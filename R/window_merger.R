@@ -141,7 +141,7 @@ pvalue_dependence_correction <- function(p_to_correct, dependent_p_values){
 #' @param padjMethod p-value adjustment method (multiple testing correction) for the whole table, can be any input for base function p.adjust
 #' @param ncores number of cores to use
 mergeWindows <- function(annRes,minDist=0,padjWindow='bonferroni',padjMethod='BH',ncores=5){
-  register(BatchtoolsParam(workers = ncores), default = TRUE)
+  
   annRes <- na.omit(annRes)
   padjWindow <- match.arg(padjWindow,choices=c('local','bonferroni'),several.ok=FALSE)
   neededCols <- c('chromosome','unique_id','begin','end','strand','baseMean','log2FoldChange','lfcSE','stat','pvalue','gene_id','gene_name',
@@ -169,6 +169,7 @@ mergeWindows <- function(annRes,minDist=0,padjWindow='bonferroni',padjMethod='BH
          Missing columns:
          ',paste(missingCols,collapse=", "),'')
   }
+  register(BatchtoolsParam(workers = ncores), default = TRUE)
   rownames(annRes) <- NULL
   geneIds <- unique(annRes[,'gene_id'])
   geneList <- vector('list',length(geneIds))
@@ -176,8 +177,6 @@ mergeWindows <- function(annRes,minDist=0,padjWindow='bonferroni',padjMethod='BH
   for(geneId in geneIds){
     geneList[[geneId]] <- annRes[ annRes['gene_id']==geneId, ]
   }
-  cl <- parallel::makeCluster(ncores, outfile = "")
-  registerDoParallel(cl)
   mergeDat <- NULL
   if (padjWindow=='local'){
         mergeDat <- do.call(rbind, bplapply(geneList, mergeWindowsHelper_local))
