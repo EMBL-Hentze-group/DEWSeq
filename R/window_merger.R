@@ -1,7 +1,8 @@
 
 # @TODO: fix repeating code!
 
-#' merge overlapping windows and
+#' @title  local simes correction
+#' @description Helper function, merge overlapping windows and
 #' correct p-values for these overlapping windows using local simes like method
 #' @param annRes annotated results (data.frame)
 #' @param minDist minimum distance between non overlapping windows,
@@ -58,8 +59,8 @@ mergeWindowsHelper_local <- function(annRes,minDist=0){
 
 # @TODO: fix repeating code!
 
-#' merge overlapping windows and
-#' correct p-values for these overlapping windows using bonferroni FWER
+#' @title  bonferroni correction
+#' @description Helper function merge overlapping windows, correct p-values for these overlapping windows using bonferroni FWER
 #' @param annRes annotated results (data.frame)
 #' @param minDist minimum distance between non overlapping windows,
 #' default: 0 to account for bed formatted window regions
@@ -185,6 +186,7 @@ mergeWindows <- function(annRes,minDist=0,padjWindow='bonferroni',padjMethod='BH
         mergeDat <- do.call(rbind, bplapply(geneList, mergeWindowsHelper_bonferroni))
         mergeDat$pBonferroni.adj <- p.adjust(mergeDat[,'pBonferroni'], method = padjMethod)
     }
+  rownames(mergeDat) <- NULL
   message('\n')
   return(mergeDat)
 }
