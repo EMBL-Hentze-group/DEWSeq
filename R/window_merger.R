@@ -189,45 +189,6 @@ mergeWindows <- function(annRes,minDist=0,padjWindow='bonferroni',padjMethod='BH
   return(mergeDat)
 }
 
-
-#' @title create regions from significant windows
-#' @description create significant regions by merging significant windows 
-#' given p-adjusted value and log2 fold change columns and thresholds
-#' @param mergeDat data.frame, output from \code{\link{mergeWindows}}
-#' @param padjCol name of the adjusted pvalue column (default: pBonferroni.adj)
-#' @param padjThresh threshold for p-adjusted value (default: 0.05)
-#' @param log2FoldChangeCol name of the log2foldchange column (default: log2FoldChange)
-#' @param log2FoldChangeThresh threshold for log2foldchange value (default:1)
-#' @param ncores number of cores to uses
-#' @returns data.frame
-createRegions <- function(mergeDat,padjCol='pBonferroni.padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,ncores=5){
-  requiredCols <- c('unique_id','chromosome','begin','end','strand','gene_id','regionStartId',padjCol,log2FoldChangeCol)
-  missingCols <- setdiff(requiredCols,colnames(mergeDat))
-  if(length(missingCols)>0){
-    stop('Input data.frame is missing required columns, needed columns:
-        chromosome: chromosome name
-        unique_id: unique id of the window
-        begin: window start co-ordinate
-        end: window end co-ordinate
-        strand: strand
-        gene_id: gene id
-        regionStartId: unique_id of the left most overlapping window
-     ',padjCol,': p-adjusted value column
-     ',log2FoldChangeCol,': log2foldchange column.
-      Missing columns: ',paste(missingCols,collapse=", "),'')
-  }
-  register(BatchtoolsParam(workers = ncores), default = TRUE)
-  rownames(mergeDat) <- NULL
-  geneIds <- unique(mergeDat[,'gene_id'])
-  geneList <- vector('list',length(geneIds))
-  names(geneList) <- geneIds
-  for(geneId in geneIds){
-    geneList[[geneId]] <- mergeDat[ mergeDat['gene_id']==geneId, ]
-  }
-  regionDat <- do.call(rbind, bplapply(geneList, createRegionsHelper))
-  return(regionDat)
-}
-
 #' @title: helper function, create region
 #' @description: merge significant neighboring windows into regions
 #' @param mergeDat a gene specific result data.frame
@@ -237,7 +198,7 @@ createRegions <- function(mergeDat,padjCol='pBonferroni.padj',padjThresh=0.05,lo
 #' @param log2FoldChangeThresh threshold for log2foldchange value (default:1)
 #' @param ncores number of cores to uses
 #' @keywords internal
-createRegionsHelper <- function(mergeDat,padjCol='pBonferroni.padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1){
+createRegionsHelper <- function(mergeDat,padjCol='pBonferroni.adj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1){
   mergeDat <- mergeDat[with(mergeDat,order(begin,end)),]
   rownames(mergeDat) <- NULL
   mergeDat[,'regionStartId'] <- as.character(mergeDat[,'regionStartId'])
@@ -282,6 +243,49 @@ createRegionsHelper <- function(mergeDat,padjCol='pBonferroni.padj',padjThresh=0
   }else{
     mergeRes[,'regionStartId'] <- mergeDat[,'unique_id']
   }
-  return(cbind(mergeDat[,-which(colnames(mergeDat)=='regionStartId')],mergeRes))
+  mergeRes <- cbind(mergeDat[,-which(colnames(mergeDat)=='regionStartId')],mergeRes)
+  return(mergeRes)
 }
 #' @TODO: write a wrapper for DESeq2 wald test
+
+#' @title create regions from significant windows
+#' @description create significant regions by merging significant windows 
+#' given p-adjusted value and log2 fold change columns and thresholds
+#' @param mergeDat data.frame, output from \code{\link{mergeWindows}}
+#' @param padjCol name of the adjusted pvalue column (default: pBonferroni.adj)
+#' @param padjThresh threshold for p-adjusted value (default: 0.05)
+#' @param log2FoldChangeCol name of the log2foldchange column (default: log2FoldChange)
+#' @param log2FoldChangeThresh threshold for log2foldchange value (default:1)
+#' @param ncores number of cores to uses
+#' @returns data.frame
+createRegions <- function(mergeDat,padjCol='pBonferroni.padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,ncores=5){
+  requiredCols <- c('unique_id','chromosome','begin','end','strand','gene_id','regionStartId',padjCol,log2FoldChangeCol)
+  missingCols <- setdiff(requiredCols,colnames(mergeDat))
+  if(length(missingCols)>0){
+    stop('Input data.frame is missing required columns, needed columns:
+        chromosome: chromosome name
+        unique_id: unique id of the window
+        begin: window start co-ordinate
+        end: window end co-ordinate
+        strand: strand
+        gene_id: gene id
+        regionStartId: unique_id of the left most overlapping window
+     ',padjCol,': p-adjusted value column
+     ',log2FoldChangeCol,': log2foldchange column.
+      Missing columns: ',paste(missingCols,collapse=", "),'')
+  }
+  
+  rownames(mergeDat) <- NULL
+  geneIds <- unique(mergeDat[,'gene_id'])
+  geneList <- vector('list',length(geneIds))
+  names(geneList) <- geneIds
+  for(geneId in geneIds){
+    geneList[[geneId]] <- mergeDat[ mergeDat['gene_id']==geneId, ]
+  }
+  register(BatchtoolsParam(workers = ncores), default = TRUE)
+  regionDat <- do.call(rbind,bplapply(geneList, createRegionsHelper,padjCol=padjCol,
+    padjThresh=padjThresh,log2FoldChangeCol=log2FoldChangeCol,log2FoldChangeThresh=log2FoldChangeThresh))
+  rownames(regionDat) <- NULL
+  message('\n')
+  return(regionDat)
+}
