@@ -2,8 +2,7 @@
 % Please edit documentation in R/window_merger.R
 \name{mergeWindowsHelper_local}
 \alias{mergeWindowsHelper_local}
-\title{merge overlapping windows and
-correct p-values for these overlapping windows using local simes like method}
+\title{local simes correction}
 \usage{
 mergeWindowsHelper_local(annRes, minDist = 0)
 }
@@ -14,7 +13,7 @@ mergeWindowsHelper_local(annRes, minDist = 0)
 default: 0 to account for bed formatted window regions}
 }
 \description{
-merge overlapping windows and
+Helper function, merge overlapping windows and
 correct p-values for these overlapping windows using local simes like method
 }
 \keyword{internal}

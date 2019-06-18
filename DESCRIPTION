@@ -1,8 +1,8 @@
 Package: DEWSeq
 Type: Package
 Title: eCLIP window differential expression analysis
-Version: 0.1.0
-Author: Who wrote it
+Version: 0.1.1
+Author: Hentze lab bioinformatics team
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: Differential expression analysis of windows from eCLIP data
     Use four spaces when indenting paragraphs within the Description.

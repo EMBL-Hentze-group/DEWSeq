@@ -2,8 +2,7 @@
 % Please edit documentation in R/window_merger.R
 \name{mergeWindowsHelper_bonferroni}
 \alias{mergeWindowsHelper_bonferroni}
-\title{merge overlapping windows and
-correct p-values for these overlapping windows using bonferroni FWER}
+\title{bonferroni correction}
 \usage{
 mergeWindowsHelper_bonferroni(annRes, minDist = 0)
 }
@@ -14,7 +13,6 @@ mergeWindowsHelper_bonferroni(annRes, minDist = 0)
 default: 0 to account for bed formatted window regions}
 }
 \description{
-merge overlapping windows and
-correct p-values for these overlapping windows using bonferroni FWER
+Helper function merge overlapping windows, correct p-values for these overlapping windows using bonferroni FWER
 }
 \keyword{internal}

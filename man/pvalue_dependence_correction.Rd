@@ -2,7 +2,7 @@
 % Please edit documentation in R/window_merger.R
 \name{pvalue_dependence_correction}
 \alias{pvalue_dependence_correction}
-\title{pvalue correction using local simes like approach}
+\title{p-value correction}
 \usage{
 pvalue_dependence_correction(p_to_correct, dependent_p_values)
 }

@@ -1,2 +1,0 @@
-export(results_DEWSeq)
-export(mergeWindows)
