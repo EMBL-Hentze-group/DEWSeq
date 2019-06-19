@@ -72,3 +72,4 @@ toBED <- function(windowRes,fileName,padjCol='padj',padjThresh=0.05,log2FoldChan
       write(paste(sigRegions[i,],collapse="\t"),file=fileName,append=TRUE)
   }
 }
+

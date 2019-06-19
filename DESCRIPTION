@@ -3,14 +3,12 @@ Type: Package
 Title: eCLIP window differential expression analysis
 Version: 0.1.1
 Author: Hentze lab bioinformatics team
-Maintainer: The package maintainer <yourself@somewhere.net>
+Maintainer: Hentze bioinformatics team <biohentze@embl.de>
 Description: Differential expression analysis of windows from eCLIP data
     Use four spaces when indenting paragraphs within the Description.
 Imports:
     DESeq2,
-    IHW,
-    BiocParallel,
-    ggplot2
+    BiocParallel
 Suggests:
    knitr
 License: What license is it under?
