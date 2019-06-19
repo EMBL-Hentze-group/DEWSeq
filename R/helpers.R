@@ -1,5 +1,7 @@
 # This file contains helper functions
+# Author: Sudeep Sahadevan, sudeep.sahadevan@embl.de
 
+#' @export
 #' @title windows/regions to BED
 #' @description given output of \code{\link{createRegions}} and significance thresholds, extract significant windows, 
 #' regions (merged neighboring significant windows) and create a BED file for visualization

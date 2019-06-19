@@ -1,4 +1,5 @@
-
+# This file contains functions to find overlapping windows/correct for dependency among overlapping windows
+# Author: Sudeep Sahadevan, sudeep.sahadevan@embl.de
 # @TODO: fix repeating code!
 
 #' @title  local simes correction
@@ -132,6 +133,7 @@ pvalue_dependence_correction <- function(p_to_correct, dependent_p_values){
   return (min(1,(p_to_correct * nr_of_p_values / inv_rank_of_p_to_correct))) # to correct for p-values going above 1
 }
 
+#' @export
 #' @title merge windows
 #' @description merge annotated sliding windows
 #' @param annRes annotated DESEq2 table

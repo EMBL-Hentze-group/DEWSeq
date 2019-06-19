@@ -1,3 +1,7 @@
+# R functions to create region from significant windows
+# Author: Sudeep Sahadevan, sudeep.sahadevan@embl.de
+
+
 #' @title: helper function, create region
 #' @description: merge significant neighboring windows into regions
 #' @param mergeDat a gene specific result data.frame
@@ -51,7 +55,7 @@ createRegionsHelper <- function(mergeDat,padjCol,padjThresh=0.05,log2FoldChangeC
   return(mergeRes)
 }
 
-
+#' @export
 #' @title create regions from significant windows
 #' @description create significant regions by merging significant windows
 #' given p-adjusted value and log2 fold change columns and thresholds
@@ -94,6 +98,7 @@ createRegions <- function(mergeDat,padjCol='pBonferroni.adj',padjThresh=0.05,log
   return(regionDat)
 }
 
+#' @export
 #' @title extract significant regions
 #' @description extract significant windows from output of \code{\link{createRegions}} using \code{regionStartId} column,
 #' merge these significant windows to regions and create the following columns for each significant region: \cr

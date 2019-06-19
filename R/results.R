@@ -1,3 +1,4 @@
+#' @export
 #' @title extract DEWseq results
 #' @description This is a hack of the DESeq2 results function
 #' credits to the authors
