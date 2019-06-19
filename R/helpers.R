@@ -65,7 +65,7 @@ toBED <- function(windowRes,fileName,padjCol='padj',padjThresh=0.05,log2FoldChan
   # convert to BED 9 format
   sigRegions <- data.frame(sigRegions,col7=sigRegions[,'begin'],col8=sigRegions[,'end'],col9=rep(itemRGB,nrow(sigRegions)),stringsAsFactors=FALSE)
   # now start writing
-  write(sprintf('track name="%s" type=bedDetail description="%s" visibility=2 itemRgb="On" useScore=1',trackName,description),file=fileName)
+  write(sprintf('track name="%s" description="%s" visibility=2 itemRgb="On" useScore=1',trackName,description),file=fileName)
   for(i in c(1:nrow(sigRegions))){
       write(paste(sigRegions[i,],collapse="\t"),file=fileName,append=TRUE)
   }

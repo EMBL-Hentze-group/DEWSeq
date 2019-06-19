@@ -94,15 +94,15 @@ createRegions <- function(mergeDat,padjCol='pBonferroni.adj',padjThresh=0.05,log
   return(regionDat)
 }
 
-#' @title extract significant windows 
-#' @description extract significant windows from output of \code{\link{createRegions}} using \code{regionStartId} column
-#' and create the following columns for each significant region:
-#'   padj_min: min. padj value in the region
-#'   padj_max: max. padj value in the region
-#'   padj_avg: avg. padj value in the region
-#'   log2FoldChange_min: min. log 2 fold change in the region
-#'   log2FoldChange_max: max. log 2 fold change in the region
-#'   log2FoldChange_avg: avg. log 2 fold change in the region
+#' @title extract significant regions
+#' @description extract significant windows from output of \code{\link{createRegions}} using \code{regionStartId} column,
+#' merge these significant windows to regions and create the following columns for each significant region: \cr
+#'   \code{padj_min}: min. padj value in the region \cr
+#'   \code{padj_max}: max. padj value in the region \cr
+#'   \code{padj_avg}: avg. padj value in the region \cr
+#'   \code{log2FoldChange_min}: min. log 2 fold change in the region \cr
+#'   \code{log2FoldChange_max}: max. log 2 fold change in the region \cr
+#'   \code{log2FoldChange_avg}: avg. log 2 fold change in the region \cr
 #' @param windowRes output data.frame from \code{\link{createRegions}}
 #' @param padjCol name of the adjusted pvalue column (default: padj)
 #' @param padjThresh threshold for p-adjusted value (default: 0.05)
