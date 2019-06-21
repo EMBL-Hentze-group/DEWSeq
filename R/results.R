@@ -129,7 +129,7 @@ results_DEWSeq <- function(object, contrast, name, listValues=c(1,-1), cooksCuto
   }
 
   rownames(res) <- rownames(object)
-
+  res <- res[-which(mcols(object)$allZero), ]
   # add unshrunken MLE coefficients to the results table
   if (addMLE) {
     if (is.numeric(contrast)) stop("addMLE only implemented for: contrast=c('condition','B','A')")
