@@ -74,8 +74,8 @@ mergeWindowsHelper_bonferroni <- function(annRes,minDist=0){
   beDiff <- annRes[,'begin'] - endW
   # all indices where the current window do not overlap the previous one
   posInd <- which(beDiff>=minDist) # The operator MUST BE '>='
-  prevGeneId <-  c(annRes[1,'gene_id'],annRes[,'gene_id'])
-  prevGeneId <- prevGeneId[-length(prevGeneId)]
+  #prevGeneId <-  c(annRes[1,'gene_id'],annRes[,'gene_id'])
+  #prevGeneId <- prevGeneId[-length(prevGeneId)]
   # all indices where the current gene id is different from the previous one
   diffGeneInd <- which(annRes[,'gene_id']!=prevGeneId)
   # all indices where sliding window should be split
@@ -170,7 +170,7 @@ mergeWindows <- function(annRes,minDist=0,padjWindow='bonferroni',padjMethod='BH
          Missing columns:
          ',paste(missingCols,collapse=", "),'')
   }
-  register(BatchtoolsParam(workers = ncores), default = TRUE)
+  BiocParallel::register(BatchtoolsParam(workers = ncores), default = TRUE)
   rownames(annRes) <- NULL
   geneIds <- unique(annRes[,'gene_id'])
   geneList <- vector('list',length(geneIds))

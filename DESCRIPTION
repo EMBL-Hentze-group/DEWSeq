@@ -9,6 +9,9 @@ Description: Differential expression analysis of windows from eCLIP data
 Imports:
     DESeq2,
     BiocParallel
+Depends:
+    DESeq2,
+    BiocParallel
 Suggests:
    knitr
 License: What license is it under?
