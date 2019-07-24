@@ -224,10 +224,13 @@ extractRegions_test <- function(windowRes,padjCol='padj',padjThresh=0.05,log2Fol
   geneRange <- BiocGenerics::sort(geneRange)
   geneReduce <- GenomicRanges::reduce(geneRange,drop.empty.ranges=TRUE,with.revmap=TRUE,min.gapwidth=1)
   mcols(geneReduce)$regionStartId <- 'Undefined'
-  mcols(geneReduce)$padj_min <- mcols(geneReduce)$padj_max <- mcols(geneReduce)$padj_avg <- 1
-  mcols(geneReduce)$log2FoldChange_min <- mcols(geneReduce)$log2FoldChange_max <- mcols(geneReduce)$log2FoldChange_avg <- 1
-  for(i in c(1:length(resReduce))){
+  mcols(geneReduce)$nWindows <- 1
+  mcols(geneReduce)$padj_min <- mcols(geneReduce)$padj_max <- mcols(geneReduce)$padj_avg <- 1.0
+  mcols(geneReduce)$log2FoldChange_min <- mcols(geneReduce)$log2FoldChange_max <- mcols(geneReduce)$log2FoldChange_avg <- 0.0
+  pb <- utils::txtProgressBar(min=0,max=length(geneReduce),style = 3)
+  for(i in c(1:length(geneReduce))){
     mergeInd <- unlist(mcols(geneReduce)[i,1])
+    mcols(geneReduce)[i,'nWindows'] <- length(mergeInd)
     mcols(geneReduce)[i,'regionStartId'] <- mcols(geneRange)[min(mergeInd),'unique_id']
     mcols(geneReduce)[i,'padj_min'] <- min(mcols(geneRange)[mergeInd,padjCol])
     mcols(geneReduce)[i,'padj_max'] <- max(mcols(geneRange)[mergeInd,padjCol])
@@ -235,7 +238,9 @@ extractRegions_test <- function(windowRes,padjCol='padj',padjThresh=0.05,log2Fol
     mcols(geneReduce)[i,'log2FoldChange_min'] <- min(mcols(geneRange)[mergeInd,log2FoldChangeCol])
     mcols(geneReduce)[i,'log2FoldChange_max'] <- max(mcols(geneRange)[mergeInd,log2FoldChangeCol])
     mcols(geneReduce)[i,'log2FoldChange_avg'] <- mean(mcols(geneRange)[mergeInd,log2FoldChangeCol])
+    utils::setTxtProgressBar(pb=pb,value=i)
   }
+  close(pb)
   return(as.data.frame(geneReduce))
 }
 
