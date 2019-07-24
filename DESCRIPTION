@@ -8,10 +8,12 @@ Description: Differential expression analysis of windows from eCLIP data
     Use four spaces when indenting paragraphs within the Description.
 Imports:
     DESeq2,
-    BiocParallel
+    BiocParallel,
+    GenomicRanges
 Depends:
     DESeq2,
-    BiocParallel
+    BiocParallel,
+    GenomicRanges
 Suggests:
    knitr
 License: What license is it under?
