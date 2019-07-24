@@ -4,14 +4,29 @@
 \alias{results_DEWSeq}
 \title{extract DEWseq results}
 \usage{
-results_DEWSeq(object, contrast, name, listValues = c(1, -1),
-  cooksCutoff, test, addMLE = FALSE, tidy = FALSE, parallel = FALSE,
-  BPPARAM = bpparam(), minmu = 0.5)
+results_DEWSeq(object, annotationFile, contrast, name, listValues = c(1,
+  -1), cooksCutoff, test, addMLE = FALSE, tidy = FALSE,
+  parallel = FALSE, BPPARAM = bpparam(), minmu = 0.5)
 }
 \arguments{
 \item{object}{a DESeqDataSet, on which one of the following functions has already been called:
-\code{\link{DESeq}}, \code{\link{nbinomWaldTest}}
+\code{\link{DESeq}}, \code{\link{nbinomWaldTest}}\cr
 \code{\link{nbinomLRT}} is NOT supported in this version}
+
+\item{annotationFile}{sliding window annotation file, can be plain either text or .gz file,
+the file MUST be TAB separated, and MUST have the following columns:\cr
+\code{chromosome} chromosome name \cr
+\code{unique_id} unique id of the window \cr
+\code{begin} window start co-ordinate \cr
+\code{end} window end co-ordinate \cr
+\code{strand} strand \cr
+\code{gene_id} gene id \cr
+\code{gene_name} gene name \cr
+\code{gene_type} gene type annotation \cr
+\code{gene_region} gene region \cr
+\code{Nr_of_region} number of the current region \cr
+\code{Total_nr_of_region} total number of regions \cr
+\code{window_number} window number \cr}
 
 \item{contrast}{this argument specifies what comparison to extract from the \code{object} to build a results table.}
 

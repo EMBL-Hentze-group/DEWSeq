@@ -8,8 +8,22 @@
 #' log2 fold changes, standard errors, test statistics, p-values and adjusted p-values;
 #' For further details, please refer documentation for \code{results} function in DESeq2 package
 #' @param object a DESeqDataSet, on which one of the following functions has already been called:
-#' \code{\link{DESeq}}, \code{\link{nbinomWaldTest}}
+#' \code{\link{DESeq}}, \code{\link{nbinomWaldTest}}\cr
 #' \code{\link{nbinomLRT}} is NOT supported in this version
+#' @param annotationFile sliding window annotation file, can be plain either text or .gz file,
+#' the file MUST be TAB separated, and MUST have the following columns:\cr
+#' \code{chromosome} chromosome name \cr
+#' \code{unique_id} unique id of the window \cr
+#' \code{begin} window start co-ordinate \cr
+#' \code{end} window end co-ordinate \cr
+#' \code{strand} strand \cr
+#' \code{gene_id} gene id \cr
+#' \code{gene_name} gene name \cr
+#' \code{gene_type} gene type annotation \cr
+#' \code{gene_region} gene region \cr
+#' \code{Nr_of_region} number of the current region \cr
+#' \code{Total_nr_of_region} total number of regions \cr
+#' \code{window_number} window number \cr
 #' @param contrast this argument specifies what comparison to extract from the \code{object} to build a results table.
 #' @param name the name of the individual effect (coefficient) for building a results table.
 #' \code{name} argument is ignored if \code{contrast} is specified
@@ -25,7 +39,7 @@
 #' If not specified, the parameters last registered with
 #' \code{\link{register}} will be used.
 #' @param minmu lower bound on the estimated count (used when calculating contrasts)
-results_DEWSeq <- function(object, contrast, name, listValues=c(1,-1), cooksCutoff, test,
+results_DEWSeq <- function(object, annotationFile,contrast, name, listValues=c(1,-1), cooksCutoff, test,
                            addMLE=FALSE, tidy=FALSE, parallel=FALSE, BPPARAM=bpparam(), minmu=0.5) {
 
   stopifnot(is(object, "DESeqDataSet"))
@@ -141,11 +155,14 @@ results_DEWSeq <- function(object, contrast, name, listValues=c(1,-1), cooksCuto
     # if an all zero contrast, also zero out the lfcMLE
     res$lfcMLE[ which(res$log2FoldChange == 0 & res$stat == 0) ] <- 0
   }
+  # read the annotation table and keep it for later
+  resGrange <- .readAnnotation(fname=annotationFile,uniqIds = rownames(res))
   # prune res object for all regions/windows with stat>=0
   res <- res[res$stat>=0,]
   if(nrow(res)==0){
     stop("Cannot find any windows/regions with log2FoldChange>=0")
   }
+
   # recalculate p-values, in this case, only right sided test is enough
   if(useT){
     # keep degrees of freedom for the regions/windows with stat>=0
@@ -201,20 +218,30 @@ results_DEWSeq <- function(object, contrast, name, listValues=c(1,-1), cooksCuto
       }
     } ### END heuristic ###
     res <- res[ setdiff(rownames(res),rownames(object)[which(cooksOutlier)]),  ]
+
   }
+  # calculate the number of windows that overlaps with each other by atleast 2 bp,
+  # this way, any intron/exon junctions will not be counted, but all ovelapping windows will be counted
+  resOvs <- GenomicRanges::findOverlaps(resGrange,minoverlap=2,drop.redundant=FALSE,drop.self=FALSE,ignore.strand=FALSE)
+  nOvWindows <- as.data.frame(table(queryHits(resOvs)))[,2]
+  names(nOvWindows) <- rownames(mcols(resGrange))
+  nOvWindows <- nOvWindows[rownames(res)]
+  # adjusted p-values for overlapping windows using Bonferroni correction
+  res$pBonferroni <- pmin(res$pvalue*nOvWindows,1)
 
   # if original baseMean was positive, but now zero due to replaced counts, fill in results
   if ( sum(mcols(object)$replace, na.rm=TRUE) > 0) {
-    nowZeroIds <- interset(rownames(res),rownames(object)[which(mcols(object)$replace & mcols(object)$baseMean == 0)])
+    nowZeroIds <- intersect(rownames(res),rownames(object)[which(mcols(object)$replace & mcols(object)$baseMean == 0)])
     if(length(nowZeroIds)>0){
       res[nowZeroIds,"log2FoldChange"] <- 0
       if (addMLE) { res[nowZeroIds,"lfcMLE"] <- 0 }
       res[nowZeroIds,"lfcSE"] <- 0
       res[nowZeroIds,"stat"] <- 0
       res[nowZeroIds,"pvalue"] <- 1
+      res[nowZeroIds,"pBonferroni"] <- 1
     }
   }
-
+  res$pBonferroni.adj <- p.adjust(res[,'pBonferroni'], method = 'BH')
   # add prior information
   deseq2.version <- packageVersion("DESeq2")
   if (!attr(object,"betaPrior")) {
@@ -225,13 +252,12 @@ results_DEWSeq <- function(object, contrast, name, listValues=c(1,-1), cooksCuto
                       betaPriorVar=betaPriorVar)
   }
   # make results object
-  deseqRes <- DESeqResults(res, priorInfo=priorInfo)
+  deseqRes <- DESeqResults(cbind(res,as.data.frame(resGrange[rownames(res),])), priorInfo=priorInfo)
   if (tidy) {
     colnms <- colnames(deseqRes)
-    deseqRes$unique_id <- rownames(deseqRes)
     mcols(deseqRes,use.names=TRUE)["unique_id","type"] <- "results"
     mcols(deseqRes,use.names=TRUE)["unique_id","description"] <- "unique id for the window/region(row names)"
-    deseqRes <- deseqRes[,c("unique_id",colnms)]
+    deseqRes <- deseqRes[,c("unique_id",setdiff(colnms,'unique_id'))]
     rownames(deseqRes) <- NULL
     deseqRes <- as.data.frame(deseqRes)
   }
