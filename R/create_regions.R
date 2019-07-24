@@ -115,7 +115,7 @@ createRegions <- function(mergeDat,padjCol='pBonferroni.adj',padjThresh=0.05,log
 #' @param log2FoldChangeThresh threshold for log2foldchange value (default:1)
 #' @return data.frame
 extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1){
-  requiredCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name','regionStartId',
+  requiredCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name',
     'gene_type','gene_region','Nr_of_region','Total_nr_of_region','window_number',padjCol,log2FoldChangeCol)
   missingCols <- setdiff(requiredCols,colnames(windowRes))
   if(length(missingCols)>0){
@@ -126,14 +126,12 @@ extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
         end: window end co-ordinate
         strand: strand
         gene_id: gene id
-        regionStartId: unique_id of the left most overlapping window
-        gene_id: gene id
         gene_name: gene name
         gene_type: gene type annotation
         gene_region: gene region
         Nr_of_region: number of the current region
         Total_nr_of_region: total number of regions
-        window_number: window numbe
+        window_number: window number
      ',padjCol,': p-adjusted value column
      ',log2FoldChangeCol,': log2foldchange column.
       Missing columns: ',paste(missingCols,collapse=", "),'')
@@ -176,3 +174,69 @@ extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
   }
   return(regionDat)
 }
+
+#' @export
+#' @title extract significant regions
+#' @description extract significant windows from output of \code{\link{createRegions}} using \code{regionStartId} column,
+#' merge these significant windows to regions and create the following columns for each significant region: \cr
+#'   \code{padj_min}: min. padj value in the region \cr
+#'   \code{padj_max}: max. padj value in the region \cr
+#'   \code{padj_avg}: avg. padj value in the region \cr
+#'   \code{log2FoldChange_min}: min. log 2 fold change in the region \cr
+#'   \code{log2FoldChange_max}: max. log 2 fold change in the region \cr
+#'   \code{log2FoldChange_avg}: avg. log 2 fold change in the region \cr
+#' @param windowRes output data.frame from \code{\link{createRegions}}
+#' @param padjCol name of the adjusted pvalue column (default: padj)
+#' @param padjThresh threshold for p-adjusted value (default: 0.05)
+#' @param log2FoldChangeCol name of the log2foldchange column (default: log2FoldChange)
+#' @param log2FoldChangeThresh threshold for log2foldchange value (default:1)
+#' @return data.frame
+extractRegions_test <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1){
+  requiredCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name',
+                    'gene_type','gene_region','Nr_of_region','Total_nr_of_region','window_number',padjCol,log2FoldChangeCol)
+  missingCols <- setdiff(requiredCols,colnames(windowRes))
+  if(length(missingCols)>0){
+    stop('Input data.frame is missing required columns, needed columns:
+        chromosome: chromosome name
+        unique_id: unique id of the window
+        begin: window start co-ordinate
+        end: window end co-ordinate
+        strand: strand
+        gene_id: gene id
+        gene_name: gene name
+        gene_type: gene type annotation
+        gene_region: gene region
+        Nr_of_region: number of the current region
+        Total_nr_of_region: total number of regions
+        window_number: window number
+     ',padjCol,': p-adjusted value column
+     ',log2FoldChangeCol,': log2foldchange column.
+      Missing columns: ',paste(missingCols,collapse=", "),'')
+  }
+  windowRes <- na.omit(windowRes[,requiredCols])
+  sigDat <- windowRes[ windowRes[,padjCol]<=padjThresh & windowRes[,log2FoldChangeCol]>=log2FoldChangeThresh, ]
+  if(nrow(sigDat)==0){
+    stop('There are no significant windows/regions under the current threshold!')
+  }
+  geneRange <- GenomicRanges::makeGRangesFromDataFrame(sigDat,seqnames.field = 'gene_id',start.field = 'begin',end.field = 'end',strand.field = 'strand',
+                                                      ignore.strand=FALSE,starts.in.df.are.0based=FALSE,keep.extra.columns = TRUE)
+  geneRange <-  GenomeInfoDb::sortSeqlevels(geneRange)
+  geneRange <- BiocGenerics::sort(geneRange)
+  geneReduce <- GenomicRanges::reduce(geneRange,drop.empty.ranges=TRUE,with.revmap=TRUE,min.gapwidth=1)
+  mcols(geneReduce)$regionStartId <- 'Undefined'
+  mcols(geneReduce)$padj_min <- mcols(geneReduce)$padj_max <- mcols(geneReduce)$padj_avg <- 1
+  mcols(geneReduce)$log2FoldChange_min <- mcols(geneReduce)$log2FoldChange_max <- mcols(geneReduce)$log2FoldChange_avg <- 1
+  for(i in c(1:length(resReduce))){
+    mergeInd <- unlist(mcols(geneReduce)[i,1])
+    mcols(geneReduce)[i,'regionStartId'] <- mcols(geneRange)[min(mergeInd),'unique_id']
+    mcols(geneReduce)[i,'padj_min'] <- min(mcols(geneRange)[mergeInd,padjCol])
+    mcols(geneReduce)[i,'padj_max'] <- max(mcols(geneRange)[mergeInd,padjCol])
+    mcols(geneReduce)[i,'padj_mean'] <- mean(mcols(geneRange)[mergeInd,padjCol])
+    mcols(geneReduce)[i,'log2FoldChange_min'] <- min(mcols(geneRange)[mergeInd,log2FoldChangeCol])
+    mcols(geneReduce)[i,'log2FoldChange_max'] <- max(mcols(geneRange)[mergeInd,log2FoldChangeCol])
+    mcols(geneReduce)[i,'log2FoldChange_avg'] <- mean(mcols(geneRange)[mergeInd,log2FoldChangeCol])
+  }
+  return(as.data.frame(geneReduce))
+}
+
+
