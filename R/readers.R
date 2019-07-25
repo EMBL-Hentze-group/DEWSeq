@@ -1,3 +1,6 @@
+# Function(s) to read in large files
+# Author: Sudeep Sahadevan, sudeep.sahadevan@embl.de
+
 #' @title  read annotation data
 #' @description read annotation data for windows
 #' The file MUST be tab separated and MUST have the following columns:\cr
@@ -52,6 +55,8 @@
                                                   ignore.strand=FALSE,keep.extra.columns=TRUE, starts.in.df.are.0based=TRUE)
     gr <- GenomeInfoDb::sortSeqlevels(gr)
     gr <- BiocGenerics::sort(gr)
+    rm(annTable)
+    gc()
     return(gr)
   }else{
     commonIds <- intersect(as.character(uniqIds),rownames(annTable))
@@ -62,6 +67,8 @@
                                                    strand.field='strand', ignore.strand=FALSE,keep.extra.columns=TRUE, starts.in.df.are.0based=TRUE)
     gr <- GenomeInfoDb::sortSeqlevels(gr)
     gr <- BiocGenerics::sort(gr)
+    rm(annTable)
+    gc()
     return(gr)
   }
 }

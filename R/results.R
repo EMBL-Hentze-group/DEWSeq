@@ -257,6 +257,8 @@ results_DEWSeq <- function(object, annotationFile,contrast, name, listValues=c(1
   colnames(deseqRes) <- c('baseMean', 'log2FoldChange', 'lfcSE','stat', 'pvalue', 'pBonferroni','pBonferroni.adj', 'chromosome', 'begin','end',
                           'width',  'strand','unique_id', 'gene_id',  'gene_name','gene_type', 'gene_region', 'Nr_of_region','Total_nr_of_region',
                           'window_number')
+  # 'seqnames' from Granges is always a factor!
+  deseqRes$chromosome <- as.character(deseqRes$chromosome)
   # may this helps to improve the memory usage
   rm(resOvs,nOvWindows,resGrange)
   gc()
