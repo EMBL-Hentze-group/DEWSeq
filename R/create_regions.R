@@ -223,25 +223,39 @@ extractRegions_test <- function(windowRes,padjCol='padj',padjThresh=0.05,log2Fol
   geneRange <-  GenomeInfoDb::sortSeqlevels(geneRange)
   geneRange <- BiocGenerics::sort(geneRange)
   geneReduce <- GenomicRanges::reduce(geneRange,drop.empty.ranges=TRUE,with.revmap=TRUE,min.gapwidth=1)
-  mcols(geneReduce)$regionStartId <- 'Undefined'
-  mcols(geneReduce)$nWindows <- 1
+  mcols(geneReduce)$regionStartId <- mcols(geneReduce)$gene_name <- mcols(geneReduce)$gene_type <- mcols(geneReduce)$gene_region  <- 'Undefined'
+  mcols(geneReduce)$chromosome <- 'Undefined'
+  mcols(geneReduce)$nWindows <- mcols(geneReduce)$Nr_of_region <-  mcols(geneReduce)$Total_nr_of_region <- mcols(geneReduce)$window_number <- 1
   mcols(geneReduce)$padj_min <- mcols(geneReduce)$padj_max <- mcols(geneReduce)$padj_avg <- 1.0
   mcols(geneReduce)$log2FoldChange_min <- mcols(geneReduce)$log2FoldChange_max <- mcols(geneReduce)$log2FoldChange_avg <- 0.0
   pb <- utils::txtProgressBar(min=0,max=length(geneReduce),style = 3)
   for(i in c(1:length(geneReduce))){
+    # values
     mergeInd <- unlist(mcols(geneReduce)[i,1])
     mcols(geneReduce)[i,'nWindows'] <- length(mergeInd)
-    mcols(geneReduce)[i,'regionStartId'] <- mcols(geneRange)[min(mergeInd),'unique_id']
     mcols(geneReduce)[i,'padj_min'] <- min(mcols(geneRange)[mergeInd,padjCol])
     mcols(geneReduce)[i,'padj_max'] <- max(mcols(geneRange)[mergeInd,padjCol])
     mcols(geneReduce)[i,'padj_mean'] <- mean(mcols(geneRange)[mergeInd,padjCol])
     mcols(geneReduce)[i,'log2FoldChange_min'] <- min(mcols(geneRange)[mergeInd,log2FoldChangeCol])
     mcols(geneReduce)[i,'log2FoldChange_max'] <- max(mcols(geneRange)[mergeInd,log2FoldChangeCol])
     mcols(geneReduce)[i,'log2FoldChange_avg'] <- mean(mcols(geneRange)[mergeInd,log2FoldChangeCol])
+    # annotations
+    mcols(geneReduce)[i,'regionStartId'] <- mcols(geneRange)[min(mergeInd),'unique_id']
+    mcols(geneReduce)[i,'chromosome'] <- mcols(geneRange)[min(mergeInd),'chromosome']
+    mcols(geneReduce)[i,'gene_name'] <- mcols(geneRange)[min(mergeInd),'gene_name']
+    mcols(geneReduce)[i,'gene_type'] <- mcols(geneRange)[min(mergeInd),'gene_type']
+    mcols(geneReduce)[i,'gene_region'] <- mcols(geneRange)[min(mergeInd),'gene_region']
+    mcols(geneReduce)[i,'Nr_of_region'] <- mcols(geneRange)[min(mergeInd),'Nr_of_region']
+    mcols(geneReduce)[i,'Total_nr_of_region'] <- mcols(geneRange)[min(mergeInd),'Total_nr_of_region']
+    mcols(geneReduce)[i,'window_number'] <- mcols(geneRange)[min(mergeInd),'window_number']
+    # progress
     utils::setTxtProgressBar(pb=pb,value=i)
   }
+  rm(geneRange)
+  gc()
   close(pb)
-  return(as.data.frame(geneReduce))
+  regionRes <- as.data.frame(geneReduce)
+  return(regionRes)
 }
 
 

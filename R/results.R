@@ -157,6 +157,7 @@ results_DEWSeq <- function(object, annotationFile,contrast, name, listValues=c(1
   }
   # read the annotation table and keep it for later
   resGrange <- .readAnnotation(fname=annotationFile,uniqIds = rownames(res))
+  gc()
   # prune res object for all regions/windows with stat>=0
   res <- res[res$stat>=0,]
   if(nrow(res)==0){
@@ -228,7 +229,6 @@ results_DEWSeq <- function(object, annotationFile,contrast, name, listValues=c(1
   nOvWindows <- nOvWindows[rownames(res)]
   # adjusted p-values for overlapping windows using Bonferroni correction
   res$pBonferroni <- pmin(res$pvalue*nOvWindows,1)
-
   # if original baseMean was positive, but now zero due to replaced counts, fill in results
   if ( sum(mcols(object)$replace, na.rm=TRUE) > 0) {
     nowZeroIds <- intersect(rownames(res),rownames(object)[which(mcols(object)$replace & mcols(object)$baseMean == 0)])
@@ -241,6 +241,7 @@ results_DEWSeq <- function(object, annotationFile,contrast, name, listValues=c(1
       res[nowZeroIds,"pBonferroni"] <- 1
     }
   }
+  # correct the window p-values for FDR on the genome level
   res$pBonferroni.adj <- p.adjust(res[,'pBonferroni'], method = 'BH')
   # add prior information
   deseq2.version <- packageVersion("DESeq2")
@@ -256,6 +257,9 @@ results_DEWSeq <- function(object, annotationFile,contrast, name, listValues=c(1
   colnames(deseqRes) <- c('baseMean', 'log2FoldChange', 'lfcSE','stat', 'pvalue', 'pBonferroni','pBonferroni.adj', 'chromosome', 'begin','end',
                           'width',  'strand','unique_id', 'gene_id',  'gene_name','gene_type', 'gene_region', 'Nr_of_region','Total_nr_of_region',
                           'window_number')
+  # may this helps to improve the memory usage
+  rm(resOvs,nOvWindows,resGrange)
+  gc()
   if (tidy) {
     colnms <- colnames(deseqRes)
     mcols(deseqRes,use.names=TRUE)["unique_id","type"] <- "results"
