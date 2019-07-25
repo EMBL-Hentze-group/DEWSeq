@@ -223,7 +223,7 @@ results_DEWSeq <- function(object, annotationFile,contrast, name, listValues=c(1
   }
   # calculate the number of windows that overlaps with each other by atleast 2 bp,
   # this way, any intron/exon junctions will not be counted, but all ovelapping windows will be counted
-  resOvs <- GenomicRanges::findOverlaps(resGrange,minoverlap=2,drop.redundant=FALSE,drop.self=FALSE,ignore.strand=FALSE)
+  resOvs <- GenomicRanges::findOverlaps(resGrange,minoverlap=1,drop.redundant=FALSE,drop.self=FALSE,ignore.strand=FALSE)
   nOvWindows <- as.data.frame(table(queryHits(resOvs)))[,2]
   names(nOvWindows) <- rownames(mcols(resGrange))
   nOvWindows <- nOvWindows[rownames(res)]

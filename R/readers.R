@@ -32,7 +32,7 @@
   }
   missingCols <- setdiff(neededCols,colnames(annTable))
   if(length(missingCols)>0){
-    stop('Input annotatino file is missing required columns, needed columns:
+    stop('Input annotation file is missing required columns, needed columns:
          chromosome: chromosome name
          unique_id: unique id of the window
          begin: window start co-ordinate
