@@ -13,17 +13,17 @@
 }
 \description{
 read annotation data for windows
-The file MUST be tab separated and MUST have the following columns:
-chromosome: chromosome name
-unique_id: unique id of the window
-begin: window start co-ordinate
-end: window end co-ordinate
-strand: strand
-gene_id: gene id
-gene_name: gene name
-gene_type: gene type annotation
-gene_region: gene region
-Nr_of_region: number of the current region
-Total_nr_of_region: total number of regions
-window_number: window number
+The file MUST be tab separated and MUST have the following columns:\cr
+chromosome: chromosome name \cr
+unique_id: unique id of the window \cr
+begin: window start co-ordinate \cr
+end: window end co-ordinate \cr
+strand: strand \cr
+gene_id: gene id \cr
+gene_name: gene name \cr
+gene_type: gene type annotation \cr
+gene_region: gene region \cr
+Nr_of_region: number of the current region \cr
+Total_nr_of_region: total number of regions \cr
+window_number: window number \cr
 }

@@ -1,4 +1,4 @@
-Package: DEWSeq
+Package: DEWSeq2
 Type: Package
 Title: eCLIP window differential expression analysis
 Version: 1.0.0
@@ -9,14 +9,12 @@ Description: Differential expression analysis of windows from eCLIP data
 Imports:
     DESeq2,
     data.table,
-    BiocParallel,
     GenomeInfoDb,
     GenomicRanges,
     utils
 Depends:
     DESeq2,
     data.table,
-    BiocParallel,
     GenomeInfoDb,
     GenomicRanges,
     utils
