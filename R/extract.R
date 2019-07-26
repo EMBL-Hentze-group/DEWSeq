@@ -42,7 +42,8 @@ extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
   windowRes <- na.omit(windowRes[,requiredCols])
   sigDat <- windowRes[ windowRes[,padjCol]<=padjThresh & windowRes[,log2FoldChangeCol]>=log2FoldChangeThresh, ]
   if(nrow(sigDat)==0){
-    stop('There are no significant windows/regions under the current threshold!')
+    message('There are no significant windows/regions under the current threshold!\nPlease lower your significance cut-off thresholds and manually check if there are any significant windows under the threshold')
+    return(NULL)
   }
   geneRange <- GenomicRanges::makeGRangesFromDataFrame(sigDat,seqnames.field = 'gene_id',start.field = 'begin',end.field = 'end',strand.field = 'strand',
                                                       ignore.strand=FALSE,starts.in.df.are.0based=FALSE,keep.extra.columns = TRUE)
