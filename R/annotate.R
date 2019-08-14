@@ -19,10 +19,7 @@
 #' @return data.frame
 annotateResults <- function(results,annotationFile){
     results <- na.omit(as.data.frame(results))
-    if(is.null(rownames(results))){
-        if (!'row' %in% colnames(results)){
-            stop('results data.frame MUST either have rownames() or row names in "row" column')
-        }
+    if ('row' %in% colnames(results)){
         rownames(results) <- results$row
     }
     neededCols <- c('baseMean','log2FoldChange','lfcSE','stat','pvalue','padj')
