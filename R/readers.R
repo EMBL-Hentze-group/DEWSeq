@@ -18,7 +18,7 @@
 #' window_number: window number \cr
 #' @param fname file name/path
 #' @param uniqIds filter stable and keep annotation for these unique ids
-.readAnnotation <- function(fname,uniqIds=NULL){
+.readAnnotation <- function(fname,uniqIds=NULL,asGRange=TRUE){
   neededCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name','gene_type','gene_region','Nr_of_region',
                  'Total_nr_of_region','window_number')
   gzlen <- grep(pattern = '\\.gz',ignore.case = TRUE,x=fname)
@@ -63,12 +63,16 @@
     if(length(commonIds)==0){
       stop('There are no common unique ids between the input file and uniqueIds. Please check your data sets!')
     }
-    gr <- GenomicRanges::makeGRangesFromDataFrame(annTable[commonIds,], seqnames.field='chromosome',start.field='begin',end.field='end',
-                                                   strand.field='strand', ignore.strand=FALSE,keep.extra.columns=TRUE, starts.in.df.are.0based=TRUE)
-    gr <- GenomeInfoDb::sortSeqlevels(gr)
-    gr <- BiocGenerics::sort(gr)
-    rm(annTable)
-    gc()
-    return(gr)
+    if(asGRange){
+      gr <- GenomicRanges::makeGRangesFromDataFrame(annTable[commonIds,], seqnames.field='chromosome',start.field='begin',end.field='end',
+                                                    strand.field='strand', ignore.strand=FALSE,keep.extra.columns=TRUE, starts.in.df.are.0based=TRUE)
+      gr <- GenomeInfoDb::sortSeqlevels(gr)
+      gr <- BiocGenerics::sort(gr)
+      rm(annTable)
+      gc()
+      return(gr)
+    }else{
+      return(annTable[commonIds,])
+    }
   }
 }

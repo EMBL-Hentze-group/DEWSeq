@@ -4,7 +4,7 @@
 \alias{.readAnnotation}
 \title{read annotation data}
 \usage{
-.readAnnotation(fname, uniqIds = NULL)
+.readAnnotation(fname, uniqIds = NULL, asGRange = TRUE)
 }
 \arguments{
 \item{fname}{file name/path}
