@@ -93,7 +93,9 @@ extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
 }
 
 
-expressionPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,
+#' @export
+#' @title normalized counts per region
+countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,
                                 normalizedCounts,selectCol='log2FoldChange',type='max'){
   requiredCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name',
                     'gene_type','gene_region','Nr_of_region','Total_nr_of_region','window_number',padjCol,log2FoldChangeCol)
@@ -159,8 +161,9 @@ expressionPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2Fol
     outDat[i,'gene_region'] <- mcols(sigRange)[min(mergeInd),'gene_region']
     outDat[i,'Nr_of_region'] <- mcols(sigRange)[min(mergeInd),'Nr_of_region']
     outDat[i,'Total_nr_of_region'] <- mcols(sigRange)[min(mergeInd),'Total_nr_of_region']
-    outDat[i,'window_number'] <- mcols(sigRange)[min(mergeInd),'window_number']
+    #outDat[i,'window_number'] <- mcols(sigRange)[min(mergeInd),'window_number']
     outDat[i,colnames(normalizedCounts)] <- unlist(mcols(sigRange)[callFn(mcols(sigRange)[mergeInd,selectCol]),colnames(normalizedCounts)])
   }
+  return(outDat)
 }
 
