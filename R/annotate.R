@@ -21,6 +21,7 @@ annotateResults <- function(results,annotationFile){
     results <- na.omit(as.data.frame(results))
     if ('row' %in% colnames(results)){
         rownames(results) <- results$row
+        results$row <- NULL
     }
     neededCols <- c('baseMean','log2FoldChange','lfcSE','stat','pvalue','padj')
     missingCols <- setdiff(neededCols,colnames(results))
@@ -28,5 +29,9 @@ annotateResults <- function(results,annotationFile){
         stop('Input results table doesnot have all DESeq2 columns. Missing columns:',paste(missingCols,collapse=", "),'')
     }
     resGrange <- .readAnnotation(fname=annotationFile,uniqIds = rownames(results),asGRange=FALSE)
-   return(cbind(results,as.data.frame(resGrange[rownames(results),])))
+    results <- cbind(results,as.data.frame(resGrange[rownames(results),]))
+    rownames(results) <- NULL
+   return(results)
 }
+
+

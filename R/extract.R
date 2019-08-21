@@ -93,3 +93,74 @@ extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
 }
 
 
+expressionPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,
+                                normalizedCounts,selectCol='log2FoldChange',type='max'){
+  requiredCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name',
+                    'gene_type','gene_region','Nr_of_region','Total_nr_of_region','window_number',padjCol,log2FoldChangeCol)
+  missingCols <- setdiff(requiredCols,colnames(windowRes))
+  if(length(missingCols)>0){
+    stop('Input data.frame is missing required columns, needed columns:
+        chromosome: chromosome name
+        unique_id: unique id of the window
+        begin: window start co-ordinate
+        end: window end co-ordinate
+        strand: strand
+        gene_id: gene id
+        gene_name: gene name
+        gene_type: gene type annotation
+        gene_region: gene region
+        Nr_of_region: number of the current region
+        Total_nr_of_region: total number of regions
+        window_number: window number
+     ',padjCol,': p-adjusted value column
+     ',log2FoldChangeCol,': log2foldchange column.
+      Missing columns: ',paste(missingCols,collapse=", "),'')
+  }
+  windowRes <- na.omit(windowRes[,requiredCols])
+  sigDat <- windowRes[ windowRes[,padjCol]<=padjThresh & windowRes[,log2FoldChangeCol]>=log2FoldChangeThresh, ]
+  rownames(sigDat) <- sigDat$unique_id
+  if(nrow(sigDat)==0){
+    stop('There are no significant windows/regions under the current threshold!\nPlease lower your significance cut-off thresholds and manually check if there are any significant windows under the threshold')
+    # return(NULL)
+  }
+  if(! selectCol %in% colnames(windowRes)){
+    stop('Cannot find "',selectCol,'" in windowRes column names. MUST be one of ',paste(colnames(windowRes),collapse=", "),'')
+  }
+  if(! is.numeric(windowRes[,selectCol])){
+    stop('"',selectCol,'" values must be numeric!')
+  }
+  ops <- match.arg(type,c('min','max'),several.ok = FALSE)
+  callFn <- ifelse(ops=='min',which.min,which.max)
+  normalizedCounts <- as.data.frame(na.omit(normalizedCounts))
+  commonids <- intersect(rownames(normalizedCounts),rownames(windowRes))
+  if(length(commonids)==0){
+    stop('There are no common elements between significant windows/regions in under the current threshold and windows in normalizedCounts data.frame!\nPlease lower your significance cut-off thresholds and manually check if there are any significant windows under the threshold')
+  }
+  sigDat <- cbind(sigDat[commonids,],normalizedCounts[commonids,])
+  sigRange <- GenomicRanges::makeGRangesFromDataFrame(sigDat,seqnames.field = 'gene_id',start.field = 'begin',end.field = 'end',strand.field = 'strand',
+                                                       ignore.strand=FALSE,starts.in.df.are.0based=FALSE,keep.extra.columns = TRUE)
+  sigRange <-  GenomeInfoDb::sortSeqlevels(sigRange)
+  sigRange <- BiocGenerics::sort(sigRange)
+  sigReduce <- GenomicRanges::reduce(sigRange,drop.empty.ranges=TRUE,with.revmap=TRUE,min.gapwidth=1)
+  if(nrow(mcols(sigReduce))<1){
+    stop('Cannot find overlapping windows (regions) in input results!')
+  }
+  outCols <- c('gene_id','region_begin','region_end','width','strand','regionStartId','unique_id','chromosome','begin','end','gene_name','gene_region',
+               'Nr_of_region','Total_nr_of_region','window_number')+ colnames(normalizedCounts)
+  outDat <- cbind(as.data.frame(sigReduce)[,c(1:5)],data.frame(matrix(data=NA,nrow=nrow(mcols(sigReduce)),ncol = length(outCols)-5)))
+  colnames(outDat) <- outCols
+  for(i in c(1:length(sigReduce))){
+    mergeInd <- sigReduce$revmap[[i]]
+    outDat[i,'regionStartId'] <- mcols(sigRange)[min(mergeInd),'unique_id']
+    outDat[i,'unique_id'] <- mcols(sigRange)[min(mergeInd),'unique_id']
+    outDat[i,'chromosome'] <- mcols(sigRange)[min(mergeInd),'chromosome']
+    outDat[i,'gene_name'] <- mcols(sigRange)[min(mergeInd),'gene_name']
+    outDat[i,'gene_type'] <- mcols(sigRange)[min(mergeInd),'gene_type']
+    outDat[i,'gene_region'] <- mcols(sigRange)[min(mergeInd),'gene_region']
+    outDat[i,'Nr_of_region'] <- mcols(sigRange)[min(mergeInd),'Nr_of_region']
+    outDat[i,'Total_nr_of_region'] <- mcols(sigRange)[min(mergeInd),'Total_nr_of_region']
+    outDat[i,'window_number'] <- mcols(sigRange)[min(mergeInd),'window_number']
+    outDat[i,colnames(normalizedCounts)] <- unlist(mcols(sigRange)[callFn(mcols(sigRange)[mergeInd,selectCol]),colnames(normalizedCounts)])
+  }
+}
+
