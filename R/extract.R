@@ -96,7 +96,7 @@ extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
 #' @export
 #' @title normalized counts per region
 countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,
-                                normalizedCounts,selectCol='log2FoldChange',type='max'){
+                                normalizedCounts,selectCol='log2FoldChange',op='max'){
   requiredCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name',
                     'gene_type','gene_region','Nr_of_region','Total_nr_of_region','window_number',padjCol,log2FoldChangeCol)
   missingCols <- setdiff(requiredCols,colnames(windowRes))
@@ -131,8 +131,8 @@ countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldCha
   if(! is.numeric(windowRes[,selectCol])){
     stop('"',selectCol,'" values must be numeric!')
   }
-  ops <- match.arg(type,c('min','max'),several.ok = FALSE)
-  callFn <- ifelse(ops=='min',which.min,which.max)
+  op <- match.arg(op,c('min','max'),several.ok = FALSE)
+  callFn <- ifelse(op=='min',which.min,which.max)
   normalizedCounts <- as.data.frame(na.omit(normalizedCounts))
   commonids <- intersect(rownames(normalizedCounts),rownames(windowRes))
   if(length(commonids)==0){
