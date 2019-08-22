@@ -96,7 +96,7 @@ extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
 #' @export
 #' @title normalized counts per region
 #' @TODO comment me!
-countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1, normalizedCounts,
+countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,begin0based=TRUE, normalizedCounts,
                     treatmentCols,treatmentName='treatment',controlName='control', op='max'){
   requiredCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name',
                     'gene_type','gene_region','Nr_of_region','Total_nr_of_region','window_number',padjCol,log2FoldChangeCol)
@@ -156,7 +156,7 @@ countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldCha
   }
   sigDat <- cbind(sigDat[commonids,],normalizedCounts[commonids,])
   sigRange <- GenomicRanges::makeGRangesFromDataFrame(sigDat,seqnames.field = 'gene_id',start.field = 'begin',end.field = 'end',strand.field = 'strand',
-                                                       ignore.strand=FALSE,starts.in.df.are.0based=FALSE,keep.extra.columns = TRUE)
+                                                       ignore.strand=FALSE,starts.in.df.are.0based=begin0based,keep.extra.columns = TRUE)
   sigRange <-  GenomeInfoDb::sortSeqlevels(sigRange)
   sigRange <- BiocGenerics::sort(sigRange)
   sigReduce <- GenomicRanges::reduce(sigRange,drop.empty.ranges=TRUE,with.revmap=TRUE,min.gapwidth=1)
@@ -208,6 +208,11 @@ countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldCha
     utils::setTxtProgressBar(pb=pb,value=i)
   }
   close(pb)
+  if(begin0based){ # return 0 based start positions
+    outDat$region_begin <- outDat$region_begin-1
+    outDat$begin.log2FCWindow <- outDat$begin.log2FCWindow-1
+    outDat$begin.meanWindow <- pmax(outDat$begin.meanWindow-1,0)
+  }
   colOrder <- c(c('chromosome','gene_id','gene_name','gene_region','regionStartId','region_begin','region_end','width','strand','Nr_of_region','Total_nr_of_region',
   'unique_id.log2FCWindow','begin.log2FCWindow','end.log2FCWindow'),log2FCMean,log2FCWindowCols,
   c('unique_id.meanWindow','begin.meanWindow','end.meanWindow'),meanMean,meanWindowCols)
