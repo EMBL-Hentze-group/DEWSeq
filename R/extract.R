@@ -216,6 +216,8 @@ countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldCha
   colOrder <- c(c('chromosome','gene_id','gene_name','gene_region','regionStartId','region_begin','region_end','width','strand','Nr_of_region','Total_nr_of_region',
   'unique_id.log2FCWindow','begin.log2FCWindow','end.log2FCWindow'),log2FCMean,log2FCWindowCols,
   c('unique_id.meanWindow','begin.meanWindow','end.meanWindow'),meanMean,meanWindowCols)
+  outDat <- outDat[order(outDat$chromosome,outDat$region_begin),] # sort as a separate step to fix 
+  rownames(outDat) <- NULL # fix jumbled up rownames
   return(outDat[,colOrder])
 }
 
