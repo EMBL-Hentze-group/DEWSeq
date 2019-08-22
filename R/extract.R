@@ -95,7 +95,8 @@ extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
 
 #' @export
 #' @title normalized counts per region
-countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1, normalizedCounts, op='max'){
+countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1, normalizedCounts,
+                    treatmentCols,treatmentName='treatment',controlName='control', op='max'){
   requiredCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name',
                     'gene_type','gene_region','Nr_of_region','Total_nr_of_region','window_number',padjCol,log2FoldChangeCol)
   missingCols <- setdiff(requiredCols,colnames(windowRes))
@@ -127,18 +128,19 @@ countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldCha
   # if (length(unique(controlCols))<length(controlCols)){
   #   stop('There are repeating names in controlCols')
   # }
-  # if (length(unique(treatmentCols))<length(treatmentCols)){
-  #   stop('There are repeating names in treatmentCols')
-  # }
-  # if(length(setdiff(treatmentCols,colnames(normalizedCounts)))>0){
-  #   stop('mismatch treatmentCols and column names of normalizedCounts!')
-  # }
+  if (length(unique(treatmentCols))<length(treatmentCols)){
+    stop('There are repeating names in treatmentCols')
+  }
+  if(length(setdiff(treatmentCols,colnames(normalizedCounts)))>0){
+    stop('mismatch treatmentCols and column names of normalizedCounts!')
+  }
   # if(length(setdiff(controlCols,colnames(normalizedCounts)))>0){
   #   stop('mismatch controlCols and column names of normalizedCounts!')
   # }
   # if (length(intersect(treatmentCols,controlCols))>0){
   #   stop('treatmentCols and controlCols should not have shared names!')
   # }
+  controlCols <- setdiff(rownames(normalizedCounts),treatmentCols)
   op <- match.arg(op,c('min','max'),several.ok = FALSE)
   callFn <- which.max
   if(op=='min'){
@@ -161,16 +163,19 @@ countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldCha
     stop('Cannot find overlapping windows (regions) in input results!')
   }
   log2FCWindowCols <- paste(colnames(normalizedCounts),'log2FCWindow',sep='.')
+  log2FCMean <- paste(c(treatmentName,controlName),'mean.log2FCWindow',sep='.')
   meanWindowCols <- paste(colnames(normalizedCounts),'meanWindow',sep='.')
+  meanMean <- paste(c(treatmentName,controlName),'mean.meanWindow',sep='.')
   outCols <- c(c('gene_id','region_begin','region_end','width','strand','regionStartId','chromosome','gene_name','gene_region',
-               'Nr_of_region','Total_nr_of_region','window_number','unique_id.log2FCWindow','begin.log2FCWindow','end.log2FCWindow'), log2FCWindowCols,
-               c('unique_id.meanWindow','begin.meanWindow','end.meanWindow'),meanWindowCols)
+               'Nr_of_region','Total_nr_of_region','unique_id.log2FCWindow','begin.log2FCWindow','end.log2FCWindow'),
+               log2FCMean, log2FCWindowCols, c('unique_id.meanWindow','begin.meanWindow','end.meanWindow'),
+               meanMean,meanWindowCols)
   outDat <- cbind(as.data.frame(sigReduce)[,c(1:5)],data.frame(matrix(data=NA,nrow=nrow(mcols(sigReduce)),ncol = length(outCols)-5)))
   colnames(outDat) <- outCols
   # now fill out 0s for the mean window columns
   outDat$unique_id.meanWindow <- 'same window'
-  outDat[,c('begin.meanWindow','end.meanWindow',meanWindowCols)] <- 0
-  
+  outDat[,c('begin.meanWindow','end.meanWindow',meanMean,meanWindowCols)] <- 0
+  pb <- utils::txtProgressBar(min=0,max=length(sigReduce),style = 3)
   for(i in c(1:length(sigReduce))){
     mergeInd <- sigReduce$revmap[[i]]
     outDat[i,'regionStartId'] <- mcols(sigRange)[min(mergeInd),'unique_id']
@@ -185,16 +190,26 @@ countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldCha
     outDat[i,'unique_id.log2FCWindow'] <- mcols(sigRange)[mergeInd[log2FCInd],'unique_id']
     outDat[i,'begin.log2FCWindow'] <- start(sigRange[mergeInd[log2FCInd]])
     outDat[i,'end.log2FCWindow'] <- end(sigRange[mergeInd[log2FCInd]])
+    outDat[i,paste0(treatmentName,'.mean.log2FCWindow')] <- mean(unlist(mcols(sigRange)[mergeInd[log2FCInd],treatmentCols]))
+    outDat[i,paste0(controlName,'.mean.log2FCWindow')] <- mean(unlist(mcols(sigRange)[mergeInd[log2FCInd],controlCols]))
     outDat[i,log2FCWindowCols] <- unlist(mcols(sigRange)[mergeInd[log2FCInd],colnames(normalizedCounts)])
     # get the window with minimum/maximum normalized count
-    meanInd <- callFn( rowMeans( as.data.frame(mcols(sigRange)[mergeInd,colnames(normalizedCounts)]) ) )
+    meanInd <- callFn( rowMeans( as.data.frame(mcols(sigRange)[mergeInd,treatmentCols]) ) )
     if(log2FCInd!=meanInd){
       outDat[i,'unique_id.meanWindow'] <- mcols(sigRange)[mergeInd[meanInd],'unique_id']
       outDat[i,'begin.meanWindow'] <- start(sigRange[mergeInd[meanInd]])
       outDat[i,'end.meanWindow'] <- end(sigRange[mergeInd[meanInd]])
+      outDat[i,paste0(treatmentName,'.mean.meanWindow')] <- mean(unlist(mcols(sigRange)[mergeInd[log2FCInd],treatmentCols]))
+      outDat[i,paste0(controlName,'.mean.meanWindow')] <- mean(unlist(mcols(sigRange)[mergeInd[log2FCInd],controlCols]))
       outDat[i,meanWindowCols] <- unlist(mcols(sigRange)[mergeInd[meanInd],colnames(normalizedCounts)])
     }
+    # progress
+    utils::setTxtProgressBar(pb=pb,value=i)
   }
-  return(outDat)
+  close(pb)
+  colOrder <- c(c('chromosome','gene_id','gene_name','gene_region','regionStartId','region_begin','region_end','width','strand','Nr_of_region','Total_nr_of_region',
+  'unique_id.log2FCWindow','begin.log2FCWindow','end.log2FCWindow'),log2FCMean,log2FCWindowCols,
+  c('unique_id.meanWindow','begin.meanWindow','end.meanWindow'),meanMean,meanWindowCols)
+  return(outDat[,colOrder])
 }
 
