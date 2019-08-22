@@ -161,12 +161,16 @@ countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldCha
     stop('Cannot find overlapping windows (regions) in input results!')
   }
   log2FCWindowCols <- paste(colnames(normalizedCounts),'log2FCWindow',sep='.')
-  meanWindowCols <- paste(colnames(normalizedCounts),'baseMeanWindow',sep='.')
+  meanWindowCols <- paste(colnames(normalizedCounts),'meanWindow',sep='.')
   outCols <- c(c('gene_id','region_begin','region_end','width','strand','regionStartId','chromosome','gene_name','gene_region',
                'Nr_of_region','Total_nr_of_region','window_number','unique_id.log2FCWindow','begin.log2FCWindow','end.log2FCWindow'), log2FCWindowCols,
                c('unique_id.meanWindow','begin.meanWindow','end.meanWindow'),meanWindowCols)
   outDat <- cbind(as.data.frame(sigReduce)[,c(1:5)],data.frame(matrix(data=NA,nrow=nrow(mcols(sigReduce)),ncol = length(outCols)-5)))
   colnames(outDat) <- outCols
+  # now fill out 0s for the mean window columns
+  outDat$unique_id.meanWindow <- 'same window'
+  outDat[,c('begin.meanWindow','end.meanWindow',meanWindowCols)] <- 0
+  
   for(i in c(1:length(sigReduce))){
     mergeInd <- sigReduce$revmap[[i]]
     outDat[i,'regionStartId'] <- mcols(sigRange)[min(mergeInd),'unique_id']
@@ -184,10 +188,12 @@ countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldCha
     outDat[i,log2FCWindowCols] <- unlist(mcols(sigRange)[mergeInd[log2FCInd],colnames(normalizedCounts)])
     # get the window with minimum/maximum normalized count
     meanInd <- callFn( rowMeans( as.data.frame(mcols(sigRange)[mergeInd,colnames(normalizedCounts)]) ) )
-    outDat[i,'unique_id.meanWindow'] <- mcols(sigRange)[mergeInd[meanInd],'unique_id']
-    outDat[i,'begin.meanWindow'] <- start(sigRange[mergeInd[meanInd]])
-    outDat[i,'end.meanWindow'] <- end(sigRange[mergeInd[meanInd]])
-    outDat[i,meanWindowCols] <- unlist(mcols(sigRange)[mergeInd[meanInd],colnames(normalizedCounts)])
+    if(log2FCInd!=meanInd){
+      outDat[i,'unique_id.meanWindow'] <- mcols(sigRange)[mergeInd[meanInd],'unique_id']
+      outDat[i,'begin.meanWindow'] <- start(sigRange[mergeInd[meanInd]])
+      outDat[i,'end.meanWindow'] <- end(sigRange[mergeInd[meanInd]])
+      outDat[i,meanWindowCols] <- unlist(mcols(sigRange)[mergeInd[meanInd],colnames(normalizedCounts)])
+    }
   }
   return(outDat)
 }
