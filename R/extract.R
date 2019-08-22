@@ -95,6 +95,10 @@ extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
 
 #' @export
 #' @title normalized counts per region
+#' @description given window resutls and normalized counts, combine significant overlapping windows into regions and
+#' for each region, pick two candidate winodws (i) with highest log2FoldChange and (ii) with highest normalized mean in
+#' treatment samples. Return a data fram with region information and stats, and for the selected windows stats:
+#' normalized mean expression in treatment and control samples, individual expression in replicates
 #' @TODO comment me!
 countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,begin0based=TRUE, normalizedCounts,
                     treatmentCols,treatmentName='treatment',controlName='control', op='max'){
@@ -216,7 +220,7 @@ countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldCha
   colOrder <- c(c('chromosome','gene_id','gene_name','gene_region','regionStartId','region_begin','region_end','width','strand','Nr_of_region','Total_nr_of_region',
   'unique_id.log2FCWindow','begin.log2FCWindow','end.log2FCWindow'),log2FCMean,log2FCWindowCols,
   c('unique_id.meanWindow','begin.meanWindow','end.meanWindow'),meanMean,meanWindowCols)
-  outDat <- outDat[order(outDat$chromosome,outDat$region_begin),] # sort as a separate step to fix 
+  outDat <- outDat[order(outDat$chromosome,outDat$region_begin),] # sort as a separate step to fix
   rownames(outDat) <- NULL # fix jumbled up rownames
   return(outDat[,colOrder])
 }
