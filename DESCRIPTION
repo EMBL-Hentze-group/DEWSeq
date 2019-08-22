@@ -1,7 +1,7 @@
 Package: DEWSeq2
 Type: Package
 Title: eCLIP window differential expression analysis
-Version: 1.5.1
+Version: 1.5.3
 Author: Hentze lab bioinformatics team
 Maintainer: Hentze bioinformatics team <biohentze@embl.de>
 Description: Differential expression analysis of windows from eCLIP data

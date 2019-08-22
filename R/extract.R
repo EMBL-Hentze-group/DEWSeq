@@ -96,9 +96,9 @@ extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
 #' @export
 #' @title normalized counts per region
 #' @description given window resutls and normalized counts, combine significant overlapping windows into regions and
-#' for each region, pick two candidate winodws (i) with highest log2FoldChange and (ii) with highest normalized mean in
-#' treatment samples. Return a data fram with region information and stats, and for the selected windows stats:
-#' normalized mean expression in treatment and control samples, individual expression in replicates
+#' for each region, pick two candidate winodws:\cr (i) with highest log2FoldChange and\cr (ii) with highest normalized mean in
+#' treatment samples.\cr Return a data.frame with region information and stats, and for the selected windows stats:\cr
+#' normalized mean expression in treatment and control samples and\cr individual expression in replicates
 #' @TODO comment me!
 countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,begin0based=TRUE, normalizedCounts,
                     treatmentCols,treatmentName='treatment',controlName='control', op='max'){
