@@ -95,6 +95,7 @@ extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
 
 #' @export
 #' @title normalized counts per region
+#' @TODO comment me!
 countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1, normalizedCounts,
                     treatmentCols,treatmentName='treatment',controlName='control', op='max'){
   requiredCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name',
@@ -140,7 +141,7 @@ countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldCha
   # if (length(intersect(treatmentCols,controlCols))>0){
   #   stop('treatmentCols and controlCols should not have shared names!')
   # }
-  controlCols <- setdiff(rownames(normalizedCounts),treatmentCols)
+  controlCols <- setdiff(colnames(normalizedCounts),treatmentCols)
   op <- match.arg(op,c('min','max'),several.ok = FALSE)
   callFn <- which.max
   if(op=='min'){
@@ -199,8 +200,8 @@ countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldCha
       outDat[i,'unique_id.meanWindow'] <- mcols(sigRange)[mergeInd[meanInd],'unique_id']
       outDat[i,'begin.meanWindow'] <- start(sigRange[mergeInd[meanInd]])
       outDat[i,'end.meanWindow'] <- end(sigRange[mergeInd[meanInd]])
-      outDat[i,paste0(treatmentName,'.mean.meanWindow')] <- mean(unlist(mcols(sigRange)[mergeInd[log2FCInd],treatmentCols]))
-      outDat[i,paste0(controlName,'.mean.meanWindow')] <- mean(unlist(mcols(sigRange)[mergeInd[log2FCInd],controlCols]))
+      outDat[i,paste0(treatmentName,'.mean.meanWindow')] <- mean(unlist(mcols(sigRange)[mergeInd[meanInd],treatmentCols]))
+      outDat[i,paste0(controlName,'.mean.meanWindow')] <- mean(unlist(mcols(sigRange)[mergeInd[meanInd],controlCols]))
       outDat[i,meanWindowCols] <- unlist(mcols(sigRange)[mergeInd[meanInd],colnames(normalizedCounts)])
     }
     # progress
