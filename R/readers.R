@@ -18,9 +18,13 @@
 #' window_number: window number \cr
 #' @param fname file name/path
 #' @param uniqIds filter stable and keep annotation for these unique ids
-.readAnnotation <- function(fname,uniqIds=NULL,asGRange=TRUE){
+#' @param asGRange boolean, whether to reaturn a GRange object or a data.frame object
+.readAnnotation <- function(fname,uniqIds=NULL,asGRange=TRUE,checkWindowNumber=TRUE){
   neededCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name','gene_type','gene_region','Nr_of_region',
-                 'Total_nr_of_region','window_number')
+                 'Total_nr_of_region')
+  if(checkWindowNumber){
+    neededCols <- c(neededCols,'window_number')
+  }
   gzlen <- grep(pattern = '\\.gz',ignore.case = TRUE,x=fname)
   platform <- Sys.info()[['sysname']]
   if(gzlen>0 && platform=='Windows'){
@@ -31,7 +35,7 @@
     annTable <- data.table::fread(fname,sep="\t",stringsAsFactors = FALSE,header=TRUE)
   }
   missingCols <- setdiff(neededCols,colnames(annTable))
-  if(length(missingCols)>0){
+  if(length(missingCols)>0 & checkWindowNumber){
     stop('Input annotation file is missing required columns, needed columns:
          chromosome: chromosome name
          unique_id: unique id of the window
@@ -47,17 +51,38 @@
          window_number: window number
          Missing columns:
          ',paste(missingCols,collapse=", "),'')
+  }else if(length(missingCols)>0 &!checkWindowNumber){
+    stop('Input annotation file is missing required columns, needed columns:
+         chromosome: chromosome name
+         unique_id: unique id of the window
+         begin: window start co-ordinate
+         end: window end co-ordinate
+         strand: strand
+         gene_id: gene id
+         gene_name: gene name
+         gene_type: gene type annotation
+         gene_region: gene region
+         Nr_of_region: number of the current region
+         Total_nr_of_region: total number of regions
+         Missing columns:
+         ',paste(missingCols,collapse=", "),'')
   }
   annTable <- as.data.frame(annTable)
-  rownames(annTable) <- annTable$unique_id
+  if(length(annTable$unique_id)==length(unique(annTable$unique_id))){
+    rownames(annTable) <- annTable$unique_id
+  }
   if(is.null(uniqIds)){
-    gr <- GenomicRanges::makeGRangesFromDataFrame(annTable,seqnames.field='chromosome',start.field='begin',end.field='end',strand.field='strand',
+    if(asGRange){
+      gr <- GenomicRanges::makeGRangesFromDataFrame(annTable,seqnames.field='chromosome',start.field='begin',end.field='end',strand.field='strand',
                                                   ignore.strand=FALSE,keep.extra.columns=TRUE, starts.in.df.are.0based=TRUE)
-    gr <- GenomeInfoDb::sortSeqlevels(gr)
-    gr <- BiocGenerics::sort(gr)
-    rm(annTable)
-    gc()
-    return(gr)
+      gr <- GenomeInfoDb::sortSeqlevels(gr)
+      gr <- BiocGenerics::sort(gr)
+      rm(annTable)
+      gc()
+      return(gr)
+    }else{
+      return(annTable)
+    }
   }else{
     commonIds <- intersect(as.character(uniqIds),rownames(annTable))
     if(length(commonIds)==0){
