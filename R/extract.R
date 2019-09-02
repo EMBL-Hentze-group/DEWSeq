@@ -192,7 +192,7 @@ countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldCha
   for(i in c(1:length(sigReduce))){
     mergeInd <- sigReduce$revmap[[i]]
     outDat[i,'regionStartId'] <- mcols(sigRange)[min(mergeInd),'unique_id']
-    compDat[i,'regionStartId'] <- mcols(sigRange)[min(mergeInd),'unique_id']
+    outDat[i,'regionStartId'] <- mcols(sigRange)[min(mergeInd),'unique_id']
     outDat[i,'chromosome'] <- mcols(sigRange)[min(mergeInd),'chromosome']
     outDat[i,'gene_name'] <- mcols(sigRange)[min(mergeInd),'gene_name']
     outDat[i,'gene_type'] <- mcols(sigRange)[min(mergeInd),'gene_type']
