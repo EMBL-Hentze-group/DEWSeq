@@ -39,8 +39,9 @@
 #' If not specified, the parameters last registered with
 #' \code{\link{register}} will be used.
 #' @param minmu lower bound on the estimated count (used when calculating contrasts)
+#' @param begin0based if TRUE, return start positions in 0-based format
 results_DEWSeq <- function(object, annotationFile,contrast, name, listValues=c(1,-1), cooksCutoff, test,
-                           addMLE=FALSE, tidy=FALSE, parallel=FALSE, BPPARAM=bpparam(), minmu=0.5) {
+                           addMLE=FALSE, tidy=FALSE, parallel=FALSE, BPPARAM=bpparam(), minmu=0.5,begin0based=TRUE) {
 
   stopifnot(is(object, "DESeqDataSet"))
 
@@ -259,6 +260,9 @@ results_DEWSeq <- function(object, annotationFile,contrast, name, listValues=c(1
                           'window_number')
   # 'seqnames' from Granges is always a factor!
   deseqRes$chromosome <- as.character(deseqRes$chromosome)
+  if(begin0based){
+    deseqRes$begin <- pmax(deseqRes$begin-1,0)
+  }
   # may this helps to improve the memory usage
   rm(resOvs,nOvWindows,resGrange)
   gc()

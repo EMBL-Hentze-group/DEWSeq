@@ -6,7 +6,8 @@
 \usage{
 results_DEWSeq(object, annotationFile, contrast, name, listValues = c(1,
   -1), cooksCutoff, test, addMLE = FALSE, tidy = FALSE,
-  parallel = FALSE, BPPARAM = bpparam(), minmu = 0.5)
+  parallel = FALSE, BPPARAM = bpparam(), minmu = 0.5,
+  begin0based = TRUE)
 }
 \arguments{
 \item{object}{a DESeqDataSet, on which one of the following functions has already been called:
@@ -51,6 +52,8 @@ If not specified, the parameters last registered with
 \code{\link{register}} will be used.}
 
 \item{minmu}{lower bound on the estimated count (used when calculating contrasts)}
+
+\item{begin0based}{if TRUE, return start positions in 0-based format}
 }
 \description{
 This is a hack of the DESeq2 results function

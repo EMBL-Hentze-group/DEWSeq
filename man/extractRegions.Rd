@@ -5,7 +5,8 @@
 \title{extract significant regions}
 \usage{
 extractRegions(windowRes, padjCol = "padj", padjThresh = 0.05,
-  log2FoldChangeCol = "log2FoldChange", log2FoldChangeThresh = 1)
+  log2FoldChangeCol = "log2FoldChange", log2FoldChangeThresh = 1,
+  begin0based = TRUE)
 }
 \arguments{
 \item{windowRes}{output data.frame from \code{\link{createRegions}}}
@@ -17,6 +18,8 @@ extractRegions(windowRes, padjCol = "padj", padjThresh = 0.05,
 \item{log2FoldChangeCol}{name of the log2foldchange column (default: log2FoldChange)}
 
 \item{log2FoldChangeThresh}{threshold for log2foldchange value (default:1)}
+
+\item{begin0based}{if TRUE, window start positions are 0-based}
 }
 \value{
 data.frame

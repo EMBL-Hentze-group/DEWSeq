@@ -16,8 +16,9 @@
 #' @param padjThresh threshold for p-adjusted value (default: 0.05)
 #' @param log2FoldChangeCol name of the log2foldchange column (default: log2FoldChange)
 #' @param log2FoldChangeThresh threshold for log2foldchange value (default:1)
+#' @param begin0based if TRUE, window start positions are 0-based
 #' @return data.frame
-extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1){
+extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,begin0based=TRUE){
   requiredCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name',
                     'gene_type','gene_region','Nr_of_region','Total_nr_of_region','window_number',padjCol,log2FoldChangeCol)
   missingCols <- setdiff(requiredCols,colnames(windowRes))
@@ -46,7 +47,7 @@ extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
     return(NULL)
   }
   geneRange <- GenomicRanges::makeGRangesFromDataFrame(sigDat,seqnames.field = 'gene_id',start.field = 'begin',end.field = 'end',strand.field = 'strand',
-                                                      ignore.strand=FALSE,starts.in.df.are.0based=FALSE,keep.extra.columns = TRUE)
+                                                      ignore.strand=FALSE,starts.in.df.are.0based=begin0based,keep.extra.columns = TRUE)
   geneRange <-  GenomeInfoDb::sortSeqlevels(geneRange)
   geneRange <- BiocGenerics::sort(geneRange)
   geneReduce <- GenomicRanges::reduce(geneRange,drop.empty.ranges=TRUE,with.revmap=TRUE,min.gapwidth=1)
@@ -88,6 +89,9 @@ extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
   colnames(regionRes)[3] <- 'region_end'
   colnames(regionRes)[6] <- 'region_length'
   colnames(regionRes)[14] <- 'gene_id'
+  if(begin0based){
+    regionRes$region_begin <- pmax(regionRes$region_begin-1,0)
+  }
   rownames(regionRes) <- NULL
   return(regionRes[with(regionRes,order(chromosome,region_begin)),])
 }
@@ -173,7 +177,7 @@ countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldCha
   meanMean <- paste(c(treatmentName,controlName),'mean.meanWindow',sep='.')
   outCols <- c(c('gene_id','region_begin','region_end','width','strand','regionStartId','chromosome','gene_name','gene_region','gene_type',
                'Nr_of_region','Total_nr_of_region',paste0('min.',log2FoldChangeCol),paste0('mean.',log2FoldChangeCol),paste0('max.',log2FoldChangeCol),
-               'unique_id.log2FCWindow','begin.log2FCWindow','end.log2FCWindow',paste0(log2FoldChangeCol,'.log2FCWindow')),log2FCMean, log2FCWindowCols, 
+               'unique_id.log2FCWindow','begin.log2FCWindow','end.log2FCWindow',paste0(log2FoldChangeCol,'.log2FCWindow')),log2FCMean, log2FCWindowCols,
                c('unique_id.meanWindow','begin.meanWindow','end.meanWindow',paste0(log2FoldChangeCol,'.meanWindow')),meanMean,meanWindowCols)
   outDat <- cbind(as.data.frame(sigReduce)[,c(1:5)],data.frame(matrix(data=NA,nrow=nrow(mcols(sigReduce)),ncol = length(outCols)-5)))
   colnames(outDat) <- outCols
@@ -249,10 +253,10 @@ countsPerRegion <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldCha
 }
 
 #' @export
-#' @description 
+#' @description
 #' for the given widow description file and annotation file,
 #' find overlaps between the two in terms of chromosomal locations,
-#' return the number of regions (3'UTR, 5'UTR, exon, intron, CDS ...) as a 
+#' return the number of regions (3'UTR, 5'UTR, exon, intron, CDS ...) as a
 #' as a count table
 countGeneRegion <- function(regionRes,annotationFile,begin0based=TRUE,minOverlap=0.5){
   requiredCols <- c('chromosome','regionStartId','region_begin','region_end','strand','gene_id','gene_name')

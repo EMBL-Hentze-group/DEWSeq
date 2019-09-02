@@ -4,12 +4,15 @@
 \alias{.readAnnotation}
 \title{read annotation data}
 \usage{
-.readAnnotation(fname, uniqIds = NULL, asGRange = TRUE)
+.readAnnotation(fname, uniqIds = NULL, asGRange = TRUE,
+  checkWindowNumber = TRUE)
 }
 \arguments{
 \item{fname}{file name/path}
 
 \item{uniqIds}{filter stable and keep annotation for these unique ids}
+
+\item{asGRange}{boolean, whether to reaturn a GRange object or a data.frame object}
 }
 \description{
 read annotation data for windows
