@@ -1,20 +1,21 @@
 Package: DEWSeq
 Type: Package
-Title: eCLIP window differential expression analysis
+Title: Differential Expressed Windows Based on the Negative 
+   Binomial Distribution
 Version: 0.1.2
-Author: Hentze lab bioinformatics team
+Authors@R: c(
+    person("Sudeep", "Sahadevan", email="sahadevan@embl.de", role = c("aut","cre")),
+    person("Thomas", "Schwarzl", email="sahadevaon@embl.de", role = c("aut", "ctb"))
 Maintainer: Hentze bioinformatics team <biohentze@embl.de>
-Description: Differential expression analysis of windows from eCLIP data
-    Use four spaces when indenting paragraphs within the Description.
-Imports:
-    DESeq2,
-    BiocParallel
+Description: Differential expression analysis of windows for 
+   next-generation sequencing data like eCLIP or iCLIP data.
 Depends:
-    DESeq2,
-    BiocParallel
+    DESeq2
 Suggests:
-   knitr
-License: What license is it under?
+   knitr,
+   BiocParallel
+License: LGPL (>= 3)
+URL: https://git.embl.de/biohentze/DEWSeq
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
