@@ -1,3 +1,6 @@
+
+# TODO: is all of the annotation needed, or are coordinates sufficient?
+
 #' @export
 #' @title create regions from significant windows
 #' @description create significant regions by merging significant windows

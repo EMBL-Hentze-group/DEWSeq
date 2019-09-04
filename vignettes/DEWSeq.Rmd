@@ -1,0 +1,77 @@
+---
+title: "Analyzing eCLIP data with DEWSeq"
+author: "Thomas Schwarzl, Sudeep Sahadevan"
+date: "`r format(Sys.Date(), '%m/%d/%Y')`"
+abstract: >
+  Put abstract here
+output:
+  BiocStyle::html_document:
+    highlight: pygments
+    toc: true
+    fig_width: 5
+#bibliography: library.bib
+vignette: >
+  %\VignetteIndexEntry{Analyzing eCLIP data with DEWSeq}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\usepackage[utf8]{inputenc}
+---
+
+```{r setup, echo=FALSE, results="hide"}
+#  DEWSeq package version: `r packageVersion("DESeq2")` <- this goes into abstract
+
+knitr::opts_chunk$set(tidy=FALSE, cache=FALSE,
+                      dev="png",
+                      message=FALSE, error=FALSE, warning=TRUE)
+```	
+
+
+# Standard workflow
+
+```{r, eval = F, echo = F}
+#**Note:** if you use DEWSeq in published research, please cite:
+#
+#> Authors. (Year)
+#> Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2.
+#> *Genome Biology*, **15**:550.
+#> [10.1186/s13059-014-0550-8](http://dx.doi.org/10.1186/s13059-014-0550-8)
+```
+
+Other Bioconductor package with a similar aim is
+[csaw](http://bioconductor.org/packages/csaw)
+
+Please get familiar with this Bioconductor package before you are using DEWSeq
+[DESea2](http://bioconductor.org/packages/DESeq2)
+
+
+## eCLIP/iCLIP data preprocessing steps.
+
+eCLIP or iCLIP data preprocessing can be extensive, exhaustive and frustrating. 
+Generally the steps for prepressing are:
+
+
+* Unique Molecular Identifiers (UMIs) extraction and demultiplexing
+  ([Je Suite](https://gbcs.embl.de/portal/tiki-index.php?page=Je), or other
+  tools)
+* Read quality filtering (optional)
+* Trimming of sequencing adapters (with tools like
+  [cutadapt](https://cutadapt.readthedocs.io))
+* Second trimming step (extremely important for paired-end (standard) eCLIP
+  libraries). This is needed because a 'bug' in the standard paired-end eCLIP
+  protocol. Hint: Single-seCLIP is a lot of advantages to standard, paired-end
+  eCLIP, one of them, this step is not needed.
+* Quality Control (fastqc with multiqc summary statistics is a common).
+* Alignment (Novoalign, STAR, or other (splice-aware) aligners, depending
+  on your organisms)
+* PCR duplication removal also called UMI evaluation
+  [Je Suite](https://gbcs.embl.de/portal/tiki-index.php?page=Je) or 
+  custom tools depending on your protocol and single-read or paired-end setup.
+
+
+Naturally, this can vary with different protocols and sequencing setups. 
+Eventually, you will end up with *.bam* files
+
+
+
+
+
