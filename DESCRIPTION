@@ -7,8 +7,7 @@ Authors@R: c(
     person("Thomas", "Schwarzl", email="schwarzl@embl.de", role = c("aut", "ctb"))
     )
 Maintainer: Hentze bioinformatics team <biohentze@embl.de>
-Description: Differential expression analysis of windows from eCLIP data
-    Use four spaces when indenting paragraphs within the Description.
+Description: Differential expression analysis of windows for next-generation sequencing data like eCLIP or iCLIP data.
 Imports:
     DESeq2,
     data.table,
