@@ -6,11 +6,11 @@
 #' @description extract significant windows from output of \code{\link{results_DEWSeq}} using the supplied padj and log2FoldChange cut-offs and\cr
 #' merge these significant windows to regions and create the following columns for each significant region: \cr
 #' \code{padj_min}: min. padj value in the region \cr
+#' \code{padj_mean}: average padj value in the region \cr
 #' \code{padj_max}: max. padj value in the region \cr
-#' \code{padj_avg}: avg. padj value in the region \cr
 #' \code{log2FoldChange_min}: min. log 2 fold change in the region \cr
+#' \code{log2FoldChange_mean}: average log 2 fold change in the region \cr
 #' \code{log2FoldChange_max}: max. log 2 fold change in the region \cr
-#' \code{log2FoldChange_avg}: avg. log 2 fold change in the region \cr
 #'
 #' @details
 #' The output data.frame from this function will have the following columns
@@ -29,11 +29,11 @@
 #' \code{Total_nr_of_region}: total number of regions \cr
 #' \code{window_number}: window number \cr
 #' \code{padj_min}: min. padj value in the region \cr
+#' \code{padj_mean}: average padj value in the region \cr
 #' \code{padj_max}: max. padj value in the region \cr
-#' \code{padj_avg}: avg. padj value in the region \cr
 #' \code{log2FoldChange_min}: min. log 2 fold change in the region \cr
 #' \code{log2FoldChange_max}: max. log 2 fold change in the region \cr
-#' \code{log2FoldChange_avg}: avg. log 2 fold change in the region \cr
+#' \code{log2FoldChange_mean}: average log 2 fold change in the region \cr
 #'
 #' @param windowRes output data.frame from \code{\link{results_DEWSeq}}
 #' @param padjCol name of the adjusted pvalue column (default: padj)
@@ -79,8 +79,8 @@ extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
   mcols(geneReduce)$regionStartId <- mcols(geneReduce)$gene_name <- mcols(geneReduce)$gene_type <- mcols(geneReduce)$gene_region  <- 'Undefined'
   mcols(geneReduce)$chromosome <- mcols(geneReduce)$unique_ids  <- 'Undefined'
   mcols(geneReduce)$windows_in_region <- mcols(geneReduce)$Nr_of_region <-  mcols(geneReduce)$Total_nr_of_region <- mcols(geneReduce)$window_number <- 1
-  mcols(geneReduce)$padj_min <- mcols(geneReduce)$padj_max <- mcols(geneReduce)$padj_avg <- 1.0
-  mcols(geneReduce)$log2FoldChange_min <- mcols(geneReduce)$log2FoldChange_max <- mcols(geneReduce)$log2FoldChange_avg <- 0.0
+  mcols(geneReduce)$padj_min <- mcols(geneReduce)$padj_max <- mcols(geneReduce)$padj_mean <- 1.0
+  mcols(geneReduce)$log2FoldChange_min <- mcols(geneReduce)$log2FoldChange_max <- mcols(geneReduce)$log2FoldChange_mean <- 0.0
   pb <- utils::txtProgressBar(min=0,max=length(geneReduce),style = 3)
   for(i in c(1:length(geneReduce))){
     # values
@@ -88,10 +88,10 @@ extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
     mcols(geneReduce)[i,'windows_in_region'] <- length(mergeInd)
     mcols(geneReduce)[i,'padj_min'] <- min(mcols(geneRange)[mergeInd,padjCol])
     mcols(geneReduce)[i,'padj_max'] <- max(mcols(geneRange)[mergeInd,padjCol])
-    mcols(geneReduce)[i,'padj_avg'] <- mean(mcols(geneRange)[mergeInd,padjCol])
+    mcols(geneReduce)[i,'padj_mean'] <- mean(mcols(geneRange)[mergeInd,padjCol])
     mcols(geneReduce)[i,'log2FoldChange_min'] <- min(mcols(geneRange)[mergeInd,log2FoldChangeCol])
     mcols(geneReduce)[i,'log2FoldChange_max'] <- max(mcols(geneRange)[mergeInd,log2FoldChangeCol])
-    mcols(geneReduce)[i,'log2FoldChange_avg'] <- mean(mcols(geneRange)[mergeInd,log2FoldChangeCol])
+    mcols(geneReduce)[i,'log2FoldChange_mean'] <- mean(mcols(geneRange)[mergeInd,log2FoldChangeCol])
     # annotations
     mcols(geneReduce)[i,'regionStartId'] <- mcols(geneRange)[min(mergeInd),'unique_id']
     mcols(geneReduce)[i,'unique_ids'] <- paste(mcols(geneRange)[mergeInd,'unique_id'],collapse = ', ')
@@ -107,8 +107,8 @@ extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
   }
   close(pb)
   regionRes <- as.data.frame(geneReduce)
-  regionRes <- regionRes[,c('chromosome','start','end','strand','windows_in_region','width','padj_min','padj_avg','padj_max',
-                            'log2FoldChange_min','log2FoldChange_avg','log2FoldChange_max','regionStartId','seqnames','gene_name','gene_type','gene_region',
+  regionRes <- regionRes[,c('chromosome','start','end','strand','windows_in_region','width','padj_min','padj_mean','padj_max',
+                            'log2FoldChange_min','log2FoldChange_mean','log2FoldChange_max','regionStartId','seqnames','gene_name','gene_type','gene_region',
                             'Nr_of_region','Total_nr_of_region','window_number','unique_ids')]
   colnames(regionRes)[2] <- 'region_begin'
   colnames(regionRes)[3] <- 'region_end'

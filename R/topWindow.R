@@ -2,9 +2,52 @@
 #' @export
 #' @title stats for the top windows in each region
 #' @description given window resutls and normalized counts, combine significant overlapping windows into regions and
-#' for each region, pick two candidate winodws:\cr (i) with highest log2FoldChange and\cr (ii) with highest normalized mean in
-#' treatment samples.\cr Return a data.frame with region information and stats, and for the selected windows stats:\cr
-#' normalized mean expression in treatment and control samples and\cr individual expression in replicates
+#' for each region, pick two candidate winodws:
+#' \enumerate{
+#'  \item with highest log2FoldChange and
+#'  \item with highest normalized mean in treatment samples (see parameter \code{treatmentCols})
+#' }
+#' Return a data.frame with region information and stats, and for the selected windows, the following information:
+#' \itemize{
+#'  \item \code{unique_id} of the window
+#'  \item start and end co-ordinates
+#'  \item log2FoldChange
+#'  \item normalized mean expression in treatment and control samples and
+#'  \item individual normalized expression in replicates
+#' }
+#'
+#' @details
+#' The output data.frame of this function has the following columns:\cr
+#' \code{chromosome}: chromosome name \cr
+#' \code{gene_id}: gene id \cr
+#' \code{gene_name}: gene name \cr
+#' \code{gene_region}: gene region \cr
+#' \code{gene_type}: gene type annotation \cr
+#' \code{regionStartId}: \code{unique_id} of the left most window, where a enriched region begins \cr
+#' \code{region_begin}: start position of the enriched region \cr
+#' \code{region_end}: end position of the enriched region\cr
+#' \code{region_length}: length of the enrched region \cr
+#' \code{strand}: strand info \cr
+#' \code{Nr_of_region}: number of the current region \cr
+#' \code{Total_nr_of_region}: total number of regions \cr
+#' \code{log2FoldChange_min}: min. log 2 fold change in the region \cr
+#' \code{log2FoldChange_mean}: average log 2 fold change in the region \cr
+#' \code{log2FoldChange_max}: max. log 2 fold change in the region \cr
+#' \code{unique_id.log2FCWindow}: unique_id of the window with largest log2FoldChange  \cr
+#' \code{begin.log2FCWindow}: start position of the window with largest log2FoldChange  \cr
+#' \code{end.log2FCWindow}: end of the window with largest log2FoldChange  \cr
+#' \code{log2FoldChange.log2FCWindow}: log2FoldChange  of the window with largest log2FoldChange \cr
+#' \code{treatmentName.mean.log2FCWindow}: mean of the normalized expression of the treatment samples for log2FCWindow, names in \code{treatmentCols} are used to calculate mean and treatmentName is from the parameter \code{treatmentName}\cr
+#' \code{controlName.mean.log2FCWindow}: mean of the normalized expression of the control samples for log2FCWindow, \code{colnames(normalizedCounts)} not found in \code{treatmentCols} are used to calculate mean and controlName is from the parameter \code{controlName}\cr
+#' the next columns will be normalized expression values  of the log2FCWindow from individual treatment and control samples\cr
+#' \code{unique_id.meanWindow}:  unique_id of the window with largest mean in all treatment samples from \code{treatmentCols} \cr
+#' \code{begin.meanWindow}: start position of the mean window \cr
+#' \code{end.meanWindow}:  end position of the mean window\cr
+#' \code{log2FoldChange.meanWindow}:log2FoldChange of the mean window   \cr
+#' \code{treatmentName.mean.meanWindow}: mean of the normalized expression of the treatment samples for meanWindow, names in \code{treatmentCols} are used to calculate mean and treatmentName is from the parameter \code{treatmentName}\cr
+#' \code{controlName.mean.meanWindow}: mean of the normalized expression of the control samples for log2FCWindow, \code{colnames(normalizedCounts)} not found in \code{treatmentCols} are used to calculate mean and controlName is from the parameter \code{controlName}\cr
+#' the next columns will be normalized expression values  of the meanWindow from individual treatment and control samples\cr
+#'
 #' @param windowRes output data.frame from \code{\link{results_DEWSeq}}
 #' @param padjCol name of the adjusted pvalue column (default: padj)
 #' @param padjThresh threshold for p-adjusted value (default: 0.05)
@@ -13,8 +56,12 @@
 #' @param begin0based TRUE (default) or FALSE. If TRUE, then the start positions in \code{windowRes} is  considered to be 0-based
 #' @param normalizedCounts data.frame with normalized read counts per window. \code{rownames(normalizedCounts)} and \code{unique_id} column from \code{windoeRes} must match
 #' @param treatmentCols column names in \code{normalizedCounts} for treatment/case samples. The remaining columns in the data.frame will be considered control samples
-#' @param treatmentName name to append to mean treatment  (default: treatment)
-#' @param controlName name for
+#' @param treatmentName treatment name, see Details  (default: treatment)
+#' @param controlName control name, see Details (default: control)
+#' @param op can be one of \code{max} (default) or \code{min}. \code{max} returns windows with maximum log2FoldChange and mean normalized expression in the \code{treatmentCols} columns,
+#' \code{min} returns windows with minimum log2FoldChange and mean normalized expression
+#'
+#' @return data.frame
 topWindowStats <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,begin0based=TRUE, normalizedCounts,
                            treatmentCols,treatmentName='treatment',controlName='control', op='max'){
   requiredCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name',
@@ -75,8 +122,8 @@ topWindowStats <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
   log2FCMean <- paste(c(treatmentName,controlName),'mean.log2FCWindow',sep='.')
   meanWindowCols <- paste(colnames(normalizedCounts),'meanWindow',sep='.')
   meanMean <- paste(c(treatmentName,controlName),'mean.meanWindow',sep='.')
-  outCols <- c(c('gene_id','region_begin','region_end','width','strand','regionStartId','chromosome','gene_name','gene_region','gene_type',
-                 'Nr_of_region','Total_nr_of_region',paste0('min.',log2FoldChangeCol),paste0('mean.',log2FoldChangeCol),paste0('max.',log2FoldChangeCol),
+  outCols <- c(c('gene_id','region_begin','region_end','region_length','strand','regionStartId','chromosome','gene_name','gene_region','gene_type',
+                 'Nr_of_region','Total_nr_of_region',paste0(log2FoldChangeCol,'_min'),paste0(log2FoldChangeCol,'_mean'),paste0(log2FoldChangeCol,'_max'),
                  'unique_id.log2FCWindow','begin.log2FCWindow','end.log2FCWindow',paste0(log2FoldChangeCol,'.log2FCWindow')),log2FCMean, log2FCWindowCols,
                c('unique_id.meanWindow','begin.meanWindow','end.meanWindow',paste0(log2FoldChangeCol,'.meanWindow')),meanMean,meanWindowCols)
   outDat <- cbind(as.data.frame(sigReduce)[,c(1:5)],data.frame(matrix(data=NA,nrow=nrow(mcols(sigReduce)),ncol = length(outCols)-5)))
@@ -99,9 +146,9 @@ topWindowStats <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
     outDat[i,'Total_nr_of_region'] <- mcols(sigRange)[min(mergeInd),'Total_nr_of_region']
     #get the window with minimum/maximum log2 Foldchange
     # fill log2FoldChange first
-    outDat[i,paste0('min.',log2FoldChangeCol)] <- min(unlist(mcols(sigRange)[mergeInd,log2FoldChangeCol]))
-    outDat[i,paste0('mean.',log2FoldChangeCol)] <- mean(unlist(mcols(sigRange)[mergeInd,log2FoldChangeCol]))
-    outDat[i,paste0('max.',log2FoldChangeCol)] <- max(unlist(mcols(sigRange)[mergeInd,log2FoldChangeCol]))
+    outDat[i,paste0(log2FoldChangeCol,'_min')] <- min(unlist(mcols(sigRange)[mergeInd,log2FoldChangeCol]))
+    outDat[i,paste0(log2FoldChangeCol,'_mean')] <- mean(unlist(mcols(sigRange)[mergeInd,log2FoldChangeCol]))
+    outDat[i,paste0(log2FoldChangeCol,'_max')] <- max(unlist(mcols(sigRange)[mergeInd,log2FoldChangeCol]))
     log2FCInd <- callFn(mcols(sigRange)[mergeInd,log2FoldChangeCol])
     outDat[i,'unique_id.log2FCWindow'] <- mcols(sigRange)[mergeInd[log2FCInd],'unique_id']
     outDat[i,'begin.log2FCWindow'] <- start(sigRange[mergeInd[log2FCInd]])
