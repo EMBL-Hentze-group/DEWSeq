@@ -5,6 +5,7 @@ Version: 1.5.6
 Authors@R: c(
     person("Sudeep", "Sahadevan", email="sahadevan@embl.de", role = c("aut","cre")),
     person("Thomas", "Schwarzl", email="sahadevaon@embl.de", role = c("aut", "ctb"))
+    )
 Maintainer: Hentze bioinformatics team <biohentze@embl.de>
 Description: Differential expression analysis of windows from eCLIP data
     Use four spaces when indenting paragraphs within the Description.
