@@ -2,7 +2,7 @@
 
 export(annotateResults)
 export(countGeneRegion)
-export(countsPerRegion)
 export(extractRegions)
 export(results_DEWSeq)
 export(toBED)
+export(topWindowStats)

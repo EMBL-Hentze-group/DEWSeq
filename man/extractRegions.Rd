@@ -9,7 +9,7 @@ extractRegions(windowRes, padjCol = "padj", padjThresh = 0.05,
   begin0based = TRUE)
 }
 \arguments{
-\item{windowRes}{output data.frame from \code{\link{createRegions}}}
+\item{windowRes}{output data.frame from \code{\link{results_DEWSeq}}}
 
 \item{padjCol}{name of the adjusted pvalue column (default: padj)}
 
@@ -19,18 +19,41 @@ extractRegions(windowRes, padjCol = "padj", padjThresh = 0.05,
 
 \item{log2FoldChangeThresh}{threshold for log2foldchange value (default:1)}
 
-\item{begin0based}{if TRUE, window start positions are 0-based}
+\item{begin0based}{TRUE (default) or FALSE. If TRUE, then the start positions in \code{windowRes} is  considered to be 0-based}
 }
 \value{
 data.frame
 }
 \description{
-extract significant windows from output of \code{\link{createRegions}} using \code{regionStartId} column,
+extract significant windows from output of \code{\link{results_DEWSeq}} using the supplied padj and log2FoldChange cut-offs and\cr
 merge these significant windows to regions and create the following columns for each significant region: \cr
-  \code{padj_min}: min. padj value in the region \cr
-  \code{padj_max}: max. padj value in the region \cr
-  \code{padj_avg}: avg. padj value in the region \cr
-  \code{log2FoldChange_min}: min. log 2 fold change in the region \cr
-  \code{log2FoldChange_max}: max. log 2 fold change in the region \cr
-  \code{log2FoldChange_avg}: avg. log 2 fold change in the region \cr
+\code{padj_min}: min. padj value in the region \cr
+\code{padj_max}: max. padj value in the region \cr
+\code{padj_avg}: avg. padj value in the region \cr
+\code{log2FoldChange_min}: min. log 2 fold change in the region \cr
+\code{log2FoldChange_max}: max. log 2 fold change in the region \cr
+\code{log2FoldChange_avg}: avg. log 2 fold change in the region \cr
+}
+\details{
+The output data.frame from this function will have the following columns
+\code{chromosome}: chromosome name \cr
+\code{regionStartId}: \code{unique_id} of the left most window, where a enriched region begins \cr
+\code{region_begin}: starting position of the enriched region \cr
+\code{region_end}: ending position of the enriched region\cr
+\code{strand}: strand info \cr
+\code{windows_in_region}: total number of windows that make up the enriched region\cr
+\code{region_length}: length of the enrched region \cr
+\code{gene_id}: gene id \cr
+\code{gene_name}: gene name \cr
+\code{gene_type}: gene type annotation \cr
+\code{gene_region}: gene region \cr
+\code{Nr_of_region}: number of the current region \cr
+\code{Total_nr_of_region}: total number of regions \cr
+\code{window_number}: window number \cr
+\code{padj_min}: min. padj value in the region \cr
+\code{padj_max}: max. padj value in the region \cr
+\code{padj_avg}: avg. padj value in the region \cr
+\code{log2FoldChange_min}: min. log 2 fold change in the region \cr
+\code{log2FoldChange_max}: max. log 2 fold change in the region \cr
+\code{log2FoldChange_avg}: avg. log 2 fold change in the region \cr
 }
