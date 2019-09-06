@@ -4,14 +4,30 @@
 \alias{results_DEWSeq}
 \title{extract DEWseq results}
 \usage{
-results_DEWSeq(object, contrast, name, listValues = c(1, -1),
-  cooksCutoff, test, addMLE = FALSE, tidy = FALSE, parallel = FALSE,
-  BPPARAM = bpparam(), minmu = 0.5)
+results_DEWSeq(object, annotationFile, contrast, name, listValues = c(1,
+  -1), cooksCutoff, test, addMLE = FALSE, tidy = FALSE,
+  parallel = FALSE, BPPARAM = bpparam(), minmu = 0.5,
+  begin0based = TRUE)
 }
 \arguments{
 \item{object}{a DESeqDataSet, on which one of the following functions has already been called:
-\code{\link{DESeq}}, \code{\link{nbinomWaldTest}}
-\code{\link{nbinomLRT}} is NOT supported in this version}
+\code{\link[DESeq2:nbinomWaldTest]{nbinomWaldTest}}\cr
+\code{\link[DESeq2:nbinomLRT]{nbinomLRT}} is NOT supported in this version}
+
+\item{annotationFile}{sliding window annotation file, can be plain either text or .gz file,
+the file MUST be TAB separated, and MUST have the following columns:\cr
+\code{chromosome}: chromosome name \cr
+\code{unique_id}: unique id of the window \cr
+\code{begin}: window start co-ordinate, see parameter \code{begin0based} \cr
+\code{end}: window end co-ordinate \cr
+\code{strand}: strand \cr
+\code{gene_id}: gene id \cr
+\code{gene_name}: gene name \cr
+\code{gene_type}: gene type annotation \cr
+\code{gene_region}: gene region \cr
+\code{Nr_of_region}: number of the current region \cr
+\code{Total_nr_of_region}: total number of regions \cr
+\code{window_number}: window number \cr}
 
 \item{contrast}{this argument specifies what comparison to extract from the \code{object} to build a results table.}
 
@@ -36,13 +52,35 @@ If not specified, the parameters last registered with
 \code{\link{register}} will be used.}
 
 \item{minmu}{lower bound on the estimated count (used when calculating contrasts)}
+
+\item{begin0based}{TRUE (default) or FALSE. If TRUE, then the start positions in \code{object} and \code{annotationFile} are  considered to be 0-based}
+}
+\value{
+data.frame
 }
 \description{
-This is a hack of the DESeq2 results function
-credits to the authors
-This documentation is based on DESeq2 results function documentation
-Extract results from a DESeq analysis object
-\code{results_DEWSeq} extracts a result table from a DESeq analysis giving base means across samples,
-log2 fold changes, standard errors, test statistics, p-values and adjusted p-values;
-For further details, please refer documentation for \code{results} function in DESeq2 package
+This is a modified version of the \code{\link[DESeq2:results]{results}}  function.
+This documentation is based on DESeq2 results function documentation\cr
+Extract results from a DESeq analysis object\cr
+\code{results_DEWSeq} extracts a result table from a DESeq analysis giving base means across samples, log2 fold changes, standard errors, test statistics, p-values and adjusted p-values.
+
+For further details, please refer documentation for \code{\link[DESeq2:results]{results}} function in DESeq2 package
+}
+\details{
+The output data.frame from this function will have the following columns: \cr
+ \code{chromosome} : chromosome name\cr
+ \code{unique_id} : unique id of the window\cr
+ \code{begin} : window start co-ordinate, see parameter \code{begin0based}\cr
+ \code{end} : window end co-ordinate\cr
+ \code{strand} : strand\cr
+ \code{gene_id} : gene id\cr
+ \code{gene_name} : gene name\cr
+ \code{gene_type} : gene type annotation\cr
+ \code{gene_region} : gene region\cr
+ \code{Nr_of_region} : number of the current region\cr
+ \code{Total_nr_of_region} : total number of regions\cr
+ \code{window_number} : window number\cr
+
+The columns listed below are from DESeq2 \code{\link[DESeq2:results]{results}}, please consult DESeq2 vignettes for an explanation of these columns:\cr
+\code{baseMean}, \code{log2FoldChange}, \code{lfcSE}, \code{stat}, \code{pvalue}, \code{padj}
 }
