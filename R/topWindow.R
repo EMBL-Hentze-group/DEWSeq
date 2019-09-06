@@ -17,36 +17,38 @@
 #' }
 #'
 #' @details
-#' The output data.frame of this function has the following columns:\cr
-#' \code{chromosome}: chromosome name \cr
-#' \code{gene_id}: gene id \cr
-#' \code{gene_name}: gene name \cr
-#' \code{gene_region}: gene region \cr
-#' \code{gene_type}: gene type annotation \cr
-#' \code{regionStartId}: \code{unique_id} of the left most window, where a enriched region begins \cr
-#' \code{region_begin}: start position of the enriched region \cr
-#' \code{region_end}: end position of the enriched region\cr
-#' \code{region_length}: length of the enrched region \cr
-#' \code{strand}: strand info \cr
-#' \code{Nr_of_region}: number of the current region \cr
-#' \code{Total_nr_of_region}: total number of regions \cr
-#' \code{log2FoldChange_min}: min. log 2 fold change in the region \cr
-#' \code{log2FoldChange_mean}: average log 2 fold change in the region \cr
-#' \code{log2FoldChange_max}: max. log 2 fold change in the region \cr
-#' \code{unique_id.log2FCWindow}: unique_id of the window with largest log2FoldChange  \cr
-#' \code{begin.log2FCWindow}: start position of the window with largest log2FoldChange  \cr
-#' \code{end.log2FCWindow}: end of the window with largest log2FoldChange  \cr
-#' \code{log2FoldChange.log2FCWindow}: log2FoldChange  of the window with largest log2FoldChange \cr
-#' \code{treatmentName.mean.log2FCWindow}: mean of the normalized expression of the treatment samples for log2FCWindow, names in \code{treatmentCols} are used to calculate mean and treatmentName is from the parameter \code{treatmentName}\cr
-#' \code{controlName.mean.log2FCWindow}: mean of the normalized expression of the control samples for log2FCWindow, \code{colnames(normalizedCounts)} not found in \code{treatmentCols} are used to calculate mean and controlName is from the parameter \code{controlName}\cr
-#' the next columns will be normalized expression values  of the log2FCWindow from individual treatment and control samples\cr
-#' \code{unique_id.meanWindow}:  unique_id of the window with largest mean in all treatment samples from \code{treatmentCols} \cr
-#' \code{begin.meanWindow}: start position of the mean window \cr
-#' \code{end.meanWindow}:  end position of the mean window\cr
-#' \code{log2FoldChange.meanWindow}:log2FoldChange of the mean window   \cr
-#' \code{treatmentName.mean.meanWindow}: mean of the normalized expression of the treatment samples for meanWindow, names in \code{treatmentCols} are used to calculate mean and treatmentName is from the parameter \code{treatmentName}\cr
-#' \code{controlName.mean.meanWindow}: mean of the normalized expression of the control samples for log2FCWindow, \code{colnames(normalizedCounts)} not found in \code{treatmentCols} are used to calculate mean and controlName is from the parameter \code{controlName}\cr
-#' the next columns will be normalized expression values  of the meanWindow from individual treatment and control samples\cr
+#' The output data.frame of this function has the following columns:
+#' \itemize{
+#'  \item \code{chromosome}: chromosome name
+#'  \item \code{gene_id}: gene id
+#'  \item \code{gene_name}: gene name
+#'  \item \code{gene_region}: gene region
+#'  \item \code{gene_type}: gene type annotation
+#'  \item \code{regionStartId}: \code{unique_id} of the left most window, where a enriched region begins
+#'  \item \code{region_begin}: start position of the enriched region
+#'  \item \code{region_end}: end position of the enriched region
+#'  \item \code{region_length}: length of the enrched region
+#'  \item \code{strand}: strand info
+#'  \item \code{Nr_of_region}: number of the current region
+#'  \item \code{Total_nr_of_region}: total number of regions
+#'  \item \code{log2FoldChange_min}: min. log 2 fold change in the region
+#'  \item \code{log2FoldChange_mean}: average log 2 fold change in the region
+#'  \item \code{log2FoldChange_max}: max. log 2 fold change in the region
+#'  \item \code{unique_id.log2FCWindow}: unique_id of the window with largest log2FoldChange
+#'  \item \code{begin.log2FCWindow}: start position of the window with largest log2FoldChange
+#'  \item \code{end.log2FCWindow}: end of the window with largest log2FoldChange
+#'  \item \code{log2FoldChange.log2FCWindow}: log2FoldChange  of the window with largest log2FoldChange
+#'  \item \code{treatmentName.mean.log2FCWindow}: mean of the normalized expression of the treatment samples for log2FCWindow, names in \code{treatmentCols} are used to calculate mean and treatmentName is from the parameter \code{treatmentName}
+#'  \item \code{controlName.mean.log2FCWindow}: mean of the normalized expression of the control samples for log2FCWindow, \code{colnames(normalizedCounts)} not found in \code{treatmentCols} are used to calculate mean and controlName is from the parameter \code{controlName}
+#'  \item the next columns will be normalized expression values  of the log2FCWindow from individual treatment and control samples.
+#'  \item \code{unique_id.meanWindow}:  unique_id of the window with largest mean in all treatment samples from \code{treatmentCols}
+#'  \item \code{begin.meanWindow}: start position of the mean window
+#'  \item \code{end.meanWindow}:  end position of the mean window
+#'  \item \code{log2FoldChange.meanWindow}:log2FoldChange of the mean window
+#'  \item \code{treatmentName.mean.meanWindow}: mean of the normalized expression of the treatment samples for meanWindow, names in \code{treatmentCols} are used to calculate mean and treatmentName is from the parameter \code{treatmentName}
+#'  \item \code{controlName.mean.meanWindow}: mean of the normalized expression of the control samples for log2FCWindow, \code{colnames(normalizedCounts)} not found in \code{treatmentCols} are used to calculate mean and controlName is from the parameter \code{controlName}
+#'  \item the next columns will be normalized expression values  of the meanWindow from individual treatment and control samples
+#' }
 #'
 #' @param windowRes output data.frame from \code{\link{results_DEWSeq}}
 #' @param padjCol name of the adjusted pvalue column (default: padj)

@@ -1,46 +1,38 @@
 #' @export
 #' @title extract DEWseq results
 #' @description This is a modified version of the \code{\link[DESeq2:results]{results}}  function.
-#' This documentation is based on DESeq2 results function documentation\cr
-#' Extract results from a DESeq analysis object\cr
+#' This documentation is based on DESeq2 results function documentation.
+#'
+#' This function uses chromosomal positions given in the \code{annotationFile} to identify overlapping windows in \code{dds} object.
+#' For each window, the number of overlapping windows are counted, and the p-value is adjusted for FWER using bonferroni correction.
 #'
 #' For further details, please refer documentation for \code{\link[DESeq2:results]{results}} function in DESeq2 package
 #'
 #' @details
-#' The output data.frame from this function will have the following columns: \cr
-#'  \code{chromosome} : chromosome name\cr
-#'  \code{unique_id} : unique id of the window\cr
-#'  \code{begin} : window start co-ordinate, see parameter \code{begin0based}\cr
-#'  \code{end} : window end co-ordinate\cr
-#'  \code{strand} : strand\cr
-#'  \code{gene_id} : gene id\cr
-#'  \code{gene_name} : gene name\cr
-#'  \code{gene_type} : gene type annotation\cr
-#'  \code{gene_region} : gene region\cr
-#'  \code{Nr_of_region} : number of the current region\cr
-#'  \code{Total_nr_of_region} : total number of regions\cr
-#'  \code{window_number} : window number\cr
+#' \code{annotationFile} is expected to have the following columns:
+#' \itemize{
+#'   \item \code{chromosome}: chromosome name
+#'   \item \code{unique_id}: unique id of the window, \code{rownames(object)} must match this column
+#'   \item \code{begin}: window start co-ordinate, see parameter \code{begin0based}
+#'   \item \code{end}: window end co-ordinate
+#'   \item \code{strand}: strand
+#'   \item \code{gene_id}: gene id
+#'   \item \code{gene_name}: gene name
+#'   \item \code{gene_type}: gene type annotation
+#'   \item \code{gene_region}: gene region
+#'   \item \code{Nr_of_region}: number of the current region
+#'   \item \code{Total_nr_of_region}: total number of regions
+#'   \item \code{window_number}: window number
+#' }
 #'
-#' The columns listed below are from DESeq2 \code{\link[DESeq2:results]{results}}, please consult DESeq2 vignettes for an explanation of these columns:\cr
-#' \code{baseMean}, \code{log2FoldChange}, \code{lfcSE}, \code{stat}, \code{pvalue}, \code{padj}
+#' The output data.frame from this function will have all the columns listed above, along with the DESeq2 \code{\link[DESeq2:results]{results}} columns:\cr
+#' \code{baseMean}, \code{log2FoldChange}, \code{lfcSE}, \code{stat}, \code{pvalue}, \code{padj}. Please consult DESeq2 vignettes for an explanation of these columns.
 #'
 #' @param object a DESeqDataSet, on which one of the following functions has already been called:
 #' \code{\link[DESeq2:nbinomWaldTest]{nbinomWaldTest}}\cr
 #' \code{\link[DESeq2:nbinomLRT]{nbinomLRT}} is NOT supported in this version
 #' @param annotationFile sliding window annotation file, can be plain either text or .gz file,
-#' the file MUST be <TAB> separated, and MUST have the following columns:\cr
-#' \code{chromosome}: chromosome name \cr
-#' \code{unique_id}: unique id of the window, \code{rownames(object)} must match this column \cr
-#' \code{begin}: window start co-ordinate, see parameter \code{begin0based} \cr
-#' \code{end}: window end co-ordinate \cr
-#' \code{strand}: strand \cr
-#' \code{gene_id}: gene id \cr
-#' \code{gene_name}: gene name \cr
-#' \code{gene_type}: gene type annotation \cr
-#' \code{gene_region}: gene region \cr
-#' \code{Nr_of_region}: number of the current region \cr
-#' \code{Total_nr_of_region}: total number of regions \cr
-#' \code{window_number}: window number \cr
+#' the file MUST be <TAB> separated. See Details for a description of the columns and column names expected in this file.
 #' @param contrast this argument specifies what comparison to extract from the \code{object} to build a results table.
 #' @param name the name of the individual effect (coefficient) for building a results table.
 #' \code{name} argument is ignored if \code{contrast} is specified

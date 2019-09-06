@@ -14,27 +14,30 @@
 #' }
 #'
 #' @details
-#' The output data.frame from this function will have the following columns
-#' \code{chromosome}: chromosome name \cr
-#' \code{regionStartId}: \code{unique_id} of the left most window, where a enriched region begins \cr
-#' \code{region_begin}: starting position of the enriched region \cr
-#' \code{region_end}: ending position of the enriched region\cr
-#' \code{strand}: strand info \cr
-#' \code{windows_in_region}: total number of windows that make up the enriched region\cr
-#' \code{region_length}: length of the enrched region \cr
-#' \code{gene_id}: gene id \cr
-#' \code{gene_name}: gene name \cr
-#' \code{gene_type}: gene type annotation \cr
-#' \code{gene_region}: gene region \cr
-#' \code{Nr_of_region}: number of the current region \cr
-#' \code{Total_nr_of_region}: total number of regions \cr
-#' \code{window_number}: window number \cr
-#' \code{padj_min}: min. padj value in the region \cr
-#' \code{padj_mean}: average padj value in the region \cr
-#' \code{padj_max}: max. padj value in the region \cr
-#' \code{log2FoldChange_min}: min. log 2 fold change in the region \cr
-#' \code{log2FoldChange_max}: max. log 2 fold change in the region \cr
-#' \code{log2FoldChange_mean}: average log 2 fold change in the region \cr
+#' The output data.frame from this function will have the following columns:
+#' \itemize{
+#'  \item \code{chromosome}: chromosome name
+#'  \item \code{regionStartId}: \code{unique_id} of the left most window, where a enriched region begins
+#'  \item \code{region_begin}: starting position of the enriched region
+#'  \item \code{region_end}: ending position of the enriched region
+#'  \item \code{strand}: strand info
+#'  \item \code{windows_in_region}: total number of windows that make up the enriched region
+#'  \item \code{region_length}: length of the enrched region
+#'  \item \code{gene_id}: gene id
+#'  \item \code{gene_name}: gene name
+#'  \item \code{gene_type}: gene type annotation
+#'  \item \code{gene_region}: gene region
+#'  \item \code{Nr_of_region}: number of the current region
+#'  \item \code{Total_nr_of_region}: total number of regions
+#'  \item \code{window_number}: window number
+#'  \item \code{padj_min}: min. padj value in the region
+#'  \item \code{padj_mean}: average padj value in the region
+#'  \item \code{padj_max}: max. padj value in the region
+#'  \item \code{log2FoldChange_min}: min. log 2 fold change in the region
+#'  \item \code{log2FoldChange_max}: max. log 2 fold change in the region
+#'  \item \code{log2FoldChange_mean}: average log 2 fold change in the region
+#' }
+
 #'
 #' @param windowRes output data.frame from \code{\link{results_DEWSeq}}
 #' @param padjCol name of the adjusted pvalue column (default: padj)
