@@ -30,7 +30,7 @@ topWindowStats(windowRes, padjCol = "padj", padjThresh = 0.05,
 
 \item{controlName}{control name, see Details (default: control)}
 
-\item{op}{can be one of \code{max}(default) or \code{'min'}. \code{max} returns windows with maximum log2FoldChange and mean normalized expression in the \code{treatmentCols} columns,
+\item{op}{can be one of \code{max} (default) or \code{min}. \code{max} returns windows with maximum log2FoldChange and mean normalized expression in the \code{treatmentCols} columns,
 \code{min} returns windows with minimum log2FoldChange and mean normalized expression}
 }
 \value{
@@ -76,7 +76,7 @@ The output data.frame of this function has the following columns:\cr
 \code{treatmentName.mean.log2FCWindow}: mean of the normalized expression of the treatment samples for log2FCWindow, names in \code{treatmentCols} are used to calculate mean and treatmentName is from the parameter \code{treatmentName}\cr
 \code{controlName.mean.log2FCWindow}: mean of the normalized expression of the control samples for log2FCWindow, \code{colnames(normalizedCounts)} not found in \code{treatmentCols} are used to calculate mean and controlName is from the parameter \code{controlName}\cr
 the next columns will be normalized expression values  of the log2FCWindow from individual treatment and control samples\cr
-\code{unique_id.meanWindow}:  unique_id of the window with largest mean in all treatment samples from \code{treatmentCold} \cr
+\code{unique_id.meanWindow}:  unique_id of the window with largest mean in all treatment samples from \code{treatmentCols} \cr
 \code{begin.meanWindow}: start position of the mean window \cr
 \code{end.meanWindow}:  end position of the mean window\cr
 \code{log2FoldChange.meanWindow}:log2FoldChange of the mean window   \cr

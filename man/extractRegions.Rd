@@ -25,14 +25,15 @@ extractRegions(windowRes, padjCol = "padj", padjThresh = 0.05,
 data.frame
 }
 \description{
-extract significant windows from output of \code{\link{results_DEWSeq}} using the supplied padj and log2FoldChange cut-offs and\cr
-merge these significant windows to regions and create the following columns for each significant region: \cr
-\code{padj_min}: min. padj value in the region \cr
-\code{padj_mean}: average padj value in the region \cr
-\code{padj_max}: max. padj value in the region \cr
-\code{log2FoldChange_min}: min. log 2 fold change in the region \cr
-\code{log2FoldChange_mean}: average log 2 fold change in the region \cr
-\code{log2FoldChange_max}: max. log 2 fold change in the region \cr
+extract significant windows from output of \code{\link{results_DEWSeq}} using the supplied padj and log2FoldChange cut-offs and merge these significant windows to regions and create the following columns for each significant region:
+\itemize{
+\item \code{padj_min}: min. padj value in the region
+\item \code{padj_mean}: average padj value in the region
+\item \code{padj_max}: max. padj value in the region
+\item \code{log2FoldChange_min}: min. log 2 fold change in the region
+\item \code{log2FoldChange_mean}: average log 2 fold change in the region
+\item \code{log2FoldChange_max}: max. log 2 fold change in the region
+}
 }
 \details{
 The output data.frame from this function will have the following columns

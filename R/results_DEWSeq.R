@@ -3,7 +3,6 @@
 #' @description This is a modified version of the \code{\link[DESeq2:results]{results}}  function.
 #' This documentation is based on DESeq2 results function documentation\cr
 #' Extract results from a DESeq analysis object\cr
-#' \code{results_DEWSeq} extracts a result table from a DESeq analysis giving base means across samples, log2 fold changes, standard errors, test statistics, p-values and adjusted p-values.
 #'
 #' For further details, please refer documentation for \code{\link[DESeq2:results]{results}} function in DESeq2 package
 #'
@@ -29,9 +28,9 @@
 #' \code{\link[DESeq2:nbinomWaldTest]{nbinomWaldTest}}\cr
 #' \code{\link[DESeq2:nbinomLRT]{nbinomLRT}} is NOT supported in this version
 #' @param annotationFile sliding window annotation file, can be plain either text or .gz file,
-#' the file MUST be TAB separated, and MUST have the following columns:\cr
+#' the file MUST be <TAB> separated, and MUST have the following columns:\cr
 #' \code{chromosome}: chromosome name \cr
-#' \code{unique_id}: unique id of the window \cr
+#' \code{unique_id}: unique id of the window, \code{rownames(object)} must match this column \cr
 #' \code{begin}: window start co-ordinate, see parameter \code{begin0based} \cr
 #' \code{end}: window end co-ordinate \cr
 #' \code{strand}: strand \cr
@@ -57,7 +56,7 @@
 #' If not specified, the parameters last registered with
 #' \code{\link{register}} will be used.
 #' @param minmu lower bound on the estimated count (used when calculating contrasts)
-#' @param begin0based TRUE (default) or FALSE. If TRUE, then the start positions in \code{object} and \code{annotationFile} are  considered to be 0-based
+#' @param begin0based TRUE (default) or FALSE. If TRUE, then the start positions in \code{annotationFile} are  considered to be 0-based
 #'
 #' @return data.frame
 results_DEWSeq <- function(object, annotationFile,contrast, name, listValues=c(1,-1), cooksCutoff, test,
