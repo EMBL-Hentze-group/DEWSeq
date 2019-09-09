@@ -11,6 +11,8 @@ Description: Differential expression analysis of windows for
    next-generation sequencing data like eCLIP or iCLIP data.
 Depends:
     DESeq2
+    DESeq2,
+    data.table
 Suggests:
    knitr,
    BiocParallel
