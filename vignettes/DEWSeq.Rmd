@@ -1,6 +1,6 @@
 ---
 title: "Analyzing eCLIP data with DEWSeq"
-author: "Thomas Schwarzl, Sudeep Sahadevan"
+author: "Thomas Schwarzl and Sudeep Sahadevan"
 date: "`r format(Sys.Date(), '%m/%d/%Y')`"
 abstract: >
   Put abstract here
@@ -46,13 +46,17 @@ Please get familiar with this Bioconductor package before you are using DEWSeq
 
 ## eCLIP/iCLIP data preprocessing steps.
 
+### From raw to bam files
+
 eCLIP or iCLIP data preprocessing can be extensive, exhaustive and frustrating. 
 Generally the steps for prepressing are:
 
 
 * Unique Molecular Identifiers (UMIs) extraction and demultiplexing
   ([Je Suite](https://gbcs.embl.de/portal/tiki-index.php?page=Je), or other
-  tools)
+  tools). Usually the UMI is extracted from the fasta sequence and put into
+  the header. Different tools put it at different locations (beginning or
+  end of fastq header).
 * Read quality filtering (optional)
 * Trimming of sequencing adapters (with tools like
   [cutadapt](https://cutadapt.readthedocs.io))
@@ -67,9 +71,63 @@ Generally the steps for prepressing are:
   [Je Suite](https://gbcs.embl.de/portal/tiki-index.php?page=Je) or 
   custom tools depending on your protocol and single-read or paired-end setup.
 
-
 Naturally, this can vary with different protocols and sequencing setups. 
-Eventually, you will end up with *.bam* files
+Sometimes you want to remove PCR duplicates by removing exact duplicates
+(before the UMI has been extracted to the header) to remove a bit of 
+complexity for further processing. Note that next-generation sequencers 
+have error rates. Therefore we highly recommend to use a non-extact overlap 
+PCR duplication removal algorithmn.
+
+Eventually, you will end up with *.bam* files.
+
+### From bam files to counts 
+
+#### htseq-clip for iCLIP/eCLIP data preprocessing
+
+
+http://www.hentze.embl.de/public/containers/htseq-clip.simg
+
+
+## Replicates and Controls - the most important prerequisit for DEWSeq
+
+
+### You need true input controls
+
+Most of the time, the CLIP signal and background are a mix from different
+transcripts with different expression levels. There is strong
+evidence that UV crosslinking does not affect RNAs in a linear fashion, 
+therefore a total RNA-seq is not an appropriate input control. Also IgG-,
+empty beads, or similar controls are not appropriate input controls. 
+We recommend to flag enriched regions which show signal in IgG or empty
+beads controls. 
+
+You need SMI controls (see eCLIP protocol) or other type of true input
+control data. Please not that in the iCLIP field there is a wide 
+ignorance towards SMI controls, although you can be easily done and
+in fact is irresponsible not to do. 
+
+### Replicates
+
+The costs of CLIP experiments can be tempting to reduce the number of 
+replicate, but you should ask yourself how many replicates would you
+use when performing RNA-seq. Usually, the answer is, at least three
+for the sample and three for the control (depending on many experimental
+factors which also will apply for your CLIP study). As a tumb of rule, 
+your number of replicates should not be less.
+
+
+## Preprocessing Pro Tip
+
+Use Sailfish, Kallisto or any pseudoaligner to get an estimation of
+the different expression levels of transcripts. Use this to filter the
+annotation. 
+
+
+
+
+
+
+
 
 
 
