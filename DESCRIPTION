@@ -15,17 +15,11 @@ Imports:
     GenomicRanges,
     utils
 Depends:
-<<<<<<< HEAD
-    DESeq2
-    DESeq2,
-    data.table
-=======
     DESeq2,
     data.table,
     GenomeInfoDb,
     GenomicRanges,
     utils
->>>>>>> e2d907c68ccf05a39818df8f24596e9844945f5e
 Suggests:
    knitr
 License: LGPL (>= 3)
