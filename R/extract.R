@@ -3,7 +3,11 @@
 
 #' @export
 #' @title extract significant regions
-#' @description extract significant windows from output of \code{\link{results_DEWSeq}} using the supplied padj and log2FoldChange cut-offs and merge these significant windows to regions and create the following columns for each significant region:
+#' @description extract significant windows from output of
+#'     \code{\link{results_DEWSeq}} using the supplied padj and
+#'      log2FoldChange cut-offs and merge these significant windows
+#'       to regions and create the following columns for each
+#'        significant region:
 #' \itemize{
 #' \item \code{padj_min}: min. padj value in the region
 #' \item \code{padj_mean}: average padj value in the region
@@ -47,9 +51,27 @@
 #' @param begin0based TRUE (default) or FALSE. If TRUE, then the start positions in \code{windowRes} is  considered to be 0-based
 #'
 #' @return data.frame
-extractRegions <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,begin0based=TRUE){
-  requiredCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name',
-                    'gene_type','gene_region','Nr_of_region','Total_nr_of_region','window_number',padjCol,log2FoldChangeCol)
+extractRegions <- function(windowRes,
+                           padjCol              = 'padj',
+                           padjThresh           = 0.05,
+                           log2FoldChangeCol    = 'log2FoldChange',
+                           log2FoldChangeThresh = 1,
+                           begin0based          = TRUE){
+  requiredCols <- c('chromosome',
+                    'unique_id',
+                    'begin',
+                    'end',
+                    'strand',
+                    'gene_id',
+                    'gene_name',
+                    'gene_type',
+                    'gene_region',
+                    'Nr_of_region',
+                    'Total_nr_of_region',
+                    'window_number',
+                    padjCol,
+                    log2FoldChangeCol)
+
   missingCols <- setdiff(requiredCols,colnames(windowRes))
   if(length(missingCols)>0){
     stop('Input data.frame is missing required columns, needed columns:

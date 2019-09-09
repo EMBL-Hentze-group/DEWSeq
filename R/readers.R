@@ -18,9 +18,11 @@
 #'  window_number: window number \cr
 #' @param fname file name/path
 #' @param uniqIds filter stable and keep annotation for these unique ids
-#' @param asGRange boolean, whether to reaturn a GRange object or a data.frame object
+#' @param asGRange boolean, whether to reaturn a GRange object or a data.frame
+#' object
 #' @param checkWindowNumber check window number
-#' @param begin0based TRUE (default) or FALSE. If TRUE, then the start positions are considered to be 0-based
+#' @param begin0based TRUE (default) or FALSE. If TRUE, then the start
+#' positions are considered to be 0-based
 #' @return data.frame or [GRanges](https://bioconductor.org/packages/release/bioc/html/GenomicRanges.html) object
 .readAnnotation <- function(fname,uniqIds=NULL,asGRange=TRUE,checkWindowNumber=TRUE,begin0based=TRUE){
   neededCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name','gene_type','gene_region','Nr_of_region',

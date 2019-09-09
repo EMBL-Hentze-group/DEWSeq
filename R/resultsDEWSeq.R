@@ -1,12 +1,15 @@
 #' @export
 #' @title extract DEWseq results
-#' @description This is a modified version of the \code{\link[DESeq2:results]{results}}  function.
-#' This documentation is based on DESeq2 results function documentation.
+#' @description This is a modified version of the
+#'      \code{\link[DESeq2:results]{results}} function.
 #'
-#' This function uses chromosomal positions given in the \code{annotationFile} to identify overlapping windows in \code{dds} object.
-#' For each window, the number of overlapping windows are counted, and the p-value is adjusted for FWER using bonferroni correction.
+#' This function uses chromosomal positions given in the \code{annotationFile}
+#' to identify overlapping windows in \code{dds} object. For each window,
+#' the number of overlapping windows are counted, and the p-value is
+#'  adjusted for FWER using bonferroni correction.
 #'
-#' For further details, please refer documentation for \code{\link[DESeq2:results]{results}} function in DESeq2 package
+#' For further details, please refer documentation for
+#'  \code{\link[DESeq2:results]{results}} function in DESeq2 package
 #'
 #' @details
 #' \code{annotationFile} is expected to have the following columns:
@@ -25,8 +28,12 @@
 #'   \item \code{window_number}: window number
 #' }
 #'
-#' The output data.frame from this function will have all the columns listed above, along with the DESeq2 \code{\link[DESeq2:results]{results}} columns:\cr
-#' \code{baseMean}, \code{log2FoldChange}, \code{lfcSE}, \code{stat}, \code{pvalue}, \code{padj}. Please consult DESeq2 vignettes for an explanation of these columns.
+#' The output data.frame from this function will have all the columns listed
+#' above, along with the DESeq2 \code{\link[DESeq2:results]{results}}
+#' columns:\cr
+#' \code{baseMean}, \code{log2FoldChange}, \code{lfcSE}, \code{stat},
+#' \code{pvalue}, \code{padj}. Please consult DESeq2 vignettes for an
+#'  explanation of these columns.
 #'
 #' @param object a DESeqDataSet, on which one of the following functions has already been called:
 #' \code{\link[DESeq2:nbinomWaldTest]{nbinomWaldTest}}\cr
@@ -51,7 +58,7 @@
 #' @param begin0based TRUE (default) or FALSE. If TRUE, then the start positions in \code{annotationFile} are  considered to be 0-based
 #'
 #' @return data.frame
-results_DEWSeq <- function(object, annotationFile,contrast, name, listValues=c(1,-1), cooksCutoff, test,
+resultsDEWSeq <- function(object, annotationFile,contrast, name, listValues=c(1,-1), cooksCutoff, test,
                            addMLE=FALSE, tidy=FALSE, parallel=FALSE, BPPARAM=bpparam(), minmu=0.5,begin0based=TRUE) {
   stopifnot(is(object, "DESeqDataSet"))
   stopifnot(length(listValues)==2 & is.numeric(listValues))
