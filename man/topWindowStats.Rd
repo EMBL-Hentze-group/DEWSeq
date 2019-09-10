@@ -10,7 +10,7 @@ topWindowStats(windowRes, padjCol = "padj", padjThresh = 0.05,
   treatmentName = "treatment", controlName = "control", op = "max")
 }
 \arguments{
-\item{windowRes}{output data.frame from \code{\link{results_DEWSeq}}}
+\item{windowRes}{output data.frame from \code{\link{resultsDEWSeq}}}
 
 \item{padjCol}{name of the adjusted pvalue column (default: padj)}
 

@@ -9,7 +9,7 @@ extractRegions(windowRes, padjCol = "padj", padjThresh = 0.05,
   begin0based = TRUE)
 }
 \arguments{
-\item{windowRes}{output data.frame from \code{\link{results_DEWSeq}}}
+\item{windowRes}{output data.frame from \code{\link{resultsDEWSeq}}}
 
 \item{padjCol}{name of the adjusted pvalue column (default: padj)}
 
@@ -26,7 +26,7 @@ data.frame
 }
 \description{
 extract significant windows from output of
-    \code{\link{results_DEWSeq}} using the supplied padj and
+    \code{\link{resultsDEWSeq}} using the supplied padj and
      log2FoldChange cut-offs and merge these significant windows
       to regions and create the following columns for each
        significant region:

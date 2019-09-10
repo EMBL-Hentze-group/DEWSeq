@@ -3,10 +3,11 @@
 
 #' @export
 #' @title windows/regions to BED
-#' @description given output of \code{\link{extractRegions}}, \code{\link({results_DEWSeq}} and significance thresholds, extract significant windows,
+#' @description given output of \code{\link{extractRegions}}, \code{\link({resultsDEWSeq}} and significance thresholds, extract significant windows,
 #' regions (merged neighboring significant windows) and create a BED file for visualization
-#' @param windowRes output data.frame from \code{\link{results_DEWSeq}}
+#' @param windowRes output data.frame from \code{\link{resultsDEWSeq}}
 #' @param regionRes output data.frame from \code{\link{extractRegions}}
+#' @param fileName filename to save BED output
 #' @param padjCol name of the adjusted pvalue column (default: padj)
 #' @param padjThresh threshold for p-adjusted value (default: 0.05)
 #' @param log2FoldChangeCol name of the log2foldchange column (default: log2FoldChange)

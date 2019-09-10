@@ -1,6 +1,13 @@
 # Function(s) to read in large files
 # Author: Sudeep Sahadevan, sudeep.sahadevan@embl.de
 
+#'
+#' @importFrom BiocGenerics sort
+#' @importFrom GenomeInfoDb sortSeqlevels
+#' @importFrom GenomicRanges makeGRangesFromDataFrame reduce
+#' @importFrom data.table fread
+#' @importFrom utils read.table
+#'
 #' @title  read annotation data
 #' @description read annotation data for windows
 #' The file MUST be tab separated and MUST have the following columns:\cr
@@ -35,9 +42,9 @@
   if(gzlen>0 && platform=='Windows'){
     annTable <- read.table(gzfile(fname),sep="\t",stringsAsFactors=FALSE,header=TRUE)
   }else if(gzlen>0){ # assuming that zcat binary is installed in Linux and Mac distributions
-    annTable <- data.table::fread(input=paste('zcat',fname),sep="\t",stringsAsFactors = FALSE,header=TRUE)
+    annTable <- fread(input=paste('zcat',fname),sep="\t",stringsAsFactors = FALSE,header=TRUE)
   }else if (gzlen==0){
-    annTable <- data.table::fread(fname,sep="\t",stringsAsFactors = FALSE,header=TRUE)
+    annTable <- fread(fname,sep="\t",stringsAsFactors = FALSE,header=TRUE)
   }
   missingCols <- setdiff(neededCols,colnames(annTable))
   if(length(missingCols)>0 & checkWindowNumber){
@@ -78,10 +85,10 @@
   }
   if(is.null(uniqIds)){
     if(asGRange){
-      gr <- GenomicRanges::makeGRangesFromDataFrame(annTable,seqnames.field='chromosome',start.field='begin',end.field='end',strand.field='strand',
+      gr <- makeGRangesFromDataFrame(annTable,seqnames.field='chromosome',start.field='begin',end.field='end',strand.field='strand',
                                                   ignore.strand=FALSE,keep.extra.columns=TRUE, starts.in.df.are.0based=begin0based)
-      gr <- GenomeInfoDb::sortSeqlevels(gr)
-      gr <- BiocGenerics::sort(gr)
+      gr <- sortSeqlevels(gr)
+      gr <- sort(gr)
       rm(annTable)
       gc()
       return(gr)
@@ -94,10 +101,10 @@
       stop('There are no common unique ids between the input file and uniqueIds. Please check your data sets!')
     }
     if(asGRange){
-      gr <- GenomicRanges::makeGRangesFromDataFrame(annTable[commonIds,], seqnames.field='chromosome',start.field='begin',end.field='end',
+      gr <- makeGRangesFromDataFrame(annTable[commonIds,], seqnames.field='chromosome',start.field='begin',end.field='end',
                                                     strand.field='strand', ignore.strand=FALSE,keep.extra.columns=TRUE, starts.in.df.are.0based=begin0based)
-      gr <- GenomeInfoDb::sortSeqlevels(gr)
-      gr <- BiocGenerics::sort(gr)
+      gr <- sortSeqlevels(gr)
+      gr <- sort(gr)
       rm(annTable)
       gc()
       return(gr)

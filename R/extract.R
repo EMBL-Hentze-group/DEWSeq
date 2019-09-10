@@ -2,9 +2,16 @@
 # Author: Sudeep Sahadevan, sudeep.sahadevan@embl.de
 
 #' @export
+#'
+#' @importFrom BiocGenerics sort
+#' @importFrom GenomeInfoDb sortSeqlevels
+#' @importFrom GenomicRanges makeGRangesFromDataFrame reduce
+#' @importFrom S4Vectors na.omit
+#' @importFrom utils setTxtProgressBar txtProgressBar
+#'
 #' @title extract significant regions
 #' @description extract significant windows from output of
-#'     \code{\link{results_DEWSeq}} using the supplied padj and
+#'     \code{\link{resultsDEWSeq}} using the supplied padj and
 #'      log2FoldChange cut-offs and merge these significant windows
 #'       to regions and create the following columns for each
 #'        significant region:
@@ -43,7 +50,7 @@
 #' }
 
 #'
-#' @param windowRes output data.frame from \code{\link{results_DEWSeq}}
+#' @param windowRes output data.frame from \code{\link{resultsDEWSeq}}
 #' @param padjCol name of the adjusted pvalue column (default: padj)
 #' @param padjThresh threshold for p-adjusted value (default: 0.05)
 #' @param log2FoldChangeCol name of the log2foldchange column (default: log2FoldChange)
@@ -97,17 +104,17 @@ extractRegions <- function(windowRes,
     message('There are no significant windows/regions under the current threshold!\nPlease lower your significance cut-off thresholds and manually check if there are any significant windows under the threshold')
     return(NULL)
   }
-  geneRange <- GenomicRanges::makeGRangesFromDataFrame(sigDat,seqnames.field = 'gene_id',start.field = 'begin',end.field = 'end',strand.field = 'strand',
+  geneRange <- makeGRangesFromDataFrame(sigDat,seqnames.field = 'gene_id',start.field = 'begin',end.field = 'end',strand.field = 'strand',
                                                       ignore.strand=FALSE,starts.in.df.are.0based=begin0based,keep.extra.columns = TRUE)
-  geneRange <-  GenomeInfoDb::sortSeqlevels(geneRange)
-  geneRange <- BiocGenerics::sort(geneRange)
-  geneReduce <- GenomicRanges::reduce(geneRange,drop.empty.ranges=TRUE,with.revmap=TRUE,min.gapwidth=1)
+  geneRange <-  sortSeqlevels(geneRange)
+  geneRange <- sort(geneRange)
+  geneReduce <- reduce(geneRange,drop.empty.ranges=TRUE,with.revmap=TRUE,min.gapwidth=1)
   mcols(geneReduce)$regionStartId <- mcols(geneReduce)$gene_name <- mcols(geneReduce)$gene_type <- mcols(geneReduce)$gene_region  <- 'Undefined'
   mcols(geneReduce)$chromosome <- mcols(geneReduce)$unique_ids  <- 'Undefined'
   mcols(geneReduce)$windows_in_region <- mcols(geneReduce)$Nr_of_region <-  mcols(geneReduce)$Total_nr_of_region <- mcols(geneReduce)$window_number <- 1
   mcols(geneReduce)$padj_min <- mcols(geneReduce)$padj_max <- mcols(geneReduce)$padj_mean <- 1.0
   mcols(geneReduce)$log2FoldChange_min <- mcols(geneReduce)$log2FoldChange_max <- mcols(geneReduce)$log2FoldChange_mean <- 0.0
-  pb <- utils::txtProgressBar(min=0,max=length(geneReduce),style = 3)
+  pb <- txtProgressBar(min=0,max=length(geneReduce),style = 3)
   for(i in c(1:length(geneReduce))){
     # values
     mergeInd <- unlist(mcols(geneReduce)[i,1])
@@ -129,7 +136,7 @@ extractRegions <- function(windowRes,
     mcols(geneReduce)[i,'Total_nr_of_region'] <- mcols(geneRange)[min(mergeInd),'Total_nr_of_region']
     mcols(geneReduce)[i,'window_number'] <- mcols(geneRange)[min(mergeInd),'window_number']
     # progress
-    utils::setTxtProgressBar(pb=pb,value=i)
+    setTxtProgressBar(pb=pb,value=i)
   }
   close(pb)
   regionRes <- as.data.frame(geneReduce)

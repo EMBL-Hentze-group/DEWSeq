@@ -10,9 +10,11 @@ toBED(windowRes, regionRes, fileName, padjCol = "padj",
   description = "sliding windows")
 }
 \arguments{
-\item{windowRes}{output data.frame from \code{\link{results_DEWSeq}}}
+\item{windowRes}{output data.frame from \code{\link{resultsDEWSeq}}}
 
 \item{regionRes}{output data.frame from \code{\link{extractRegions}}}
+
+\item{fileName}{filename to save BED output}
 
 \item{padjCol}{name of the adjusted pvalue column (default: padj)}
 
@@ -27,6 +29,6 @@ toBED(windowRes, regionRes, fileName, padjCol = "padj",
 \item{description}{description of this track, for visualization}
 }
 \description{
-given output of \code{\link{extractRegions}}, \code{\link({results_DEWSeq}} and significance thresholds, extract significant windows,
+given output of \code{\link{extractRegions}}, \code{\link({resultsDEWSeq}} and significance thresholds, extract significant windows,
 regions (merged neighboring significant windows) and create a BED file for visualization
 }

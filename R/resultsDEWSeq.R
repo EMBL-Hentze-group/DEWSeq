@@ -1,4 +1,14 @@
 #' @export
+#'
+#' @import BiocParallel DESeq2 S4Vectors
+#'
+#' @importFrom GenomicRanges findOverlaps
+#' @importFrom methods is
+#' @importFrom SummarizedExperiment assays colData
+#' @importFrom S4Vectors na.omit
+#' @importFrom stats p.adjust pnorm pt qf terms terms.formula
+#' @importFrom utils packageVersion
+#'
 #' @title extract DEWseq results
 #' @description This is a modified version of the
 #'      \code{\link[DESeq2:results]{results}} function.
@@ -43,6 +53,7 @@
 #' @param contrast this argument specifies what comparison to extract from the \code{object} to build a results table.
 #' @param name the name of the individual effect (coefficient) for building a results table.
 #' \code{name} argument is ignored if \code{contrast} is specified
+#' @param listValues check \code{\link[DESeq2:results]{results}} for details of this parameter
 #' @param cooksCutoff theshold on Cook's distance
 #' @param test this is automatically detected internally if not provided.
 #' @param addMLE if \code{betaPrior=TRUE} was used
@@ -139,7 +150,7 @@ resultsDEWSeq <- function(object, annotationFile,contrast, name, listValues=c(1,
                                     test=test, useT=useT, minmu=minmu)
     } else if (parallel) {
       # parallel execution
-      nworkers <- getNworkers(BPPARAM)
+      nworkers <- DESeq2:::getNworkers(BPPARAM)
       idx <- factor(sort(rep(seq_len(nworkers),length.out=nrow(object))))
       res <- do.call(rbind, bplapply(levels(idx), function(l) {
         DESeq2:::cleanContrast(object[idx == l,,drop=FALSE], contrast,
@@ -240,7 +251,7 @@ resultsDEWSeq <- function(object, annotationFile,contrast, name, listValues=c(1,
   }
   # calculate the number of windows that overlaps with each other by atleast 2 bp,
   # this way, any intron/exon junctions will not be counted, but all ovelapping windows will be counted
-  resOvs <- GenomicRanges::findOverlaps(resGrange,minoverlap=1,drop.redundant=FALSE,drop.self=FALSE,ignore.strand=FALSE)
+  resOvs <- findOverlaps(resGrange,minoverlap=1,drop.redundant=FALSE,drop.self=FALSE,ignore.strand=FALSE)
   nOvWindows <- as.data.frame(table(queryHits(resOvs)))[,2]
   names(nOvWindows) <- rownames(mcols(resGrange))
   nOvWindows <- nOvWindows[rownames(res)]

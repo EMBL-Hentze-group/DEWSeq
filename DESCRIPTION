@@ -10,15 +10,25 @@ Maintainer: Hentze bioinformatics team <biohentze@embl.de>
 Description: Differential expression analysis of windows for next-generation sequencing data like eCLIP or iCLIP data.
 Imports:
     DESeq2,
+    BiocGenerics,
+    BiocParallel,
     data.table,
     GenomeInfoDb,
     GenomicRanges,
+    methods,
+    S4Vectors,
+    SummarizedExperiment,
     utils
 Depends:
     DESeq2,
+    BiocGenerics,
+    BiocParallel,
     data.table,
     GenomeInfoDb,
     GenomicRanges,
+    methods,
+    S4Vectors,
+    SummarizedExperiment,
     utils
 Suggests:
    knitr

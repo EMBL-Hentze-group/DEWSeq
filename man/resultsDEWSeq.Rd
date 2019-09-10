@@ -22,6 +22,8 @@ the file MUST be <TAB> separated. See Details for a description of the columns a
 \item{name}{the name of the individual effect (coefficient) for building a results table.
 \code{name} argument is ignored if \code{contrast} is specified}
 
+\item{listValues}{check \code{\link[DESeq2:results]{results}} for details of this parameter}
+
 \item{cooksCutoff}{theshold on Cook's distance}
 
 \item{test}{this is automatically detected internally if not provided.}
