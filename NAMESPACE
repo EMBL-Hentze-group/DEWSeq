@@ -2,6 +2,6 @@
 
 export(countGeneRegion)
 export(extractRegions)
-export(results_DEWSeq)
+export(resultsDEWSeq)
 export(toBED)
 export(topWindowStats)
