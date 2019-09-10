@@ -72,10 +72,10 @@ toBED <- function(windowRes,regionRes,fileName,padjCol='padj',padjThresh=0.05,lo
   regionRes$padj_avg <- round(((regionRes$padj_avg-allMin)/(allMax-allMin))*(bedrange[2]-bedrange[1])+bedrange[1])
   # now start writing
   write(sprintf('track name="%s" description="%s" visibility=2 itemRgb="On" useScore=1',trackName,description),file=fileName)
-  for(i in c(1:nrow(regionRes))){
+  for(i in seq_len(nrow(regionRes))){
     write(paste(regionRes[i,],collapse="\t"),file=fileName,append=TRUE)
   }
-  for(i in c(1:nrow(windowRes))){
+  for(i in seq_len(nrow(windowRes))){
       write(paste(windowRes[i,],collapse="\t"),file=fileName,append=TRUE)
   }
 }

@@ -142,7 +142,7 @@ topWindowStats <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
   outDat[,c('begin.meanWindow','end.meanWindow',meanMean,meanWindowCols)] <- 0
   # mean, log2foldchange comparison data.frame
   pb <- txtProgressBar(min=0,max=length(sigReduce),style = 3)
-  for(i in c(1:length(sigReduce))){
+  for(i in seq_len(length(sigReduce))){
     mergeInd <- sigReduce$revmap[[i]]
     outDat[i,'regionStartId'] <- mcols(sigRange)[min(mergeInd),'unique_id']
     outDat[i,'regionStartId'] <- mcols(sigRange)[min(mergeInd),'unique_id']

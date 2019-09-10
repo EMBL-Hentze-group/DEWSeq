@@ -69,8 +69,13 @@
 #' @param begin0based TRUE (default) or FALSE. If TRUE, then the start positions in \code{annotationFile} are  considered to be 0-based
 #'
 #' @return data.frame
-resultsDEWSeq <- function(object, annotationFile,contrast, name, listValues=c(1,-1), cooksCutoff, test,
-                           addMLE=FALSE, tidy=FALSE, parallel=FALSE, BPPARAM=bpparam(), minmu=0.5,begin0based=TRUE) {
+resultsDEWSeq <- function(object, annotationFile,
+                          contrast,name,
+                          listValues=c(1,-1), cooksCutoff,
+                          test, addMLE=FALSE,
+                          tidy=FALSE, parallel=FALSE,
+                          BPPARAM=bpparam(), minmu=0.5,
+                          begin0based=TRUE) {
   stopifnot(is(object, "DESeqDataSet"))
   stopifnot(length(listValues)==2 & is.numeric(listValues))
   stopifnot(listValues[1] > 0 & listValues[2] < 0)

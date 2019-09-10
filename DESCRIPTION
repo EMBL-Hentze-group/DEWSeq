@@ -31,7 +31,10 @@ Depends:
     SummarizedExperiment,
     utils
 Suggests:
-   knitr
+    knitr,
+    rmarkdown
+biocViews: Sequencing,
+    DifferentialExpression
 License: LGPL (>= 3)
 URL: https://git.embl.de/biohentze/DEWSeq
 Encoding: UTF-8

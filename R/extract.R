@@ -115,7 +115,7 @@ extractRegions <- function(windowRes,
   mcols(geneReduce)$padj_min <- mcols(geneReduce)$padj_max <- mcols(geneReduce)$padj_mean <- 1.0
   mcols(geneReduce)$log2FoldChange_min <- mcols(geneReduce)$log2FoldChange_max <- mcols(geneReduce)$log2FoldChange_mean <- 0.0
   pb <- txtProgressBar(min=0,max=length(geneReduce),style = 3)
-  for(i in c(1:length(geneReduce))){
+  for(i in seq_len(length(geneReduce))){
     # values
     mergeInd <- unlist(mcols(geneReduce)[i,1])
     mcols(geneReduce)[i,'windows_in_region'] <- length(mergeInd)
