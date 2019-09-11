@@ -1,11 +1,8 @@
 Package: DEWSeq
 Type: Package
 Title: Differential Expressed Windows Based on Negative Binomial Distribution
-Version: 1.6.0
-Authors@R: c(
-    person("Sudeep", "Sahadevan", email="sahadeva@embl.de", role = c("cre")),
-    person("Thomas", "Schwarzl", email="schwarzl@embl.de", role = c("ctb"))
-    )
+Version: 0.99.0
+Author: Sudeep Sahadevan <sahadeva@embl.de>, Thomas Schwarzl <schwarzl@embl.de>
 Maintainer: Hentze bioinformatics team <biohentze@embl.de>
 Description: Differential expression analysis of windows for next-generation sequencing data like eCLIP or iCLIP data.
 Imports:

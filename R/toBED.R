@@ -17,13 +17,15 @@
 #' @param trackName name of this track, for visualization
 #' @param description description of this track, for visualization
 #'
+#' @return write to file
+#'
 #' @examples
 #' # need specific examples
 #' \dontrun{
 #' 'toBED(windowRes=windowRes,regionRes=regionRes,fileName="enrichedWindowsRegions.bed")'
 #' }
 #'
-#' @return NULL
+
 toBED <- function(windowRes,regionRes,fileName,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,trackName='sliding windows',
                                                                                                                             description='sliding windows'){
     wRequiredCols <- c('unique_id','chromosome','begin','end','strand',padjCol,log2FoldChangeCol)

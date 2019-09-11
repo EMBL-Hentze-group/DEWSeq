@@ -28,6 +28,9 @@ toBED(windowRes, regionRes, fileName, padjCol = "padj",
 
 \item{description}{description of this track, for visualization}
 }
+\value{
+write to file
+}
 \description{
 given output of \code{\link{extractRegions}}, \code{\link{resultsDEWSeq}} and significance thresholds,
 extract significant windows, create regions by merging adjacent significant windows.
