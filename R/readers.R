@@ -37,15 +37,7 @@
   if(checkWindowNumber){
     neededCols <- c(neededCols,'window_number')
   }
-  gzlen <- grep(pattern = '\\.gz',ignore.case = TRUE,x=fname)
-  platform <- Sys.info()[['sysname']]
-  if(gzlen>0 && platform=='Windows'){
-    annTable <- read.table(gzfile(fname),sep="\t",stringsAsFactors=FALSE,header=TRUE)
-  }else if(gzlen>0){ # assuming that zcat binary is installed in Linux and Mac distributions
-    annTable <- fread(input=paste('zcat',fname),sep="\t",stringsAsFactors = FALSE,header=TRUE)
-  }else if (gzlen==0){
-    annTable <- fread(fname,sep="\t",stringsAsFactors = FALSE,header=TRUE)
-  }
+  annTable <- fread(fname,sep="\t",stringsAsFactors = FALSE,header=TRUE)
   missingCols <- setdiff(neededCols,colnames(annTable))
   if(length(missingCols)>0 & checkWindowNumber){
     stop('Input annotation file is missing required columns, needed columns:
