@@ -24,6 +24,8 @@ Suggests:
 VignetteBuilder:
     knitr
 biocViews: Sequencing,
+    GeneRegulation,
+    FunctionalGenomics,
     DifferentialExpression
 License: LGPL (>= 3)
 URL: https://git.embl.de/biohentze/DEWSeq
