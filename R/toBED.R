@@ -5,7 +5,8 @@
 #' @title windows/regions to BED
 #' @description given output of \code{\link{extractRegions}}, \code{\link({resultsDEWSeq}} and significance thresholds,
 #' extract significant windows, create regions by merging adjacent significant windows.
-#' Finally, write the output as a BED file for visualization
+#' Finally, write the output as a BED file for visualization.
+#'
 #' @param windowRes output data.frame from \code{\link{resultsDEWSeq}}
 #' @param regionRes output data.frame from \code{\link{extractRegions}}
 #' @param fileName filename to save BED output
@@ -15,6 +16,13 @@
 #' @param log2FoldChangeThresh threshold for log2foldchange value (default:1)
 #' @param trackName name of this track, for visualization
 #' @param description description of this track, for visualization
+#'
+#' @examples
+#' # need specific examples
+#' \dontrun{
+#' 'toBED(windowRes=windowRes,regionRes=regionRes,fileName="enrichedWindowsRegions.bed")'
+#' }
+#'
 #' @return NULL
 toBED <- function(windowRes,regionRes,fileName,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,trackName='sliding windows',
                                                                                                                             description='sliding windows'){

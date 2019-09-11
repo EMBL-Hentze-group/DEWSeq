@@ -84,3 +84,10 @@ columns:\cr
 \code{pvalue}, \code{padj}. Please consult DESeq2 vignettes for an
  explanation of these columns.
 }
+\examples{
+# need specific examples
+\dontrun{
+'windowRes <- resultsDEWSeq(object=dds,annotationFile="/path/to/annotation.gz")'
+}
+
+}

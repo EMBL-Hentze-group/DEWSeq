@@ -68,6 +68,12 @@
 #' @param minmu lower bound on the estimated count (used when calculating contrasts)
 #' @param begin0based TRUE (default) or FALSE. If TRUE, then the start positions in \code{annotationFile} are  considered to be 0-based
 #'
+#' @examples
+#' # need specific examples
+#' \dontrun{
+#' 'windowRes <- resultsDEWSeq(object=dds,annotationFile="/path/to/annotation.gz")'
+#' }
+#'
 #' @return data.frame
 resultsDEWSeq <- function(object, annotationFile,
                           contrast,name,

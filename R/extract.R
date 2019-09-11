@@ -57,6 +57,13 @@
 #' @param log2FoldChangeThresh threshold for log2foldchange value (default:1)
 #' @param begin0based TRUE (default) or FALSE. If TRUE, then the start positions in \code{windowRes} is  considered to be 0-based
 #'
+#' @examples
+#' # need specific examples
+#' \dontrun{
+#' 'regionRes <- extractRegions(windowRes)'
+#' }
+#'
+#'
 #' @return data.frame
 extractRegions <- function(windowRes,
                            padjCol              = 'padj',

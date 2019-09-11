@@ -3,35 +3,26 @@ Type: Package
 Title: Differential Expressed Windows Based on Negative Binomial Distribution
 Version: 1.6.0
 Authors@R: c(
-    person("Sudeep", "Sahadevan", email="sahadeva@embl.de", role = c("aut","cre")),
-    person("Thomas", "Schwarzl", email="schwarzl@embl.de", role = c("aut", "ctb"))
+    person("Sudeep", "Sahadevan", email="sahadeva@embl.de", role = c("cre")),
+    person("Thomas", "Schwarzl", email="schwarzl@embl.de", role = c("ctb"))
     )
 Maintainer: Hentze bioinformatics team <biohentze@embl.de>
 Description: Differential expression analysis of windows for next-generation sequencing data like eCLIP or iCLIP data.
 Imports:
-    DESeq2,
     BiocGenerics,
-    BiocParallel,
     data.table,
     GenomeInfoDb,
     GenomicRanges,
     methods,
     S4Vectors,
     SummarizedExperiment,
+    stats,
     utils
 Depends:
     DESeq2,
-    BiocGenerics,
-    BiocParallel,
-    data.table,
-    GenomeInfoDb,
-    GenomicRanges,
-    methods,
-    S4Vectors,
-    SummarizedExperiment,
-    utils
+    BiocParallel
 Suggests:
-    knitr,
+    knitr,  
     rmarkdown
 VignetteBuilder:
     knitr

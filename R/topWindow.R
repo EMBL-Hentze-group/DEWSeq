@@ -70,6 +70,13 @@
 #' @param op can be one of \code{max} (default) or \code{min}. \code{max} returns windows with maximum log2FoldChange and mean normalized expression in the \code{treatmentCols} columns,
 #' \code{min} returns windows with minimum log2FoldChange and mean normalized expression
 #'
+#'
+#' @examples
+#' # need specific examples
+#' \dontrun{
+#' 'topWindoPerRegionStats <- topWindowStats(windowRes=windowRes,normalizedCount=normCount)'
+#' }
+#'
 #' @return data.frame
 topWindowStats <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,begin0based=TRUE, normalizedCounts,
                            treatmentCols,treatmentName='treatment',controlName='control', op='max'){

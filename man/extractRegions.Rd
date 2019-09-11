@@ -64,3 +64,11 @@ The output data.frame from this function will have the following columns:
  \item \code{log2FoldChange_mean}: average log 2 fold change in the region
 }
 }
+\examples{
+# need specific examples
+\dontrun{
+'regionRes <- extractRegions(windowRes)'
+}
+
+
+}

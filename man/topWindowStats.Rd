@@ -86,3 +86,10 @@ The output data.frame of this function has the following columns:
  \item the next columns will be normalized expression values  of the meanWindow from individual treatment and control samples
 }
 }
+\examples{
+# need specific examples
+\dontrun{
+'topWindoPerRegionStats <- topWindowStats(windowRes=windowRes,normalizedCount=normCount)'
+}
+
+}
