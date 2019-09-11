@@ -3,7 +3,7 @@
 
 #' @export
 #' @title windows/regions to BED
-#' @description given output of \code{\link{extractRegions}}, \code{\link({resultsDEWSeq}} and significance thresholds,
+#' @description given output of \code{\link{extractRegions}}, \code{\link{resultsDEWSeq}} and significance thresholds,
 #' extract significant windows, create regions by merging adjacent significant windows.
 #' Finally, write the output as a BED file for visualization.
 #'

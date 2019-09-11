@@ -29,7 +29,7 @@ toBED(windowRes, regionRes, fileName, padjCol = "padj",
 \item{description}{description of this track, for visualization}
 }
 \description{
-given output of \code{\link{extractRegions}}, \code{\link({resultsDEWSeq}} and significance thresholds,
+given output of \code{\link{extractRegions}}, \code{\link{resultsDEWSeq}} and significance thresholds,
 extract significant windows, create regions by merging adjacent significant windows.
 Finally, write the output as a BED file for visualization.
 }
