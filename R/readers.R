@@ -5,7 +5,7 @@
 #' @importFrom BiocGenerics sort
 #' @importFrom GenomeInfoDb sortSeqlevels
 #' @importFrom GenomicRanges makeGRangesFromDataFrame reduce
-#' @importFrom data.table fread
+#' @importFrom data.table fread getDTthreads setDTthreads
 #' @importFrom utils read.table
 #'
 #' @title  read annotation data
@@ -29,14 +29,18 @@
 #' object
 #' @param checkWindowNumber check window number
 #' @param begin0based TRUE (default) or FALSE. If TRUE, then the start
+#' @param threads number of threads for fread (default: 10)
 #' positions are considered to be 0-based
-#' @return data.frame or [GRanges](https://bioconductor.org/packages/release/bioc/html/GenomicRanges.html) object
-.readAnnotation <- function(fname,uniqIds=NULL,asGRange=TRUE,checkWindowNumber=TRUE,begin0based=TRUE){
+#' @return data.frame or GRanges object
+.readAnnotation <- function(fname,uniqIds=NULL,asGRange=TRUE,checkWindowNumber=TRUE,begin0based=TRUE,threads=10){
   neededCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name','gene_type','gene_region','Nr_of_region',
                  'Total_nr_of_region')
   if(checkWindowNumber){
     neededCols <- c(neededCols,'window_number')
   }
+  # check number of available cores for fread
+  allCores <- getDTthreads()
+  setDTthreads(ifelse(threads>=allCores,allCores-1,threads))
   annTable <- fread(fname,sep="\t",stringsAsFactors = FALSE,header=TRUE)
   missingCols <- setdiff(neededCols,colnames(annTable))
   if(length(missingCols)>0 & checkWindowNumber){

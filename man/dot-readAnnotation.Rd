@@ -5,7 +5,7 @@
 \title{read annotation data}
 \usage{
 .readAnnotation(fname, uniqIds = NULL, asGRange = TRUE,
-  checkWindowNumber = TRUE, begin0based = TRUE)
+  checkWindowNumber = TRUE, begin0based = TRUE, threads = 10)
 }
 \arguments{
 \item{fname}{file name/path}
@@ -17,11 +17,13 @@ object}
 
 \item{checkWindowNumber}{check window number}
 
-\item{begin0based}{TRUE (default) or FALSE. If TRUE, then the start
+\item{begin0based}{TRUE (default) or FALSE. If TRUE, then the start}
+
+\item{threads}{number of threads for fread (default: 10)
 positions are considered to be 0-based}
 }
 \value{
-data.frame or [GRanges](https://bioconductor.org/packages/release/bioc/html/GenomicRanges.html) object
+data.frame or GRanges object
 }
 \description{
 read annotation data for windows
