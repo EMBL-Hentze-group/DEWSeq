@@ -39,9 +39,12 @@ knitr::opts_chunk$set(tidy=FALSE, cache=FALSE,
 
 Other Bioconductor package with a similar aim is
 [csaw](http://bioconductor.org/packages/csaw)
+Other Bioconductor package with a similar aim:
+ * [csaw](http://bioconductor.org/packages/csaw)
 
 Please get familiar with this Bioconductor package before you are using DEWSeq
 [DESea2](http://bioconductor.org/packages/DESeq2)
+ * [DESeq2](http://bioconductor.org/packages/DESeq2)
 
 
 ## eCLIP/iCLIP data preprocessing steps.
