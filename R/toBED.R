@@ -3,17 +3,29 @@
 
 #' @export
 #' @title windows/regions to BED
-#' @description given output of \code{\link{extractRegions}}, \code{\link({results_DEWSeq}} and significance thresholds, extract significant windows,
-#' regions (merged neighboring significant windows) and create a BED file for visualization
-#' @param windowRes output data.frame from \code{\link{results_DEWSeq}}
+#' @description given output of \code{\link{extractRegions}}, \code{\link{resultsDEWSeq}} and significance thresholds,
+#' extract significant windows, create regions by merging adjacent significant windows.
+#' Finally, write the output as a BED file for visualization.
+#'
+#' @param windowRes output data.frame from \code{\link{resultsDEWSeq}}
 #' @param regionRes output data.frame from \code{\link{extractRegions}}
+#' @param fileName filename to save BED output
 #' @param padjCol name of the adjusted pvalue column (default: padj)
 #' @param padjThresh threshold for p-adjusted value (default: 0.05)
 #' @param log2FoldChangeCol name of the log2foldchange column (default: log2FoldChange)
 #' @param log2FoldChangeThresh threshold for log2foldchange value (default:1)
 #' @param trackName name of this track, for visualization
 #' @param description description of this track, for visualization
-#' @return NULL
+#'
+#' @return write to file
+#'
+#' @examples
+#' # need specific examples
+#' \dontrun{
+#' 'toBED(windowRes=windowRes,regionRes=regionRes,fileName="enrichedWindowsRegions.bed")'
+#' }
+#'
+
 toBED <- function(windowRes,regionRes,fileName,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,trackName='sliding windows',
                                                                                                                             description='sliding windows'){
     wRequiredCols <- c('unique_id','chromosome','begin','end','strand',padjCol,log2FoldChangeCol)
@@ -71,10 +83,10 @@ toBED <- function(windowRes,regionRes,fileName,padjCol='padj',padjThresh=0.05,lo
   regionRes$padj_avg <- round(((regionRes$padj_avg-allMin)/(allMax-allMin))*(bedrange[2]-bedrange[1])+bedrange[1])
   # now start writing
   write(sprintf('track name="%s" description="%s" visibility=2 itemRgb="On" useScore=1',trackName,description),file=fileName)
-  for(i in c(1:nrow(regionRes))){
+  for(i in seq_len(nrow(regionRes))){
     write(paste(regionRes[i,],collapse="\t"),file=fileName,append=TRUE)
   }
-  for(i in c(1:nrow(windowRes))){
+  for(i in seq_len(nrow(windowRes))){
       write(paste(windowRes[i,],collapse="\t"),file=fileName,append=TRUE)
   }
 }

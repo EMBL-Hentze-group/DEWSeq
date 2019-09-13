@@ -5,21 +5,25 @@
 \title{read annotation data}
 \usage{
 .readAnnotation(fname, uniqIds = NULL, asGRange = TRUE,
-  checkWindowNumber = TRUE, begin0based = TRUE)
+  checkWindowNumber = TRUE, begin0based = TRUE, threads = 10)
 }
 \arguments{
 \item{fname}{file name/path}
 
 \item{uniqIds}{filter stable and keep annotation for these unique ids}
 
-\item{asGRange}{boolean, whether to reaturn a GRange object or a data.frame object}
+\item{asGRange}{boolean, whether to reaturn a GRange object or a data.frame
+object}
 
 \item{checkWindowNumber}{check window number}
 
-\item{begin0based}{TRUE (default) or FALSE. If TRUE, then the start positions are considered to be 0-based}
+\item{begin0based}{TRUE (default) or FALSE. If TRUE, then the start}
+
+\item{threads}{number of threads for fread (default: 10)
+positions are considered to be 0-based}
 }
 \value{
-data.frame or [GRanges](https://bioconductor.org/packages/release/bioc/html/GenomicRanges.html) object
+data.frame or GRanges object
 }
 \description{
 read annotation data for windows

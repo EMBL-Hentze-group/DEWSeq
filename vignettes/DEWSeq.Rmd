@@ -5,7 +5,7 @@ date: "`r format(Sys.Date(), '%m/%d/%Y')`"
 abstract: >
   Put abstract here
 output:
-  BiocStyle::html_document:
+  rmarkdown::html_document:
     highlight: pygments
     toc: true
     fig_width: 5

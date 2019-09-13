@@ -10,7 +10,7 @@ topWindowStats(windowRes, padjCol = "padj", padjThresh = 0.05,
   treatmentName = "treatment", controlName = "control", op = "max")
 }
 \arguments{
-\item{windowRes}{output data.frame from \code{\link{results_DEWSeq}}}
+\item{windowRes}{output data.frame from \code{\link{resultsDEWSeq}}}
 
 \item{padjCol}{name of the adjusted pvalue column (default: padj)}
 
@@ -85,4 +85,11 @@ The output data.frame of this function has the following columns:
  \item \code{controlName.mean.meanWindow}: mean of the normalized expression of the control samples for log2FCWindow, \code{colnames(normalizedCounts)} not found in \code{treatmentCols} are used to calculate mean and controlName is from the parameter \code{controlName}
  \item the next columns will be normalized expression values  of the meanWindow from individual treatment and control samples
 }
+}
+\examples{
+# need specific examples
+\dontrun{
+'topWindoPerRegionStats <- topWindowStats(windowRes=windowRes,normalizedCount=normCount)'
+}
+
 }

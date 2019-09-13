@@ -1,5 +1,12 @@
 
 #' @export
+#'
+#' @importFrom BiocGenerics sort
+#' @importFrom GenomeInfoDb sortSeqlevels
+#' @importFrom GenomicRanges makeGRangesFromDataFrame reduce
+#' @importFrom S4Vectors na.omit
+#' @importFrom utils setTxtProgressBar txtProgressBar
+#'
 #' @title stats for the top windows in each region
 #' @description given window resutls and normalized counts, combine significant overlapping windows into regions and
 #' for each region, pick two candidate winodws:
@@ -50,7 +57,7 @@
 #'  \item the next columns will be normalized expression values  of the meanWindow from individual treatment and control samples
 #' }
 #'
-#' @param windowRes output data.frame from \code{\link{results_DEWSeq}}
+#' @param windowRes output data.frame from \code{\link{resultsDEWSeq}}
 #' @param padjCol name of the adjusted pvalue column (default: padj)
 #' @param padjThresh threshold for p-adjusted value (default: 0.05)
 #' @param log2FoldChangeCol name of the log2foldchange column (default: log2FoldChange)
@@ -62,6 +69,13 @@
 #' @param controlName control name, see Details (default: control)
 #' @param op can be one of \code{max} (default) or \code{min}. \code{max} returns windows with maximum log2FoldChange and mean normalized expression in the \code{treatmentCols} columns,
 #' \code{min} returns windows with minimum log2FoldChange and mean normalized expression
+#'
+#'
+#' @examples
+#' # need specific examples
+#' \dontrun{
+#' 'topWindoPerRegionStats <- topWindowStats(windowRes=windowRes,normalizedCount=normCount)'
+#' }
 #'
 #' @return data.frame
 topWindowStats <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,begin0based=TRUE, normalizedCounts,
@@ -112,11 +126,11 @@ topWindowStats <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
     stop('There are no common elements between significant windows/regions in under the current threshold and windows in normalizedCounts data.frame!\nPlease lower your significance cut-off thresholds and manually check if there are any significant windows under the threshold')
   }
   sigDat <- cbind(sigDat[commonids,],normalizedCounts[commonids,])
-  sigRange <- GenomicRanges::makeGRangesFromDataFrame(sigDat,seqnames.field = 'gene_id',start.field = 'begin',end.field = 'end',strand.field = 'strand',
+  sigRange <- makeGRangesFromDataFrame(sigDat,seqnames.field = 'gene_id',start.field = 'begin',end.field = 'end',strand.field = 'strand',
                                                       ignore.strand=FALSE,starts.in.df.are.0based=begin0based,keep.extra.columns = TRUE)
-  sigRange <-  GenomeInfoDb::sortSeqlevels(sigRange)
-  sigRange <- BiocGenerics::sort(sigRange)
-  sigReduce <- GenomicRanges::reduce(sigRange,drop.empty.ranges=TRUE,with.revmap=TRUE,min.gapwidth=1)
+  sigRange <-  sortSeqlevels(sigRange)
+  sigRange <- sort(sigRange)
+  sigReduce <- reduce(sigRange,drop.empty.ranges=TRUE,with.revmap=TRUE,min.gapwidth=1)
   if(nrow(mcols(sigReduce))<1){
     stop('Cannot find overlapping windows (regions) in input results!')
   }
@@ -134,8 +148,8 @@ topWindowStats <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
   outDat$unique_id.meanWindow <- 'same window'
   outDat[,c('begin.meanWindow','end.meanWindow',meanMean,meanWindowCols)] <- 0
   # mean, log2foldchange comparison data.frame
-  pb <- utils::txtProgressBar(min=0,max=length(sigReduce),style = 3)
-  for(i in c(1:length(sigReduce))){
+  pb <- txtProgressBar(min=0,max=length(sigReduce),style = 3)
+  for(i in seq_len(length(sigReduce))){
     mergeInd <- sigReduce$revmap[[i]]
     outDat[i,'regionStartId'] <- mcols(sigRange)[min(mergeInd),'unique_id']
     outDat[i,'regionStartId'] <- mcols(sigRange)[min(mergeInd),'unique_id']
@@ -173,7 +187,7 @@ topWindowStats <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
     outDat[i,meanWindowCols] <- unlist(mcols(sigRange)[mergeInd[meanInd],colnames(normalizedCounts)])
     # fill out mean window data
     # progress
-    utils::setTxtProgressBar(pb=pb,value=i)
+    setTxtProgressBar(pb=pb,value=i)
   }
   close(pb)
   if(begin0based){ # return 0 based start positions
