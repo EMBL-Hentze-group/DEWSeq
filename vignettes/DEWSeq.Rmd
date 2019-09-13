@@ -5,7 +5,7 @@ date: "`r format(Sys.Date(), '%m/%d/%Y')`"
 abstract: >
   Put abstract here
 output:
-  rmarkdown::html_document:
+  BiocStyle::html_document:
     highlight: pygments
     toc: true
     fig_width: 5
@@ -37,67 +37,22 @@ knitr::opts_chunk$set(tidy=FALSE, cache=FALSE,
 #> [10.1186/s13059-014-0550-8](http://dx.doi.org/10.1186/s13059-014-0550-8)
 ```
 
-Other Bioconductor package with a similar aim is
-[csaw](http://bioconductor.org/packages/csaw)
-Other Bioconductor package with a similar aim:
+
+Other Bioconductor package with similar aim:
  * [csaw](http://bioconductor.org/packages/csaw)
 
 Please get familiar with this Bioconductor package before you are using DEWSeq
-[DESea2](http://bioconductor.org/packages/DESeq2)
  * [DESeq2](http://bioconductor.org/packages/DESeq2)
 
 
-## eCLIP/iCLIP data preprocessing steps.
+## Prerequisits for DEWSeq2
 
-### From raw to bam files
+Replicates and Input Controls - the most important prerequisit for DEWSeq
 
-eCLIP or iCLIP data preprocessing can be extensive, exhaustive and frustrating. 
-Generally the steps for prepressing are:
+### True Input Controls
 
-
-* Unique Molecular Identifiers (UMIs) extraction and demultiplexing
-  ([Je Suite](https://gbcs.embl.de/portal/tiki-index.php?page=Je), or other
-  tools). Usually the UMI is extracted from the fasta sequence and put into
-  the header. Different tools put it at different locations (beginning or
-  end of fastq header).
-* Read quality filtering (optional)
-* Trimming of sequencing adapters (with tools like
-  [cutadapt](https://cutadapt.readthedocs.io))
-* Second trimming step (extremely important for paired-end (standard) eCLIP
-  libraries). This is needed because a 'bug' in the standard paired-end eCLIP
-  protocol. Hint: Single-seCLIP is a lot of advantages to standard, paired-end
-  eCLIP, one of them, this step is not needed.
-* Quality Control (fastqc with multiqc summary statistics is a common).
-* Alignment (Novoalign, STAR, or other (splice-aware) aligners, depending
-  on your organisms)
-* PCR duplication removal also called UMI evaluation
-  [Je Suite](https://gbcs.embl.de/portal/tiki-index.php?page=Je) or 
-  custom tools depending on your protocol and single-read or paired-end setup.
-
-Naturally, this can vary with different protocols and sequencing setups. 
-Sometimes you want to remove PCR duplicates by removing exact duplicates
-(before the UMI has been extracted to the header) to remove a bit of 
-complexity for further processing. Note that next-generation sequencers 
-have error rates. Therefore we highly recommend to use a non-extact overlap 
-PCR duplication removal algorithmn.
-
-Eventually, you will end up with *.bam* files.
-
-### From bam files to counts 
-
-#### htseq-clip for iCLIP/eCLIP data preprocessing
-
-
-http://www.hentze.embl.de/public/containers/htseq-clip.simg
-
-
-## Replicates and Controls - the most important prerequisit for DEWSeq
-
-
-### You need true input controls
-
-Most of the time, the CLIP signal and background are a mix from different
-transcripts with different expression levels. There is strong
+Most of the time, the CLIP signal and background are a mix from various
+transcripts with different expression levels. Please note, there is strong
 evidence that UV crosslinking does not affect RNAs in a linear fashion, 
 therefore a total RNA-seq is not an appropriate input control. Also IgG-,
 empty beads, or similar controls are not appropriate input controls. 
@@ -112,21 +67,258 @@ in fact is irresponsible not to do.
 ### Replicates
 
 The costs of CLIP experiments can be tempting to reduce the number of 
-replicate, but you should ask yourself how many replicates would you
+replicates, but you should ask yourself how many replicates would you
 use when performing RNA-seq. Usually, the answer is, at least three
 for the sample and three for the control (depending on many experimental
 factors which also will apply for your CLIP study). As a tumb of rule, 
-your number of replicates should not be less.
+your number of replicates ideally should not be less.
+
+## eCLIP/iCLIP data preprocessing steps
+
+### From raw to bam files
+
+eCLIP or iCLIP data preprocessing can be extensive and time-consuming. 
+Generally the steps for prepressing are:
+
+* Unique Molecular Identifiers (UMIs) extraction and demultiplexing
+  ([Je Suite](https://gbcs.embl.de/portal/tiki-index.php?page=Je), or other
+  tools). Usually the UMI is extracted from the fasta sequence and put into
+  the header. Different tools put it at different locations (beginning or
+  end of fastq header).
+* Read quality filtering (optional)
+* Trimming of sequencing adapters (with tools like
+  [cutadapt](https://cutadapt.readthedocs.io))
+* Second trimming step (extremely important for paired-end (standard) eCLIP
+  libraries). This is needed because a 'bug' in the standard paired-end eCLIP
+  protocol. Hint: Single-read seCLIP has a lot of advantages to standard,
+  paired-end eCLIP, one of them is that you can skip this preprocessing step.
+* Quality Control (fastqc with multiqc summary statistics or similar).
+* Alignment (Novoalign, STAR, or other (splice-aware) aligners, depending
+  on your organisms)
+* PCR duplication removal also called UMI evaluation
+  [Je Suite](https://gbcs.embl.de/portal/tiki-index.php?page=Je) or 
+  custom tools depending on your protocol and single-read or paired-end setup.
+  Please use tools which consider sequencing errors in the UMI and read 
+  sequences.
+* Sort and index bam files (samtools or similar)
+
+Eventually, you will end up with sorted *.bam* files.
+
+### From bam files to counts 
+
+#### htseq-clip for iCLIP/eCLIP data preprocessing
+
+htseq-clip is the preprocessing pipeline developed for the use for
+DEWSeq, but other tools may be used. htseq-clip does
+ * extract sites (typically crosslink sites) 
+ * flatten the annotation and create an annotation mapping file
+ * generate sliding windows from the flattened annotation 
+ * count sites for the sliding windows
+ * create count matrices 
+
+Also it can
+ * split the annotation into UTRs, CDS
+ * count non-overlapping regions (UTRs, CDS, exons, introns, etc) for 
+   enrichment plots or DESeq2 analysis
+
+Another feature is
+ * calculating the site distance to exon/intron junctions
+
+htseq-clip is provided as a singularity
+container and comes with a Snakemake workflow for processing on local computers,
+servers, or computer clusters.
+
+All you need is
+ * .bam files (PCR duplication removed, sorted)
+ * .bam.bai index files 
+ * .gff3 files (Preferrably from Gencode or similar)
+
+Please find all information, the documentation and downloads can be found here:
+http://www.hentze.embl.de/public/htseq-clip/
+
+Tip: You can use Sailfish, Kallisto, RSEM, Salmon or any (pseudo)aligner to 
+get an estimation of the different expression levels of transcripts. Use this to 
+filter the annotation before flattening it. 
+
+# DEWSeq Workflow 
+ 
+## Load the library
+
+First step is to load the library with this command
+
+```{r load library, eval = F}
+#eval = T
+require(DEWSeq)
+```
+
+## Importing data for DEWSeq
+
+### Load test data
+
+Use this command to load the YBX3 data set
+
+```{r load test data, eval = F}
+# eval = T
+data(YBX3eCLIPChr1)
+```
+
+This data contains three IP and three input controls (SMI) samples:
+
+```{r head of test data, eval = F}
+#eval = T
+YBX3eCLIPChr1
+```
+
+### From count matrix  
+
+We need to read in the 
+ * count matrix and the (UNIQUE_ID, counts per sample)
+ * annotation file (UNIQUE_ID, chromosome locations, other info)
+which can be prepared with htseq-clip (see above)
+
+For this, we recommend tidyr packages to read in the data swiftly
+
+```{r loading tidyverse, eval = F}
+library(tidyverse)
+```
+
+First we read in counts 
+
+```{r read in count matrix, eval = F}
+countData <- read_tsv("path/swcounts/count_matrix.txt.gz")
+```
+
+Then we read in the annotation data frame 
+
+```{r read in annotation, eval = F}
+annotationData <- read_tsv("path/annotation/annotation.txt.gz")
+```
+
+Finally we have to create a sample description
+```{r create colData, eval = F}
+colData <- data.frame(
+  row.names = colnames(countData), 
+  type      = factor(
+                c(rep("IP", <X>),    ##  change this accordingly
+                  rep("SMI", <Y>)),  ##
+                levels = c("IP", "SMI"))
+)
+```
+
+This function will parse the annotation file and create a DESeq object
+
+```{r example import, eval = F}
+ddw <- DESeqDataSetFromSlidingWindows(countData  = countData,
+                                      colData    = colData,
+                                      annotation = "path/to/annotation.txt.gz",
+                                      tidy       = T,
+                                      design     = ~type)
+```
+
+This will return a DESeq object with the coordinates and annotation stores as 
+rowAnnotation.
+
+## Prefiltering
+
+Prefiltering becomes even more important with large numbers of sliding windows. 
+Please find more details here:
+[http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#pre-filtering](DESeq2 vignette on pre-filtering)
+
+```{r row filtering, eval = F}
+# eval = T
+keep <- rowSums(counts(ddw)) >= 20
+ddw <- ddw[keep,]
+```
+
+## Estimating Size Factors
+
+The standard procedure to estimate size factors is 
+
+```{r estimate size factors, eval = F}
+ddw <- estimateSizeFactors(ddw)
+```
 
 
-## Preprocessing Pro Tip
+### Estimate size factors based on a specific set of RNAs
 
-Use Sailfish, Kallisto or any pseudoaligner to get an estimation of
-the different expression levels of transcripts. Use this to filter the
-annotation. 
+CLIP data often shows high expression of RNA contaminations, therefore you might 
+want to normalise based on protein coding genes only
+
+```{r filter for mRNAs, eval = F}
+# eval T
+ddw_mRNAs <- dds[
+```
 
 
+## Differential expressed windows analysis
 
+Estimate the dispersions and perform the wald test with these two functions.
+Please note, currently, DEWSeq does not support LRT tests.
+
+```{r, eval = F}
+# eval T
+ddw <- estimateDispersions(ddw)
+ddw <- nbinomWaldTest(ddw)
+```
+
+This performes a one-sided signficance test, looking for enrichment in the
+IP samples vs the SMI controls. Also it will perform a correction
+for p-values of overlapping windows: The function will determine how many 
+overlapping windows for each window there are (this can vary at the end of 
+features, e.g. a gene) and then perform Bonferroni for each window. 
+
+These family-wise corrected windows will corrected for multiple testing 
+with Benjamini-Hochberg.
+
+```{r results, eval = F}
+# eval = T
+resultWindows <- resultsDEWSeq(dds,
+                              contrast = c("type", "IP", "SMI"),
+                              tidy = T)
+```
+
+You might be interested to correct for multiple hypothesis testing with IHW.
+
+```{r IHW, eval = F}
+# eval = T
+
+suppressPackageStartupMessages(require(IHW))
+
+results[,"p_adj_IHW"] <- ihw(pBonferroni ~ baseMean, 
+                     data = resultWindows,
+                     alpha = 0.05,
+                     nfolds = 10)
+```
+
+## Combining regions
+
+`resultWindows` contains information about the differential expression of
+windows. Now we would like to combine overlapping windows to a binding region.
+
+
+```{r extractRegions, eval = F}
+# eval = T
+resultRegions <- extractRegions(windowRes = resultWindows,
+                                padjCol   = "p_adj_IHW",
+                                padjThresh = 0.05, 
+                                log2FoldChangeThresh = 0.5)
+```
+
+Since we already corrected for the family wise error, we use the
+`extractRegions` function to combine the overlapping significant windows and
+provide metrics for best and worst p-adjusted value, as well as best and 
+worst log2 fold change.
+
+```{r resultRegions output, eval = F}
+# eval = T
+head(resultRegions)
+```
+
+# Session Info
+
+```{r}
+sessionInfo()
+```
 
 
 

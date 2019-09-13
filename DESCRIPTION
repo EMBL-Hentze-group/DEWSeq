@@ -20,7 +20,8 @@ Depends:
     BiocParallel
 Suggests:
     knitr,  
-    rmarkdown
+    rmarkdown,
+    BiocStyle
 VignetteBuilder:
     knitr
 biocViews: Sequencing,
