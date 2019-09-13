@@ -1,17 +1,24 @@
 ---
-title: "Analyzing eCLIP data with DEWSeq"
-author: "Thomas Schwarzl and Sudeep Sahadevan"
+title: "Analyzing eCLIP/iCLIP data with DEWSeq"
+author:
+- name: Sudeep Sahadevan
+  affiliation: European Molecular Biology Laboratory, Heidelberg, Germany
+  email: sahadevan@embl.de
+- name: Thomas Schwarzl
+  affiliation: European Molecular Biology Laboratory, Heidelberg, Germany
+  email: schwarzl@embl.de
 date: "`r format(Sys.Date(), '%m/%d/%Y')`"
+#package: DEWSeq
 abstract: >
-  Put abstract here
+  bla
 output:
   BiocStyle::html_document:
     highlight: pygments
     toc: true
     fig_width: 5
-#bibliography: library.bib
+bibliography: library.bib
 vignette: >
-  %\VignetteIndexEntry{Analyzing eCLIP data with DEWSeq}
+  %\VignetteIndexEntry{Analyzing eCLIP/iCLIP data with DEWSeq}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
   %\usepackage[utf8]{inputenc}
@@ -26,7 +33,7 @@ knitr::opts_chunk$set(tidy=FALSE, cache=FALSE,
 ```	
 
 
-# Introduction
+# Introduction 
 
 ```{r, eval = F, echo = F}
 #**Note:** if you use DEWSeq in published research, please cite:
@@ -40,28 +47,61 @@ knitr::opts_chunk$set(tidy=FALSE, cache=FALSE,
 
 Other Bioconductor package with similar aim:
 
-* [csaw](http://bioconductor.org/packages/csaw)
+* `r Biocpkg("csaw")`
 
 Please get familiar with this Bioconductor package before you are using DEWSeq
 
-* [DESeq2](http://bioconductor.org/packages/DESeq2)
+* `r Biocpkg("DESeq2")`
 
+## Introduction to eCLIP sequencing 
+
+RNA-binding proteins (RBPs) play a key role in the life-time 
+of RNAs. They are involved in RNA synthesis, stability, 
+degradation, transport and translation and play an 
+important layer of regulation in the cell. Over 1900 
+RBPs were detected [@Hentze2018] in different high-throughput 
+detection studies, a lot of them without known RNA-binding
+function.
+
+It is of great interest to detect binding sites of RBPs. 
+iCLIP (individual nucleotide resolution crosslinking 
+and immunoprecipitation) [@Konig2010] and the derived 
+eCLIP (enhanced CLIP) [@VanNostrand2016] sequencing protocols
+rely on UV crosslinking inducing covalent bonds of RNA
+and proteins in close proximity. When reverse transcribing
+the RNA, a majority of the time the reverse transcriptase 
+will fall of at the crosslink site.
+
+![Crosslink site trunction at reverse transcription](truncation.png)
+
+In iCLIP and eCLIP truncation events are extracted as one nucleotide position
+next to the cDNA fragment (aligned read). In the classical protocols real 
+truncations cannot be distinguished from read-through reads or other 
+interferences. This this might be individual for many proteins (and the
+remaining polypoptide of the digested protein). Other protocols like HITS-CLIP
+and PAR-CLIP [@Hafner2010] rely exclusively on read-through events only 
+(although using other reverse transcriptases). Hybrid approaches do exist but
+the technical difficulty of said protocols and many optimizations steps makes 
+them rather hard to compare. After all it is a heuristic, iCLIP/eCLIP rely 
+on single-nucleotide positions.
 
 ## Prerequisits for DEWSeq
 
-Replicates and Input Controls are required for DEWSeq
+Replicates and input controls are required for DEWSeq
 
-### True Input Controls
+### True input controls
 
-Most of the time, the CLIP signal and background are a mix from various
-transcripts with different expression levels. UV crosslinking does not 
-affect RNAs in a linear fashion, therefore an appropriate input control
-is needed for the analysis of eCLIP/iCLIP data. Unfortunately, total
-RNA-seq does not help, also IgG-, empty beads, or similar controls are 
+Typically, CLIP-seq samples do have a lot of background which consists 
+of a mix of various transcripts with different expression levels. 
+Additionally, UV crosslinking does not  affect RNAs in a linear fashion, 
+therefore an appropriate input control is needed for the analysis of
+eCLIP/iCLIP data. Unfortunately, total RNA-seq does not reflect the 
+UV crosslinked background, also IgG-, empty beads, or similar controls are 
 not appropriate input controls. We recommend size-matched input controls
-(SMI) controls as performed in the eCLIP protocol. This type of input 
-control is not protocol specific, therefore can be easily adapted to
-iCLIP or other CLIP studies. 
+(SMI) controls as performed in the eCLIP protocol [@VanNostrand2016]. 
+This type of input control is not protocol specific, therefore can be 
+easily adapted to iCLIP or other CLIP studies. Most importantly, it can
+control for truncations caused by interferences.
 
 We recommend to use IgG or empty beads controls to flag (expression 
 dependent) regions for optional removal. 
@@ -70,22 +110,23 @@ dependent) regions for optional removal.
 
 Biological replicates in high-throughput studies are needed in the 
 significance testing process to ensure reproducibility of the results.
-Please refer to the [csaw](http://bioconductor.org/packages/csaw) 
-package for discussion on this topic.
+Please refer to the `r Biocpkg("csaw")` package for discussion on this topic.
 
 In general, we recommend to ask yourself how many replicates would you
 use when performing RNA-seq. Usually, the answer is, at least three
 for the sample and three for the control (depending on many experimental
 factors which also will apply for your CLIP study). As a tumb of rule, 
 your number of replicates ideally should not be less if you are 
-interested in a transcriptome wide analysis of your RNA-binding protein.
+interested in an transcriptome wide analysis of your RNA-binding protein.
 
-## eCLIP/iCLIP data preprocessing steps
+### Count data and annotation
 
-### From raw to bam files
+The preprocessing is done in two sections
+
+#### From fastq to bam files
 
 eCLIP or iCLIP data preprocessing can be extensive and time-consuming. 
-Generally the steps for prepressing are:
+Generally the steps for preprocessing are:
 
 * Unique Molecular Identifiers (UMIs) extraction and demultiplexing
   ([Je Suite](https://gbcs.embl.de/portal/tiki-index.php?page=Je), or other
@@ -97,7 +138,7 @@ Generally the steps for prepressing are:
   [cutadapt](https://cutadapt.readthedocs.io))
 * Second trimming step (extremely important for paired-end (standard) eCLIP
   libraries). This is needed because a 'bug' in the standard paired-end eCLIP
-  protocol. Hint: Single-read seCLIP has a lot of advantages to standard,
+  protocol. Hint: Single-read seCLIP [@VanNostrand2017] has a lot of advantages to standard,
   paired-end eCLIP, one of them is that you can skip this preprocessing step.
 * Quality Control (fastqc with multiqc summary statistics or similar).
 * Alignment (Novoalign, STAR, or other (splice-aware) aligners, depending
@@ -111,9 +152,7 @@ Generally the steps for prepressing are:
 
 Eventually, you will end up with sorted *.bam* files.
 
-### From bam files to counts 
-
-#### htseq-clip for iCLIP/eCLIP data preprocessing
+#### From bam and gff3 files to count matrix and annotation
 
 htseq-clip is the preprocessing pipeline developed for the use for
 DEWSeq, but other tools may be used. htseq-clip does
@@ -148,8 +187,14 @@ Tip: You can use Sailfish, Kallisto, RSEM, Salmon or any (pseudo)aligner to
 get an estimation of the different expression levels of transcripts. Use this to 
 filter the annotation before flattening it. 
 
-# DEWSeq Workflow 
+# Analysis strategies for CLIP data
+
+RNA-binding proteins have different binding modes to ... #TODO
+
+# Binding sites detection with DEWSeq
  
+DEWSeq uses a sliding window approach with DESeq2 for enriched binding sites. 
+
 ## Load the library
 
 First step is to load the library with this command
@@ -326,12 +371,34 @@ worst log2 fold change.
 head(resultRegions)
 ```
 
+# Region-testing with DESeq2
+
+## Loading data
+
+### Loading Testdata
+
+```{r loading region test data, eval = F}
+# eval = T
+data(YBX3eCLIPregion)
+```
+
+
+## Simple Enrichment
+
+### Summing up IP 
+
+
+### Plotting enrichment IP over SMI
+
+
+
 # Session Info
 
 ```{r}
 sessionInfo()
 ```
 
+# References
 
 
 
