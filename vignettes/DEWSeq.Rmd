@@ -26,7 +26,7 @@ knitr::opts_chunk$set(tidy=FALSE, cache=FALSE,
 ```	
 
 
-# Standard workflow
+# Introduction
 
 ```{r, eval = F, echo = F}
 #**Note:** if you use DEWSeq in published research, please cite:
@@ -39,39 +39,46 @@ knitr::opts_chunk$set(tidy=FALSE, cache=FALSE,
 
 
 Other Bioconductor package with similar aim:
- * [csaw](http://bioconductor.org/packages/csaw)
+
+* [csaw](http://bioconductor.org/packages/csaw)
 
 Please get familiar with this Bioconductor package before you are using DEWSeq
- * [DESeq2](http://bioconductor.org/packages/DESeq2)
+
+* [DESeq2](http://bioconductor.org/packages/DESeq2)
 
 
-## Prerequisits for DEWSeq2
+## Prerequisits for DEWSeq
 
-Replicates and Input Controls - the most important prerequisit for DEWSeq
+Replicates and Input Controls are required for DEWSeq
 
 ### True Input Controls
 
 Most of the time, the CLIP signal and background are a mix from various
-transcripts with different expression levels. Please note, there is strong
-evidence that UV crosslinking does not affect RNAs in a linear fashion, 
-therefore a total RNA-seq is not an appropriate input control. Also IgG-,
-empty beads, or similar controls are not appropriate input controls. 
-We recommend to flag enriched regions which show signal in IgG or empty
-beads controls. 
+transcripts with different expression levels. UV crosslinking does not 
+affect RNAs in a linear fashion, therefore an appropriate input control
+is needed for the analysis of eCLIP/iCLIP data. Unfortunately, total
+RNA-seq does not help, also IgG-, empty beads, or similar controls are 
+not appropriate input controls. We recommend size-matched input controls
+(SMI) controls as performed in the eCLIP protocol. This type of input 
+control is not protocol specific, therefore can be easily adapted to
+iCLIP or other CLIP studies. 
 
-You need SMI controls (see eCLIP protocol) or other type of true input
-control data. Please not that in the iCLIP field there is a wide 
-ignorance towards SMI controls, although you can be easily done and
-in fact is irresponsible not to do. 
+We recommend to use IgG or empty beads controls to flag (expression 
+dependent) regions for optional removal. 
 
 ### Replicates
 
-The costs of CLIP experiments can be tempting to reduce the number of 
-replicates, but you should ask yourself how many replicates would you
+Biological replicates in high-throughput studies are needed in the 
+significance testing process to ensure reproducibility of the results.
+Please refer to the [csaw](http://bioconductor.org/packages/csaw) 
+package for discussion on this topic.
+
+In general, we recommend to ask yourself how many replicates would you
 use when performing RNA-seq. Usually, the answer is, at least three
 for the sample and three for the control (depending on many experimental
 factors which also will apply for your CLIP study). As a tumb of rule, 
-your number of replicates ideally should not be less.
+your number of replicates ideally should not be less if you are 
+interested in a transcriptome wide analysis of your RNA-binding protein.
 
 ## eCLIP/iCLIP data preprocessing steps
 
@@ -110,25 +117,26 @@ Eventually, you will end up with sorted *.bam* files.
 
 htseq-clip is the preprocessing pipeline developed for the use for
 DEWSeq, but other tools may be used. htseq-clip does
- * extract sites (typically crosslink sites) 
- * flatten the annotation and create an annotation mapping file
- * generate sliding windows from the flattened annotation 
- * count sites for the sliding windows
- * create count matrices 
 
-Also it can
- * split the annotation into UTRs, CDS
- * count non-overlapping regions (UTRs, CDS, exons, introns, etc) for 
+* extract sites (typically crosslink sites) 
+* flatten the annotation and create an annotation mapping file
+* generate sliding windows from the flattened annotation 
+* count sites for the sliding windows
+* create count matrices 
+
+in addition it will
+
+* split the annotation into UTRs, CDS
+* count non-overlapping regions (UTRs, CDS, exons, introns, etc) for 
    enrichment plots or DESeq2 analysis
-
-Another feature is
- * calculating the site distance to exon/intron junctions
+* calculating the site distance to exon/intron junctions
 
 htseq-clip is provided as a singularity
 container and comes with a Snakemake workflow for processing on local computers,
 servers, or computer clusters.
 
 All you need is
+
  * .bam files (PCR duplication removed, sorted)
  * .bam.bai index files 
  * .gff3 files (Preferrably from Gencode or similar)
@@ -172,8 +180,10 @@ YBX3eCLIPChr1
 ### From count matrix  
 
 We need to read in the 
- * count matrix and the (UNIQUE_ID, counts per sample)
- * annotation file (UNIQUE_ID, chromosome locations, other info)
+
+* count matrix and the (UNIQUE_ID, counts per sample)
+* annotation file (UNIQUE_ID, chromosome locations, other info)
+
 which can be prepared with htseq-clip (see above)
 
 For this, we recommend tidyr packages to read in the data swiftly
@@ -199,8 +209,8 @@ Finally we have to create a sample description
 colData <- data.frame(
   row.names = colnames(countData), 
   type      = factor(
-                c(rep("IP", <X>),    ##  change this accordingly
-                  rep("SMI", <Y>)),  ##
+                c(rep("IP", 3),    ##  change this accordingly
+                  rep("SMI", 3)),  ##
                 levels = c("IP", "SMI"))
 )
 ```
@@ -210,7 +220,7 @@ This function will parse the annotation file and create a DESeq object
 ```{r example import, eval = F}
 ddw <- DESeqDataSetFromSlidingWindows(countData  = countData,
                                       colData    = colData,
-                                      annotation = "path/to/annotation.txt.gz",
+                                      annotation = annotationData,
                                       tidy       = T,
                                       design     = ~type)
 ```
@@ -246,7 +256,9 @@ want to normalise based on protein coding genes only
 
 ```{r filter for mRNAs, eval = F}
 # eval T
-ddw_mRNAs <- dds[
+ddw_mRNAs <- dds[ mcol(srowRanges(dds))[,"gene_type"] == "protein_coding", ]
+ddw <- estimateSizeFactors(ddw_mRNAs)
+rm(ddw_mRNAs)
 ```
 
 
