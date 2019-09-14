@@ -3,14 +3,13 @@ title: "Analyzing eCLIP/iCLIP data with DEWSeq"
 author:
 - name: Sudeep Sahadevan
   affiliation: European Molecular Biology Laboratory, Heidelberg, Germany
-  email: sahadevan@embl.de
 - name: Thomas Schwarzl
   affiliation: European Molecular Biology Laboratory, Heidelberg, Germany
   email: schwarzl@embl.de
 date: "`r format(Sys.Date(), '%m/%d/%Y')`"
-#package: DEWSeq
+package: DEWSeq
 abstract: >
-  bla
+  bla 
 output:
   BiocStyle::html_document:
     highlight: pygments
@@ -25,15 +24,13 @@ vignette: >
 ---
 
 ```{r setup, echo=FALSE, results="hide"}
-#  DEWSeq package version: `r packageVersion("DESeq2")` <- this goes into abstract
-
 knitr::opts_chunk$set(tidy=FALSE, cache=FALSE,
                       dev="png",
                       message=FALSE, error=FALSE, warning=TRUE)
 ```	
 
+# Preface 
 
-# Introduction 
 
 ```{r, eval = F, echo = F}
 #**Note:** if you use DEWSeq in published research, please cite:
@@ -44,6 +41,7 @@ knitr::opts_chunk$set(tidy=FALSE, cache=FALSE,
 #> [10.1186/s13059-014-0550-8](http://dx.doi.org/10.1186/s13059-014-0550-8)
 ```
 
+## Related packages 
 
 Other Bioconductor package with similar aim:
 
@@ -52,6 +50,13 @@ Other Bioconductor package with similar aim:
 Please get familiar with this Bioconductor package before you are using DEWSeq
 
 * `r Biocpkg("DESeq2")`
+* `r Biocpkg("IHW")`
+
+## Acknowledgements
+
+Wolfgang Huber for mentoring, advice and discussion. Benjamin Lang and Gian Tartaglia for great help with functional analysis and benchmarking. Mike Love, Simon Anders, Bernd Klaus and Frederick Ziebell for comments and discussion.
+
+# Introduction 
 
 ## Introduction to eCLIP sequencing 
 
@@ -64,15 +69,19 @@ detection studies, a lot of them without known RNA-binding
 function.
 
 It is of great interest to detect binding sites of RBPs. 
-iCLIP (individual nucleotide resolution crosslinking 
-and immunoprecipitation) [@Konig2010] and the derived 
-eCLIP (enhanced CLIP) [@VanNostrand2016] sequencing protocols
+individual nucleotide resolution crosslinking 
+and immunoprecipitation (iCLIP) [@Konig2010] and the derived protocol
+enhanced CLIP (eCLIP) [@VanNostrand2016] sequencing protocols
 rely on UV crosslinking inducing covalent bonds of RNA
 and proteins in close proximity. When reverse transcribing
 the RNA, a majority of the time the reverse transcriptase 
 will fall of at the crosslink site.
 
-![Crosslink site trunction at reverse transcription](truncation.png)
+
+```{r, fig.cap = "Crosslink site trunction at reverse transcription", fig.width=200,echo =F}
+knitr::include_graphics("truncation.png")
+```
+
 
 In iCLIP and eCLIP truncation events are extracted as one nucleotide position
 next to the cDNA fragment (aligned read). In the classical protocols real 
@@ -85,14 +94,77 @@ the technical difficulty of said protocols and many optimizations steps makes
 them rather hard to compare. After all it is a heuristic, iCLIP/eCLIP rely 
 on single-nucleotide positions.
 
+
+```{r, fig.cap = "Truncation sites (often referred to as crosslink sites) are the neighboring position of the aligned read.", fig.small = T, echo = F} 
+# fig.width=200, out.width="200px"
+knitr::include_graphics("truncationsite.png")
+```
+
+## DEWSeq explained 
+
+### Understanding the signal
+
+#### Binding modes
+
+Unlike transcription factors, RNA-binding proteins have many different binding
+modes [@Hentze2018], some bind sequence specific, some have preference for 
+structures (like stem-loops), some like to bind RNA modifications,
+others are mostly found at UTRs etc. and most of them do not have a known RNA-binding domain and bind with disordered regions to unkown preferences. 
+
+```{r, fig.cap = "Different binding modes of RNA-binding proteins", fig.wide = T, echo = F} 
+# fig.width=200, out.width="200px"
+knitr::include_graphics("binding_modes.png")
+```
+All these different binding smode result in different crosslinking patterns.
+
+#### Chance of crosslinking
+
+Additionally, UV crosslinking has differe
+
+```{r, fig.cap = "Chance of crosslinking", fig.small = T, echo = F} 
+# fig.width=200, out.width="200px"
+knitr::include_graphics("crosslinking_chance.png")
+```
+
+#### Background and antibodies
+
+Antibodies 
+CLIP samples have a lot of background. 
+
+#### RNAase concentrations and protein protection
+
+In the iCLIP and eCLIP protocols...
+
+### Method
+
+#### Sliding window testing 
+
+We use a one-sided wald test from `r Biocpkg("DESeq2")` testing for enrichment.
+
+```{r, fig.cap = "Sliding window approach with single-nucleotide position count data", echo = F} 
+# fig.width=200, out.width="200px"
+knitr::include_graphics("dewseqoverview.png")
+```
+
+#### Combining significant windows
+
+Since this truncation sites or crosslinking sites are only one nucleotide, 
+in contrary to large fragments detected in ChIP-seq, 
+
+
+```{r, fig.cap = "Sliding window approach with single-nucleotide position count data", echo = F, fig.small = T} 
+# fig.width=200, out.width="200px"
+knitr::include_graphics("overlapping_sliding_windows.png")
+```
+
 ## Prerequisits for DEWSeq
 
 Replicates and input controls are required for DEWSeq
 
 ### True input controls
 
-Typically, CLIP-seq samples do have a lot of background which consists 
-of a mix of various transcripts with different expression levels. 
+Typically, CLIP-seq samples do have a lot of background which comes from
+a mix of various transcripts with different expression levels.
 Additionally, UV crosslinking does not  affect RNAs in a linear fashion, 
 therefore an appropriate input control is needed for the analysis of
 eCLIP/iCLIP data. Unfortunately, total RNA-seq does not reflect the 
@@ -119,11 +191,15 @@ factors which also will apply for your CLIP study). As a tumb of rule,
 your number of replicates ideally should not be less if you are 
 interested in an transcriptome wide analysis of your RNA-binding protein.
 
-### Count data and annotation
+# Data input
 
-The preprocessing is done in two sections
+DEWSeq needs a countmatrix and preprocessed annotation. The
+preprocessing is done in two general steps.
 
-#### From fastq to bam files
+1. Raw data preprocessing, alignment and PCR duplication removal
+2. Extraction of crosslink sites, preprocessing of annotation and counting.
+
+## Raw data preprocessing: From fastq to bam files
 
 eCLIP or iCLIP data preprocessing can be extensive and time-consuming. 
 Generally the steps for preprocessing are:
@@ -140,8 +216,8 @@ Generally the steps for preprocessing are:
   libraries). This is needed because a 'bug' in the standard paired-end eCLIP
   protocol. Hint: Single-read seCLIP [@VanNostrand2017] has a lot of advantages to standard,
   paired-end eCLIP, one of them is that you can skip this preprocessing step.
-* Quality Control (fastqc with multiqc summary statistics or similar).
-* Alignment (Novoalign, STAR, or other (splice-aware) aligners, depending
+* Quality Control ([fastqc](https://github.com/s-andrews/FastQC) with [multiqc](https://multiqc.info/) summary statistics or similar).
+* Alignment ([Novoalign](http://www.novocraft.com/products/novoalign/), [STAR](https://github.com/alexdobin/STAR), or other (splice-aware) aligners, depending
   on your organisms)
 * PCR duplication removal also called UMI evaluation
   [Je Suite](https://gbcs.embl.de/portal/tiki-index.php?page=Je) or 
@@ -152,7 +228,7 @@ Generally the steps for preprocessing are:
 
 Eventually, you will end up with sorted *.bam* files.
 
-#### From bam and gff3 files to count matrix and annotation
+## Crosslink site extraction and counting: From bam and gff3 files to count matrix and annotation
 
 htseq-clip is the preprocessing pipeline developed for the use for
 DEWSeq, but other tools may be used. htseq-clip does
@@ -189,7 +265,8 @@ filter the annotation before flattening it.
 
 # Analysis strategies for CLIP data
 
-RNA-binding proteins have different binding modes to ... #TODO
+
+   
 
 # Binding sites detection with DEWSeq
  
@@ -371,6 +448,16 @@ worst log2 fold change.
 head(resultRegions)
 ```
 
+
+# Simple Enrichment
+
+## Summing up IP 
+
+
+## Plotting enrichment IP over SMI
+
+
+
 # Region-testing with DESeq2
 
 ## Loading data
@@ -382,13 +469,9 @@ head(resultRegions)
 data(YBX3eCLIPregion)
 ```
 
+# Discussion
 
-## Simple Enrichment
-
-### Summing up IP 
-
-
-### Plotting enrichment IP over SMI
+# FAQ
 
 
 
