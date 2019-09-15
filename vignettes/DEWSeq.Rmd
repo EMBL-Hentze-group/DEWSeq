@@ -361,13 +361,19 @@ library(tidyverse)
 First we read in counts 
 
 ```{r read in count matrix, eval = F}
-countData <- read_tsv("path/swcounts/count_matrix.txt.gz")
+countData <- fread("path/swcounts/count_matrix.txt.gz", sep = "\t")
+
+# or alternatively with tidyr:
+# countData <- read_tsv("path/swcounts/count_matrix.txt.gz")
 ```
 
 Then we read in the annotation data frame 
 
 ```{r read in annotation, eval = F}
-annotationData <- read_tsv("path/annotation/annotation.txt.gz")
+annotationData <- fread("path/annotation/annotation.txt.gz", sep = "\t")
+
+# or alternatively with tidyr:
+#annotationData <- read_tsv("path/annotation/annotation.txt.gz")
 ```
 
 Finally we have to create a sample description
