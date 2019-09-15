@@ -9,7 +9,12 @@ author:
 date: "`r format(Sys.Date(), '%m/%d/%Y')`"
 package: DEWSeq
 abstract: >
-  bla 
+  In the analysis for RNA-binding protein targets is the detection of 
+  differentially expressed regions. In eCLIP or iCLIP sequencing or similiar
+  protocols provide count data for individual nucleotide. DEWSeq implements
+  a sliding window approach for the analysis of enriched regions in the IP
+  over input control samples. This vignette explains properties of i/eCLIP
+  and how to perform an analysis with count data from sliding windows.
 output:
   BiocStyle::html_document:
     highlight: pygments
@@ -54,7 +59,7 @@ Please get familiar with this Bioconductor package before you are using DEWSeq
 
 ## Acknowledgements
 
-Wolfgang Huber for mentoring, advice and discussion. Benjamin Lang and Gian Tartaglia for great help with functional analysis and benchmarking. Mike Love, Simon Anders, Bernd Klaus and Frederick Ziebell for comments and discussion.
+Wolfgang Huber and Matthias Hentze for mentoring, advice and discussion. Benjamin Lang and Gian Tartaglia for great help with functional analysis and benchmarking. Mike Love, Simon Anders, Bernd Klaus and Frederick Ziebell for comments and discussion.
 
 # Introduction 
 
@@ -100,7 +105,7 @@ on single-nucleotide positions.
 knitr::include_graphics("truncationsite.png")
 ```
 
-## DEWSeq explained 
+## The idea behind DEWSeq 
 
 ### Understanding the signal
 
@@ -119,37 +124,71 @@ All these different binding smode result in different crosslinking patterns.
 
 #### Chance of crosslinking
 
-Additionally, UV crosslinking has differe
+UV crosslinking at 254 nm is used to induce covalent (very strong!) chemical
+bonds within very close proximity of RNAs to proteins. This allows a "snapshot"
+of the RNA binding and ensures no disassociation of the complexes in further steps. Unfortunately, thisprocess is very inefficient, typically crosslinking with Stratlinker(R) UV crosslinkers do have an effecticity of ~1-3% or less. Newer
+crosslinkers with lasers can go up to ~10-20% crosslinking efficiency depending
+on protein and setup. 
 
 ```{r, fig.cap = "Chance of crosslinking", fig.small = T, echo = F} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("crosslinking_chance.png")
 ```
 
+Depending on the type of protein and the binding mode, this can result in 
+different crosslinking pattern for each protein.
+
 #### Background and antibodies
 
-Antibodies 
-CLIP samples have a lot of background. 
+When you IP your (crosslinked) protein and perform sequencing without any
+RNA digestion, you are basically performing RIP-seq or HITS-CLIP (the 
+crosslinked variatn). These studies nicely show that the enrichment of your
+protein with antibodies against protein tags or native epitops will enrich
+RNA targets, however will still result in almost full transcriptomic 
+background. Depending on your antibody, your purification method (beads) and
+many other factors, this can vary for different proteins. 
 
-#### RNAase concentrations and protein protection
+When you take a close look to the first iCLIP analysis protocols (and protocols
+to date), you will notice that snoRNAs, lincRNAs and other short RNAs are 
+excluded from the protocol because they were treated as contaminants. It was 
+shown that size matched input (SMI) controls can 
+control for different artifacts from crosslinking and library preparation
+[@VanNostrand2016].
 
-In the iCLIP and eCLIP protocols...
+#### RNase concentrations and protein protection
+
+To only sequence the binding sites, rather than the whole RNA, one has to 
+digest RNA not protected by your protein. If your protein is stacking and 
+therefore protecting a larger area from digestion, the crosslinking pattern
+can be affected as well [@Haberman2017].
 
 ### Method
 
 #### Sliding window testing 
 
-We use a one-sided wald test from `r Biocpkg("DESeq2")` testing for enrichment.
+Because of the properties of iCLIP/eCLIP data described above, we use a sliding
+window approach (where different window and step sizes can be chosen in the 
+preprocessing) and test for significant enrichment in the IP over the control.
+For this, we extended `r Biocpkg("DESeq2")` for a one-sided wald test to filter windows with negative wald stat values and do a right-tailed test on the remaining windows.
+
 
 ```{r, fig.cap = "Sliding window approach with single-nucleotide position count data", echo = F} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("dewseqoverview.png")
 ```
 
+
 #### Combining significant windows
 
 Since this truncation sites or crosslinking sites are only one nucleotide, 
-in contrary to large fragments detected in ChIP-seq, 
+in contrary to large fragments detected in ChIP-seq. ChIP-seq binding regions
+share coverage from same cDNA fragments and therefore `r Biocpkg("csaw")` 
+implements the SIMES method to join coverage blocks and treats them
+as one entity for multiple hypothesis correction. Since the single-nucleotide
+do not have the same property as cDNA fragments and each gene in eCLIP/iCLIP
+data has transcriptomic background with often large coverage blocks, in
+DEWSeq we correct the p-value for each window with Bonferroni with the number
+of overlaps. 
 
 
 ```{r, fig.cap = "Sliding window approach with single-nucleotide position count data", echo = F, fig.small = T} 
@@ -157,9 +196,15 @@ in contrary to large fragments detected in ChIP-seq,
 knitr::include_graphics("overlapping_sliding_windows.png")
 ```
 
+Then we apply multiple hypothesis correction.
+
 ## Prerequisits for DEWSeq
 
-Replicates and input controls are required for DEWSeq
+Most importantly, replicates and input controls are required for the 
+significance testing for DEWSeq. Currently, we only allow the use of 
+`r Biocpkg("DESeq2")`'s wald test, not the LRT test for complexer models.
+This will implemented later. If you want to use complexer models, you
+might want to contact the authors.
 
 ### True input controls
 
@@ -191,7 +236,7 @@ factors which also will apply for your CLIP study). As a tumb of rule,
 your number of replicates ideally should not be less if you are 
 interested in an transcriptome wide analysis of your RNA-binding protein.
 
-# Data input
+# Data preprocessing
 
 DEWSeq needs a countmatrix and preprocessed annotation. The
 preprocessing is done in two general steps.
@@ -469,10 +514,11 @@ head(resultRegions)
 data(YBX3eCLIPregion)
 ```
 
+
+```{r eval = F, echo = F}
 # Discussion
-
 # FAQ
-
+```
 
 
 # Session Info
