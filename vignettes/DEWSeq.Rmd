@@ -308,12 +308,11 @@ Tip: You can use Sailfish, Kallisto, RSEM, Salmon or any (pseudo)aligner to
 get an estimation of the different expression levels of transcripts. Use this to 
 filter the annotation before flattening it. 
 
+```{r, echo = F, eval = F}
 # Analysis strategies for CLIP data
+```
 
-
-   
-
-# Binding sites detection with DEWSeq
+# Detection of enriched regions with DEWSeq
  
 DEWSeq uses a sliding window approach with DESeq2 for enriched binding sites. 
 
@@ -428,7 +427,6 @@ ddw <- estimateSizeFactors(ddw_mRNAs)
 rm(ddw_mRNAs)
 ```
 
-
 ## Differential expressed windows analysis
 
 Estimate the dispersions and perform the wald test with these two functions.
@@ -494,6 +492,9 @@ head(resultRegions)
 ```
 
 
+```{r eval = F, echo = F}
+## Plotting
+
 # Simple Enrichment
 
 ## Summing up IP 
@@ -509,13 +510,11 @@ head(resultRegions)
 
 ### Loading Testdata
 
-```{r loading region test data, eval = F}
-# eval = T
-data(YBX3eCLIPregion)
-```
+#```{r loading region test data, eval = F}
+## eval = T
+#data(YBX3eCLIPregion)
+#```
 
-
-```{r eval = F, echo = F}
 # Discussion
 # FAQ
 ```
