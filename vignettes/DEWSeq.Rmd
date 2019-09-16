@@ -140,7 +140,9 @@ knitr::include_graphics("crosslinking_chance.png")
 ```
 
 Depending on the type of protein and the binding mode, this can result in 
-different crosslinking pattern for each protein.
+different crosslinking pattern for each protein. Crosslinking will also 
+affect nearby proteins. Therefore it is of great importance that crosslink 
+sites are enriched compared to proper input controls.
 
 #### Background and antibodies
 
@@ -164,7 +166,7 @@ control for different artifacts from crosslinking and library preparation
 To only sequence the binding sites, rather than the whole RNA, one has to 
 digest RNA not protected by your protein. If your protein is stacking and 
 therefore protecting a larger area from digestion, the crosslinking pattern
-can be affected as well [@Haberman2017].
+can be affected as well [@Haberman2017]. 
 
 ### Method
 
