@@ -355,10 +355,12 @@ We need to read in the
 
 which can be prepared with htseq-clip (see above)
 
-For this, we recommend tidyr packages to read in the data swiftly
+For this, we recommend data.table or tidyr packages to read in the data swiftly.
+To data data.table is significantly faster than tidyr.
 
-```{r loading tidyverse, eval = F}
+```{r loading tidyverse, eval = T}
 library(tidyverse)
+library(data.table)
 ```
 
 First we read in counts 
@@ -456,18 +458,20 @@ with Benjamini-Hochberg.
 ```{r DEWSeq results, eval = T}
 resultWindows <- resultsDEWSeq(ddw,
                               contrast = c("type", "IP", "SMI"),
-                              tidy = T)
+                              tidy = T) %>% as_tibble
+
+resultWindows
 ```
 
 You might be interested to correct for multiple hypothesis testing with IHW.
 
-```{r IHW multiple hypothesis correction, eval = T}
+```{r IHW multiple hypothesis correction, eval = T, warning = F}
 suppressPackageStartupMessages(require(IHW))
 
-results[,"p_adj_IHW"] <- ihw(pBonferroni ~ baseMean, 
+resultWindows[,"p_adj_IHW"] <- adj_pvalues(ihw(pBonferroni ~ baseMean, 
                      data = resultWindows,
                      alpha = 0.05,
-                     nfolds = 10)
+                     nfolds = 10))
 ```
 
 ## Combining regions
@@ -476,11 +480,11 @@ results[,"p_adj_IHW"] <- ihw(pBonferroni ~ baseMean,
 windows. Now we would like to combine overlapping windows to a binding region.
 
 
-```{r extractRegions, eval = T}
-resultRegions <- extractRegions(windowRes = resultWindows,
-                                padjCol   = "p_adj_IHW",
+```{r extractRegions, eval = T, results = "hide"}
+resultRegions <- extractRegions(windowRes  = resultWindows,
+                                padjCol    = "p_adj_IHW",
                                 padjThresh = 0.05, 
-                                log2FoldChangeThresh = 0.5)
+                                log2FoldChangeThresh = 0.5) %>% as_tibble
 ```
 
 Since we already corrected for the family wise error, we use the
@@ -489,7 +493,7 @@ provide metrics for best and worst p-adjusted value, as well as best and
 worst log2 fold change.
 
 ```{r resultRegions output, eval = T}
-head(resultRegions)
+resultRegions
 ```
 
 
