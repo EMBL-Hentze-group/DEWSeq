@@ -324,8 +324,7 @@ DEWSeq uses a sliding window approach with DESeq2 for enriched binding sites.
 
 First step is to load the library with this command
 
-```{r load library, eval = F}
-#eval = T
+```{r load library, eval = T}
 require(DEWSeq)
 ```
 
@@ -333,18 +332,18 @@ require(DEWSeq)
 
 ### Load test data
 
-Use this command to load the ENCODE SLBP data set
+Use this command to load the ENCODE SLBP data set.
 
-```{r load test data, eval = F}
-# eval = T
-data(YBX3eCLIPChr1)
+```{r load test data, eval = T}
+data(SLBP_K562_w50s20_chr1_to_10_filtered)
 ```
 
-This data contains three IP and three input controls (SMI) samples:
+This data contains two IP and one input control (SMI) samples which
+is not ideal, however it is small enough as test data. 
 
-```{r head of test data, eval = F}
-#eval = T
-YBX3eCLIPChr1
+```{r head of test data, eval = T}
+ddw <- SLBP_K562_w50s20_chr1_to_10_filtered
+ddw
 ```
 
 ### From count matrix  
@@ -410,9 +409,8 @@ Prefiltering becomes even more important with large numbers of sliding windows.
 Please find more details here:
 [http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#pre-filtering](DESeq2 vignette on pre-filtering)
 
-```{r row filtering, eval = F}
-# eval = T
-keep <- rowSums(counts(ddw)) >= 20
+```{r row filtering, eval = T}
+keep <- rowSums(counts(ddw)) >= 10
 ddw <- ddw[keep,]
 ```
 
@@ -430,9 +428,8 @@ ddw <- estimateSizeFactors(ddw)
 CLIP data often shows high expression of RNA contaminations, therefore you might 
 want to normalise based on protein coding genes only
 
-```{r filter for mRNAs, eval = F}
-# eval T
-ddw_mRNAs <- dds[ mcol(srowRanges(dds))[,"gene_type"] == "protein_coding", ]
+```{r filter for mRNAs, eval = T}
+ddw_mRNAs <- ddw[ rowData(ddw)[,"gene_type"] == "protein_coding", ]
 ddw <- estimateSizeFactors(ddw_mRNAs)
 rm(ddw_mRNAs)
 ```
@@ -442,8 +439,7 @@ rm(ddw_mRNAs)
 Estimate the dispersions and perform the wald test with these two functions.
 Please note, currently, DEWSeq does not support LRT tests.
 
-```{r, eval = F}
-# eval T
+```{r estimate dispersions and wald test, eval = T}
 ddw <- estimateDispersions(ddw)
 ddw <- nbinomWaldTest(ddw)
 ```
@@ -457,18 +453,15 @@ features, e.g. a gene) and then perform Bonferroni for each window.
 These family-wise corrected windows will corrected for multiple testing 
 with Benjamini-Hochberg.
 
-```{r results, eval = F}
-# eval = T
-resultWindows <- resultsDEWSeq(dds,
+```{r DEWSeq results, eval = T}
+resultWindows <- resultsDEWSeq(ddw,
                               contrast = c("type", "IP", "SMI"),
                               tidy = T)
 ```
 
 You might be interested to correct for multiple hypothesis testing with IHW.
 
-```{r IHW, eval = F}
-# eval = T
-
+```{r IHW multiple hypothesis correction, eval = T}
 suppressPackageStartupMessages(require(IHW))
 
 results[,"p_adj_IHW"] <- ihw(pBonferroni ~ baseMean, 
@@ -483,8 +476,7 @@ results[,"p_adj_IHW"] <- ihw(pBonferroni ~ baseMean,
 windows. Now we would like to combine overlapping windows to a binding region.
 
 
-```{r extractRegions, eval = F}
-# eval = T
+```{r extractRegions, eval = T}
 resultRegions <- extractRegions(windowRes = resultWindows,
                                 padjCol   = "p_adj_IHW",
                                 padjThresh = 0.05, 
@@ -496,8 +488,7 @@ Since we already corrected for the family wise error, we use the
 provide metrics for best and worst p-adjusted value, as well as best and 
 worst log2 fold change.
 
-```{r resultRegions output, eval = F}
-# eval = T
+```{r resultRegions output, eval = T}
 head(resultRegions)
 ```
 
