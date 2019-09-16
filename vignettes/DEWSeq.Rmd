@@ -333,7 +333,7 @@ require(DEWSeq)
 
 ### Load test data
 
-Use this command to load the YBX3 data set
+Use this command to load the ENCODE SLBP data set
 
 ```{r load test data, eval = F}
 # eval = T
