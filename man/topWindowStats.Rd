@@ -6,7 +6,7 @@
 \usage{
 topWindowStats(windowRes, padjCol = "padj", padjThresh = 0.05,
   log2FoldChangeCol = "log2FoldChange", log2FoldChangeThresh = 1,
-  begin0based = TRUE, normalizedCounts, treatmentCols,
+  start0based = TRUE, normalizedCounts, treatmentCols,
   treatmentName = "treatment", controlName = "control", op = "max")
 }
 \arguments{
@@ -20,7 +20,7 @@ topWindowStats(windowRes, padjCol = "padj", padjThresh = 0.05,
 
 \item{log2FoldChangeThresh}{threshold for log2foldchange value (default:1)}
 
-\item{begin0based}{TRUE (default) or FALSE. If TRUE, then the start positions in \code{windowRes} is  considered to be 0-based}
+\item{start0based}{TRUE (default) or FALSE. If TRUE, then the start positions in \code{windowRes} is  considered to be 0-based}
 
 \item{normalizedCounts}{data.frame with normalized read counts per window. \code{rownames(normalizedCounts)} and \code{unique_id} column from \code{windoeRes} must match}
 

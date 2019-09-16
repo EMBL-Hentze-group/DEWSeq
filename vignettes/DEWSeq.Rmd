@@ -83,7 +83,7 @@ the RNA, a majority of the time the reverse transcriptase
 will fall of at the crosslink site.
 
 
-```{r, fig.cap = "Crosslink site trunction at reverse transcription", fig.width=200,echo =F}
+
 ```{r, fig.cap = "Crosslink site trunction at reverse transcription", fig.small=T,echo =F}
 knitr::include_graphics("truncation.png")
 ```

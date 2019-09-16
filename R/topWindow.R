@@ -62,7 +62,7 @@
 #' @param padjThresh threshold for p-adjusted value (default: 0.05)
 #' @param log2FoldChangeCol name of the log2foldchange column (default: log2FoldChange)
 #' @param log2FoldChangeThresh threshold for log2foldchange value (default:1)
-#' @param begin0based TRUE (default) or FALSE. If TRUE, then the start positions in \code{windowRes} is  considered to be 0-based
+#' @param start0based TRUE (default) or FALSE. If TRUE, then the start positions in \code{windowRes} is  considered to be 0-based
 #' @param normalizedCounts data.frame with normalized read counts per window. \code{rownames(normalizedCounts)} and \code{unique_id} column from \code{windoeRes} must match
 #' @param treatmentCols column names in \code{normalizedCounts} for treatment/case samples. The remaining columns in the data.frame will be considered control samples
 #' @param treatmentName treatment name, see Details  (default: treatment)
@@ -78,7 +78,7 @@
 #' }
 #'
 #' @return data.frame
-topWindowStats <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,begin0based=TRUE, normalizedCounts,
+topWindowStats <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,start0based=TRUE, normalizedCounts,
                            treatmentCols,treatmentName='treatment',controlName='control', op='max'){
   requiredCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name',
                     'gene_type','gene_region','Nr_of_region','Total_nr_of_region','window_number',padjCol,log2FoldChangeCol)
@@ -127,7 +127,7 @@ topWindowStats <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
   }
   sigDat <- cbind(sigDat[commonids,],normalizedCounts[commonids,])
   sigRange <- makeGRangesFromDataFrame(sigDat,seqnames.field = 'gene_id',start.field = 'begin',end.field = 'end',strand.field = 'strand',
-                                                      ignore.strand=FALSE,starts.in.df.are.0based=begin0based,keep.extra.columns = TRUE)
+                                                      ignore.strand=FALSE,starts.in.df.are.0based=start0based,keep.extra.columns = TRUE)
   sigRange <-  sortSeqlevels(sigRange)
   sigRange <- sort(sigRange)
   sigReduce <- reduce(sigRange,drop.empty.ranges=TRUE,with.revmap=TRUE,min.gapwidth=1)
@@ -190,7 +190,7 @@ topWindowStats <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
     setTxtProgressBar(pb=pb,value=i)
   }
   close(pb)
-  if(begin0based){ # return 0 based start positions
+  if(start0based){ # return 0 based start positions
     outDat$region_begin <- outDat$region_begin-1
     outDat$begin.log2FCWindow <- outDat$begin.log2FCWindow-1
     outDat$begin.meanWindow <- pmax(outDat$begin.meanWindow-1,0)
