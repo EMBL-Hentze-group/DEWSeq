@@ -28,11 +28,11 @@
 #' @param asGRange boolean, whether to reaturn a GRange object or a data.frame
 #' object
 #' @param checkWindowNumber check window number
-#' @param begin0based TRUE (default) or FALSE. If TRUE, then the start
+#' @param start0based TRUE (default) or FALSE. If TRUE, then the start
 #' @param threads number of threads for fread (default: 10)
 #' positions are considered to be 0-based
 #' @return data.frame or GRanges object
-.readAnnotation <- function(fname,uniqIds=NULL,asGRange=TRUE,checkWindowNumber=TRUE,begin0based=TRUE,threads=10){
+.readAnnotation <- function(fname,uniqIds=NULL,asGRange=TRUE,checkWindowNumber=TRUE,start0based=TRUE,threads=10){
   neededCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name','gene_type','gene_region','Nr_of_region',
                  'Total_nr_of_region')
   if(checkWindowNumber){
@@ -82,7 +82,7 @@
   if(is.null(uniqIds)){
     if(asGRange){
       gr <- makeGRangesFromDataFrame(annTable,seqnames.field='chromosome',start.field='begin',end.field='end',strand.field='strand',
-                                                  ignore.strand=FALSE,keep.extra.columns=TRUE, starts.in.df.are.0based=begin0based)
+                                                  ignore.strand=FALSE,keep.extra.columns=TRUE, starts.in.df.are.0based=start0based)
       gr <- sortSeqlevels(gr)
       gr <- sort(gr)
       rm(annTable)
@@ -98,7 +98,7 @@
     }
     if(asGRange){
       gr <- makeGRangesFromDataFrame(annTable[commonIds,], seqnames.field='chromosome',start.field='begin',end.field='end',
-                                                    strand.field='strand', ignore.strand=FALSE,keep.extra.columns=TRUE, starts.in.df.are.0based=begin0based)
+                                                    strand.field='strand', ignore.strand=FALSE,keep.extra.columns=TRUE, starts.in.df.are.0based=start0based)
       gr <- sortSeqlevels(gr)
       gr <- sort(gr)
       rm(annTable)

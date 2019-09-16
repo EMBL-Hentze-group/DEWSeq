@@ -5,7 +5,7 @@
 \title{read annotation data}
 \usage{
 .readAnnotation(fname, uniqIds = NULL, asGRange = TRUE,
-  checkWindowNumber = TRUE, begin0based = TRUE, threads = 10)
+  checkWindowNumber = TRUE, start0based = TRUE, threads = 10)
 }
 \arguments{
 \item{fname}{file name/path}
@@ -17,7 +17,7 @@ object}
 
 \item{checkWindowNumber}{check window number}
 
-\item{begin0based}{TRUE (default) or FALSE. If TRUE, then the start}
+\item{start0based}{TRUE (default) or FALSE. If TRUE, then the start}
 
 \item{threads}{number of threads for fread (default: 10)
 positions are considered to be 0-based}
