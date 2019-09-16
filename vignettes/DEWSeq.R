@@ -6,7 +6,7 @@ knitr::opts_chunk$set(tidy    = FALSE,
                       error   = FALSE,
                       warning = TRUE)
 
-## ---- eval = F, echo = F---------------------------------------------------
+## ---- eval = FALSE, echo = FALSE-------------------------------------------
 #  #**Note:** if you use DEWSeq in published research, please cite:
 #  #
 #  #> Authors. (Year)
@@ -14,60 +14,59 @@ knitr::opts_chunk$set(tidy    = FALSE,
 #  #> *Genome Biology*, **15**:550.
 #  #> [10.1186/s13059-014-0550-8](http://dx.doi.org/10.1186/s13059-014-0550-8)
 
-## ---- fig.cap = "Crosslink site trunction at reverse transcription", echo =F----
+## ---- fig.cap = "Crosslink site trunction at reverse transcription", echo =FALSE----
 knitr::include_graphics("truncation.png")
 
-## ---- fig.cap = "Truncation sites (often referred to as crosslink sites) are the neighboring position of the aligned read.", fig.small = T, echo = F----
+## ---- fig.cap = "Truncation sites (often referred to as crosslink sites) are the neighboring position of the aligned read.", fig.small = TRUE, echo = FALSE----
 # fig.width=200, out.width="200px"
 knitr::include_graphics("truncationsite.png")
 
-## ---- fig.cap = "Different binding modes of RNA-binding proteins", fig.wide = T, echo = F----
+## ---- fig.cap = "Different binding modes of RNA-binding proteins", fig.wide = TRUE, echo = FALSE----
 # fig.width=200, out.width="200px"
 knitr::include_graphics("binding_modes.png")
 
-## ---- fig.cap = "Chance of crosslinking", fig.small = T, echo = F----------
+## ---- fig.cap = "Chance of crosslinking", fig.small = TRUE, echo = FALSE----
 # fig.width=200, out.width="200px"
 knitr::include_graphics("crosslinking_chance.png")
 
-## ---- fig.cap = "Sliding window approach with single-nucleotide position count data", echo = F----
+## ---- fig.cap = "Sliding window approach with single-nucleotide position count data", echo = FALSE----
 # fig.width=200, out.width="200px"
 knitr::include_graphics("dewseqoverview.png")
 
-## ---- fig.cap = "Sliding window approach with single-nucleotide position count data", echo = F, fig.small = T----
+## ---- fig.cap = "Sliding window approach with single-nucleotide position count data", echo = FALSE, fig.small = TRUE----
 # fig.width=200, out.width="200px"
 knitr::include_graphics("overlapping_sliding_windows.png")
 
-## ---- echo = F, eval = F---------------------------------------------------
+## ---- echo = FALSE, eval = FALSE-------------------------------------------
 #  # Analysis strategies for CLIP data
 
-## ----load library, eval = F------------------------------------------------
-#  #eval = T
-#  require(DEWSeq)
+## ----load library, eval = TRUE---------------------------------------------
+require(DEWSeq)
 
-## ----load test data, eval = F----------------------------------------------
-#  # eval = T
-#  data(YBX3eCLIPChr1)
+## ----load test data, eval = TRUE-------------------------------------------
+data(SLBP_K562_w50s20)
 
-## ----head of test data, eval = F-------------------------------------------
-#  #eval = T
-#  YBX3eCLIPChr1
+## ----head of test data, eval = TRUE----------------------------------------
+ddw <- SLBP_K562_w50s20
+ddw
 
-## ----loading tidyverse, eval = F-------------------------------------------
-#  library(tidyverse)
+## ----loading tidyverse, eval = TRUE----------------------------------------
+library(tidyverse)
+library(data.table)
 
-## ----read in count matrix, eval = F----------------------------------------
+## ----read in count matrix, eval = FALSE------------------------------------
 #  countData <- fread("path/swcounts/count_matrix.txt.gz", sep = "\t")
 #  
 #  # or alternatively with tidyr:
 #  # countData <- read_tsv("path/swcounts/count_matrix.txt.gz")
 
-## ----read in annotation, eval = F------------------------------------------
+## ----read in annotation, eval = FALSE--------------------------------------
 #  annotationData <- fread("path/annotation/annotation.txt.gz", sep = "\t")
 #  
 #  # or alternatively with tidyr:
 #  #annotationData <- read_tsv("path/annotation/annotation.txt.gz")
 
-## ----create colData, eval = F----------------------------------------------
+## ----create colData, eval = FALSE------------------------------------------
 #  colData <- data.frame(
 #    row.names = colnames(countData),
 #    type      = factor(
@@ -76,60 +75,67 @@ knitr::include_graphics("overlapping_sliding_windows.png")
 #                  levels = c("IP", "SMI"))
 #  )
 
-## ----example import, eval = F----------------------------------------------
+## ----example import, eval = FALSE------------------------------------------
 #  ddw <- DESeqDataSetFromSlidingWindows(countData  = countData,
 #                                        colData    = colData,
 #                                        annotation = annotationData,
-#                                        tidy       = T,
+#                                        tidy       = TRUE,
 #                                        design     = ~type)
 
-## ----row filtering, eval = F-----------------------------------------------
-#  # eval = T
-#  keep <- rowSums(counts(ddw)) >= 20
-#  ddw <- ddw[keep,]
+## ----row filtering, eval = TRUE--------------------------------------------
+keep <- rowSums(counts(ddw)) >= 10
+ddw <- ddw[keep,]
 
-## ----estimate size factors, eval = F---------------------------------------
+## ----estimate size factors, eval = FALSE-----------------------------------
 #  ddw <- estimateSizeFactors(ddw)
 
-## ----filter for mRNAs, eval = F--------------------------------------------
-#  # eval T
-#  ddw_mRNAs <- dds[ mcol(srowRanges(dds))[,"gene_type"] == "protein_coding", ]
-#  ddw <- estimateSizeFactors(ddw_mRNAs)
-#  rm(ddw_mRNAs)
+## ----filter for mRNAs, eval = TRUE-----------------------------------------
+ddw_mRNAs <- ddw[ rowData(ddw)[,"gene_type"] == "protein_coding", ]
+ddw <- estimateSizeFactors(ddw_mRNAs)
+rm(ddw_mRNAs)
 
-## ---- eval = F-------------------------------------------------------------
-#  # eval T
-#  ddw <- estimateDispersions(ddw)
-#  ddw <- nbinomWaldTest(ddw)
+## ----estimate dispersions and wald test, eval = TRUE-----------------------
+ddw <- estimateDispersions(ddw)
+ddw <- nbinomWaldTest(ddw)
 
-## ----results, eval = F-----------------------------------------------------
-#  # eval = T
-#  resultWindows <- resultsDEWSeq(dds,
-#                                contrast = c("type", "IP", "SMI"),
-#                                tidy = T)
+## ----DEWSeq results, eval = TRUE-------------------------------------------
+resultWindows <- resultsDEWSeq(ddw,
+                              contrast = c("type", "IP", "SMI"),
+                              tidy = TRUE) %>% as_tibble
 
-## ----IHW, eval = F---------------------------------------------------------
-#  # eval = T
-#  
-#  suppressPackageStartupMessages(require(IHW))
-#  
-#  results[,"p_adj_IHW"] <- ihw(pBonferroni ~ baseMean,
-#                       data = resultWindows,
-#                       alpha = 0.05,
-#                       nfolds = 10)
+resultWindows
 
-## ----extractRegions, eval = F----------------------------------------------
-#  # eval = T
-#  resultRegions <- extractRegions(windowRes = resultWindows,
-#                                  padjCol   = "p_adj_IHW",
-#                                  padjThresh = 0.05,
-#                                  log2FoldChangeThresh = 0.5)
+## ----IHW multiple hypothesis correction, eval = TRUE, warning = FALSE------
+suppressPackageStartupMessages(require(IHW))
 
-## ----resultRegions output, eval = F----------------------------------------
-#  # eval = T
-#  head(resultRegions)
+resultWindows[,"p_adj_IHW"] <- adj_pvalues(ihw(pBonferroni ~ baseMean, 
+                     data = resultWindows,
+                     alpha = 0.05,
+                     nfolds = 10))
 
-## ----eval = F, echo = F----------------------------------------------------
+## ----windows tables, eval = TRUE-------------------------------------------
+resultWindows <- resultWindows %>% mutate(significant = resultWindows$p_adj_IHW < 0.05)
+
+sum(resultWindows$significant)
+
+## ----how genes form windows------------------------------------------------
+resultWindows %>% filter(significant) %>% arrange(desc(log2FoldChange))  %>% .[["gene_name"]] %>% unique %>% head(20)
+
+## ----extractRegions, eval = TRUE, results = "hide"-------------------------
+resultRegions <- extractRegions(windowRes  = resultWindows,
+                                padjCol    = "p_adj_IHW",
+                                padjThresh = 0.05, 
+                                log2FoldChangeThresh = 0.5) %>% as_tibble
+
+## ----resultRegions output, eval = TRUE-------------------------------------
+resultRegions
+
+## ----toBED output, eval = FALSE--------------------------------------------
+#  toBED(windowRes = resultWindows,
+#        regionRes = resultRegions,
+#        fileName  = "enrichedWindowsRegions.bed")
+
+## ----eval = FALSE, echo = FALSE--------------------------------------------
 #  ## Plotting
 #  
 #  # Simple Enrichment
@@ -147,12 +153,11 @@ knitr::include_graphics("overlapping_sliding_windows.png")
 #  
 #  ### Loading Testdata
 #  
-#  #```{r loading region test data, eval = F}
-#  ## eval = T
+#  #```{r loading region test data, eval = FALSE}
+#  ## eval = TRUE
 #  #data(YBX3eCLIPregion)
 #  #```
 #  
-#  # Discussion
 #  # FAQ
 
 ## --------------------------------------------------------------------------

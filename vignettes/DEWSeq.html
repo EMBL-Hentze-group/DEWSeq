@@ -290,7 +290,8 @@ $(document).ready(function () {
 <li><a href="#differential-expressed-windows-analysis"><span class="toc-section-number">4.5</span> Differential expressed windows analysis</a></li>
 <li><a href="#combining-regions"><span class="toc-section-number">4.6</span> Combining regions</a></li>
 </ul></li>
-<li><a href="#session-info"><span class="toc-section-number">5</span> Session Info</a></li>
+<li><a href="#discussion"><span class="toc-section-number">5</span> Discussion</a></li>
+<li><a href="#session-info"><span class="toc-section-number">6</span> Session Info</a></li>
 <li><a href="#references">References</a></li>
 </ul>
 </div>
@@ -465,19 +466,29 @@ Figure 6: <span class="caption-title">Sliding window approach with single-nucleo
 <div id="load-the-library" class="section level2">
 <h2><span class="header-section-number">4.1</span> Load the library</h2>
 <p>First step is to load the library with this command</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#eval = T</span>
-<span class="kw">require</span>(DEWSeq)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">require</span>(DEWSeq)</code></pre></div>
 </div>
 <div id="importing-data-for-dewseq" class="section level2">
 <h2><span class="header-section-number">4.2</span> Importing data for DEWSeq</h2>
 <div id="load-test-data" class="section level3">
 <h3><span class="header-section-number">4.2.1</span> Load test data</h3>
-<p>Use this command to load the YBX3 data set</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># eval = T</span>
-<span class="kw">data</span>(YBX3eCLIPChr1)</code></pre></div>
-<p>This data contains three IP and three input controls (SMI) samples:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#eval = T</span>
-YBX3eCLIPChr1</code></pre></div>
+<p>Use this command to load the ENCODE SLBP data set.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(SLBP_K562_w50s20)</code></pre></div>
+<pre><code>## Warning in data(SLBP_K562_w50s20): data set 'SLBP_K562_w50s20' not found</code></pre>
+<p>This data contains two IP and one input control (SMI) samples which is not ideal, however it is small enough as test data.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ddw &lt;-<span class="st"> </span>SLBP_K562_w50s20
+ddw</code></pre></div>
+<pre><code>## class: DESeqDataSet 
+## dim: 28569 3 
+## metadata(1): version
+## assays(1): counts
+## rownames(28569): ENSG00000225630.1:exon0001W00014
+##   ENSG00000225630.1:exon0001W00015 ...
+##   ENSG00000210196.2:exon0001W00001 ENSG00000210196.2:exon0001W00002
+## rowData names(8): unique_id gene_id ... Total_nr_of_region
+##   window_number
+## colnames(3): IP1 IP2 SMI
+## colData names(1): type</code></pre>
 </div>
 <div id="from-count-matrix" class="section level3">
 <h3><span class="header-section-number">4.2.2</span> From count matrix</h3>
@@ -487,8 +498,9 @@ YBX3eCLIPChr1</code></pre></div>
 <li>annotation file (UNIQUE_ID, chromosome locations, other info)</li>
 </ul>
 <p>which can be prepared with htseq-clip (see above)</p>
-<p>For this, we recommend tidyr packages to read in the data swiftly</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)</code></pre></div>
+<p>For this, we recommend data.table or tidyr packages to read in the data swiftly. To data data.table is significantly faster than tidyr.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)
+<span class="kw">library</span>(data.table)</code></pre></div>
 <p>First we read in counts</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">countData &lt;-<span class="st"> </span><span class="kw">fread</span>(<span class="st">&quot;path/swcounts/count_matrix.txt.gz&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>)
 
@@ -511,7 +523,7 @@ YBX3eCLIPChr1</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ddw &lt;-<span class="st"> </span><span class="kw">DESeqDataSetFromSlidingWindows</span>(<span class="dt">countData  =</span> countData,
                                       <span class="dt">colData    =</span> colData,
                                       <span class="dt">annotation =</span> annotationData,
-                                      <span class="dt">tidy       =</span> T,
+                                      <span class="dt">tidy       =</span> <span class="ot">TRUE</span>,
                                       <span class="dt">design     =</span> <span class="op">~</span>type)</code></pre></div>
 <p>This will return a DESeq object with the coordinates and annotation stores as rowAnnotation.</p>
 </div>
@@ -519,8 +531,7 @@ YBX3eCLIPChr1</code></pre></div>
 <div id="prefiltering" class="section level2">
 <h2><span class="header-section-number">4.3</span> Prefiltering</h2>
 <p>Prefiltering becomes even more important with large numbers of sliding windows. Please find more details here: <a href="DESeq2%20vignette%20on%20pre-filtering">http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#pre-filtering</a></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># eval = T</span>
-keep &lt;-<span class="st"> </span><span class="kw">rowSums</span>(<span class="kw">counts</span>(ddw)) <span class="op">&gt;=</span><span class="st"> </span><span class="dv">20</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">keep &lt;-<span class="st"> </span><span class="kw">rowSums</span>(<span class="kw">counts</span>(ddw)) <span class="op">&gt;=</span><span class="st"> </span><span class="dv">10</span>
 ddw &lt;-<span class="st"> </span>ddw[keep,]</code></pre></div>
 </div>
 <div id="estimating-size-factors" class="section level2">
@@ -530,8 +541,7 @@ ddw &lt;-<span class="st"> </span>ddw[keep,]</code></pre></div>
 <div id="estimate-size-factors-based-on-a-specific-set-of-rnas" class="section level3">
 <h3><span class="header-section-number">4.4.1</span> Estimate size factors based on a specific set of RNAs</h3>
 <p>CLIP data often shows high expression of RNA contaminations, therefore you might want to normalise based on protein coding genes only</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># eval T</span>
-ddw_mRNAs &lt;-<span class="st"> </span>dds[ <span class="kw">mcol</span>(<span class="kw">srowRanges</span>(dds))[,<span class="st">&quot;gene_type&quot;</span>] <span class="op">==</span><span class="st"> &quot;protein_coding&quot;</span>, ]
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ddw_mRNAs &lt;-<span class="st"> </span>ddw[ <span class="kw">rowData</span>(ddw)[,<span class="st">&quot;gene_type&quot;</span>] <span class="op">==</span><span class="st"> &quot;protein_coding&quot;</span>, ]
 ddw &lt;-<span class="st"> </span><span class="kw">estimateSizeFactors</span>(ddw_mRNAs)
 <span class="kw">rm</span>(ddw_mRNAs)</code></pre></div>
 </div>
@@ -539,40 +549,94 @@ ddw &lt;-<span class="st"> </span><span class="kw">estimateSizeFactors</span>(dd
 <div id="differential-expressed-windows-analysis" class="section level2">
 <h2><span class="header-section-number">4.5</span> Differential expressed windows analysis</h2>
 <p>Estimate the dispersions and perform the wald test with these two functions. Please note, currently, DEWSeq does not support LRT tests.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># eval T</span>
-ddw &lt;-<span class="st"> </span><span class="kw">estimateDispersions</span>(ddw)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ddw &lt;-<span class="st"> </span><span class="kw">estimateDispersions</span>(ddw)
 ddw &lt;-<span class="st"> </span><span class="kw">nbinomWaldTest</span>(ddw)</code></pre></div>
 <p>This performes a one-sided signficance test, looking for enrichment in the IP samples vs the SMI controls. Also it will perform a correction for p-values of overlapping windows: The function will determine how many overlapping windows for each window there are (this can vary at the end of features, e.g. a gene) and then perform Bonferroni for each window.</p>
 <p>These family-wise corrected windows will corrected for multiple testing with Benjamini-Hochberg.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># eval = T</span>
-resultWindows &lt;-<span class="st"> </span><span class="kw">resultsDEWSeq</span>(dds,
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">resultWindows &lt;-<span class="st"> </span><span class="kw">resultsDEWSeq</span>(ddw,
                               <span class="dt">contrast =</span> <span class="kw">c</span>(<span class="st">&quot;type&quot;</span>, <span class="st">&quot;IP&quot;</span>, <span class="st">&quot;SMI&quot;</span>),
-                              <span class="dt">tidy =</span> T)</code></pre></div>
+                              <span class="dt">tidy =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span><span class="st"> </span>as_tibble
+
+resultWindows</code></pre></div>
+<pre><code>## # A tibble: 4,277 x 20
+##    unique_id chromosome  begin    end width strand gene_id gene_name
+##    &lt;chr&gt;     &lt;chr&gt;       &lt;dbl&gt;  &lt;int&gt; &lt;int&gt; &lt;fct&gt;  &lt;chr&gt;   &lt;chr&gt;    
+##  1 ENSG0000… chr1       1.06e6 1.06e6    50 +      ENSG00… AGRN     
+##  2 ENSG0000… chr1       1.06e6 1.06e6    50 +      ENSG00… AGRN     
+##  3 ENSG0000… chr1       1.06e6 1.06e6    50 +      ENSG00… AGRN     
+##  4 ENSG0000… chr1       7.96e6 7.96e6    50 +      ENSG00… PARK7    
+##  5 ENSG0000… chr1       1.10e7 1.10e7    50 +      ENSG00… TARDBP   
+##  6 ENSG0000… chr1       1.10e7 1.10e7    50 +      ENSG00… AL109811…
+##  7 ENSG0000… chr1       1.10e7 1.10e7    50 +      ENSG00… TARDBP   
+##  8 ENSG0000… chr1       1.69e7 1.69e7    50 +      ENSG00… CROCC    
+##  9 ENSG0000… chr1       1.69e7 1.69e7    50 +      ENSG00… CROCC    
+## 10 ENSG0000… chr1       2.37e7 2.37e7    50 +      ENSG00… RPL11    
+## # … with 4,267 more rows, and 12 more variables: gene_type &lt;chr&gt;,
+## #   gene_region &lt;chr&gt;, Nr_of_region &lt;int&gt;, Total_nr_of_region &lt;int&gt;,
+## #   window_number &lt;int&gt;, baseMean &lt;dbl&gt;, log2FoldChange &lt;dbl&gt;, lfcSE &lt;dbl&gt;,
+## #   stat &lt;dbl&gt;, pvalue &lt;dbl&gt;, pBonferroni &lt;dbl&gt;, pBonferroni.adj &lt;dbl&gt;</code></pre>
 <p>You might be interested to correct for multiple hypothesis testing with IHW.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># eval = T</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">suppressPackageStartupMessages</span>(<span class="kw">require</span>(IHW))
 
-<span class="kw">suppressPackageStartupMessages</span>(<span class="kw">require</span>(IHW))
-
-results[,<span class="st">&quot;p_adj_IHW&quot;</span>] &lt;-<span class="st"> </span><span class="kw">ihw</span>(pBonferroni <span class="op">~</span><span class="st"> </span>baseMean, 
+resultWindows[,<span class="st">&quot;p_adj_IHW&quot;</span>] &lt;-<span class="st"> </span><span class="kw">adj_pvalues</span>(<span class="kw">ihw</span>(pBonferroni <span class="op">~</span><span class="st"> </span>baseMean, 
                      <span class="dt">data =</span> resultWindows,
                      <span class="dt">alpha =</span> <span class="fl">0.05</span>,
-                     <span class="dt">nfolds =</span> <span class="dv">10</span>)</code></pre></div>
+                     <span class="dt">nfolds =</span> <span class="dv">10</span>))</code></pre></div>
+<p>Here some basic stats about the differentially expressed windows:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">resultWindows &lt;-<span class="st"> </span>resultWindows <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">significant =</span> resultWindows<span class="op">$</span>p_adj_IHW <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>)
+
+<span class="kw">sum</span>(resultWindows<span class="op">$</span>significant)</code></pre></div>
+<pre><code>## [1] 672</code></pre>
+<p>672 windows are significant. Here are the top 20 from 69 genes:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">resultWindows <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(significant) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">arrange</span>(<span class="kw">desc</span>(log2FoldChange))  <span class="op">%&gt;%</span><span class="st"> </span>.[[<span class="st">&quot;gene_name&quot;</span>]] <span class="op">%&gt;%</span><span class="st"> </span>unique <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>(<span class="dv">20</span>)</code></pre></div>
+<pre><code>##  [1] &quot;HIST1H4J&quot;  &quot;HIST1H2BF&quot; &quot;HIST1H3J&quot;  &quot;HIST1H4H&quot;  &quot;HIST1H2BD&quot; &quot;HIST1H2BL&quot;
+##  [7] &quot;HIST1H4B&quot;  &quot;HIST1H2BJ&quot; &quot;HIST1H2BG&quot; &quot;HIST1H2AG&quot; &quot;HIST1H4C&quot;  &quot;HIST1H3D&quot; 
+## [13] &quot;HIST1H3H&quot;  &quot;HIST1H4I&quot;  &quot;HIST1H2BN&quot; &quot;HIST1H1E&quot;  &quot;H2AFX&quot;     &quot;HIST1H4E&quot; 
+## [19] &quot;HIST2H2BE&quot; &quot;HIST1H2BC&quot;</code></pre>
+<p>SLBP is an histone-RNA binding protein, so we are quite happy to see that the majority of the hits are coming from histone genes.</p>
 </div>
 <div id="combining-regions" class="section level2">
 <h2><span class="header-section-number">4.6</span> Combining regions</h2>
 <p><code>resultWindows</code> contains information about the differential expression of windows. Now we would like to combine overlapping windows to a binding region.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># eval = T</span>
-resultRegions &lt;-<span class="st"> </span><span class="kw">extractRegions</span>(<span class="dt">windowRes =</span> resultWindows,
-                                <span class="dt">padjCol   =</span> <span class="st">&quot;p_adj_IHW&quot;</span>,
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">resultRegions &lt;-<span class="st"> </span><span class="kw">extractRegions</span>(<span class="dt">windowRes  =</span> resultWindows,
+                                <span class="dt">padjCol    =</span> <span class="st">&quot;p_adj_IHW&quot;</span>,
                                 <span class="dt">padjThresh =</span> <span class="fl">0.05</span>, 
-                                <span class="dt">log2FoldChangeThresh =</span> <span class="fl">0.5</span>)</code></pre></div>
+                                <span class="dt">log2FoldChangeThresh =</span> <span class="fl">0.5</span>) <span class="op">%&gt;%</span><span class="st"> </span>as_tibble</code></pre></div>
 <p>Since we already corrected for the family wise error, we use the <code>extractRegions</code> function to combine the overlapping significant windows and provide metrics for best and worst p-adjusted value, as well as best and worst log2 fold change.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># eval = T</span>
-<span class="kw">head</span>(resultRegions)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">resultRegions</code></pre></div>
+<pre><code>## # A tibble: 134 x 21
+##    chromosome region_begin region_end strand windows_in_regi… region_length
+##    &lt;chr&gt;             &lt;dbl&gt;      &lt;int&gt; &lt;fct&gt;             &lt;dbl&gt;         &lt;int&gt;
+##  1 chr1           21727930   21728020 -                     2            90
+##  2 chr1           35189325   35189375 -                     1            50
+##  3 chr1          149812085  149812155 -                     2            70
+##  4 chr1          149813270  149813380 -                     4           110
+##  5 chr1          149813410  149813460 -                     1            50
+##  6 chr1          149840677  149840767 -                     3            90
+##  7 chr1          149842207  149842357 -                     6           150
+##  8 chr1          149852978  149853048 +                     2            70
+##  9 chr1          149884678  149884728 -                     1            50
+## 10 chr1          149886078  149886388 -                    13           310
+## # … with 124 more rows, and 15 more variables: padj_min &lt;dbl&gt;,
+## #   padj_mean &lt;dbl&gt;, padj_max &lt;dbl&gt;, log2FoldChange_min &lt;dbl&gt;,
+## #   log2FoldChange_mean &lt;dbl&gt;, log2FoldChange_max &lt;dbl&gt;,
+## #   regionStartId &lt;chr&gt;, gene_id &lt;fct&gt;, gene_name &lt;chr&gt;, gene_type &lt;chr&gt;,
+## #   gene_region &lt;chr&gt;, Nr_of_region &lt;dbl&gt;, Total_nr_of_region &lt;dbl&gt;,
+## #   window_number &lt;dbl&gt;, unique_ids &lt;chr&gt;</code></pre>
+<p>134 binding regions were found which can exported as BED file so you can browse the regions in your genome browser of choice or use it for further analyses.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">toBED</span>(<span class="dt">windowRes =</span> resultWindows,
+      <span class="dt">regionRes =</span> resultRegions,
+      <span class="dt">fileName  =</span> <span class="st">&quot;enrichedWindowsRegions.bed&quot;</span>)</code></pre></div>
+<p>Further analysis which can be done is enrichment of gene types, sequence motif analysis of the regions, secondary structure analysis of binding regions and other functional analyses.</p>
 </div>
+</div>
+<div id="discussion" class="section level1">
+<h1><span class="header-section-number">5</span> Discussion</h1>
+<p>In this vignette, we left out plotting of estimates dispersions and other quality control plots like MA plots out. Please find very detailed explanation of those in the <em><a href="https://bioconductor.org/packages/3.9/DESeq2">DESeq2</a></em> vignette.</p>
+<p>The authors very much welcome any feedback, comments and suggestions.</p>
 </div>
 <div id="session-info" class="section level1">
-<h1><span class="header-section-number">5</span> Session Info</h1>
+<h1><span class="header-section-number">6</span> Session Info</h1>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sessionInfo</span>()</code></pre></div>
 <pre><code>## R version 3.6.1 (2019-07-05)
 ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
@@ -590,46 +654,55 @@ resultRegions &lt;-<span class="st"> </span><span class="kw">extractRegions</spa
 ## [8] methods   base     
 ## 
 ## other attached packages:
-##  [1] BiocStyle_2.12.0            DEWSeq_0.99.0              
-##  [3] DESeq2_1.24.0               SummarizedExperiment_1.14.0
-##  [5] DelayedArray_0.10.0         BiocParallel_1.18.0        
-##  [7] matrixStats_0.54.0          Biobase_2.44.0             
-##  [9] GenomicRanges_1.36.0        GenomeInfoDb_1.20.0        
-## [11] IRanges_2.18.0              S4Vectors_0.22.0           
-## [13] BiocGenerics_0.30.0        
+##  [1] IHW_1.12.0                  data.table_1.12.2          
+##  [3] forcats_0.4.0               stringr_1.4.0              
+##  [5] dplyr_0.8.1                 purrr_0.3.2                
+##  [7] readr_1.3.1                 tidyr_0.8.3                
+##  [9] tibble_2.1.1                ggplot2_3.1.1              
+## [11] tidyverse_1.2.1             BiocStyle_2.12.0           
+## [13] DEWSeq_0.99.0               DESeq2_1.24.0              
+## [15] SummarizedExperiment_1.14.0 DelayedArray_0.10.0        
+## [17] BiocParallel_1.18.0         matrixStats_0.54.0         
+## [19] Biobase_2.44.0              GenomicRanges_1.36.0       
+## [21] GenomeInfoDb_1.20.0         IRanges_2.18.0             
+## [23] S4Vectors_0.22.0            BiocGenerics_0.30.0        
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] bitops_1.0-6           fs_1.3.0               usethis_1.5.0         
-##  [4] bit64_0.9-7            devtools_2.0.2         RColorBrewer_1.1-2    
-##  [7] rprojroot_1.3-2        tools_3.6.1            backports_1.1.4       
-## [10] R6_2.4.0               rpart_4.1-15           DBI_1.0.0             
-## [13] Hmisc_4.2-0            lazyeval_0.2.2         colorspace_1.4-1      
-## [16] nnet_7.3-12            withr_2.1.2            tidyselect_0.2.5      
-## [19] gridExtra_2.3          prettyunits_1.0.2      processx_3.3.0        
-## [22] bit_1.1-14             compiler_3.6.1         cli_1.1.0             
-## [25] htmlTable_1.13.1       xml2_1.2.0             desc_1.2.0            
-## [28] bookdown_0.9           scales_1.0.0           checkmate_1.9.3       
-## [31] genefilter_1.66.0      callr_3.2.0            commonmark_1.7        
-## [34] stringr_1.4.0          digest_0.6.20          foreign_0.8-71        
-## [37] rmarkdown_1.12         XVector_0.24.0         base64enc_0.1-3       
-## [40] pkgconfig_2.0.2        htmltools_0.3.6        sessioninfo_1.1.1     
-## [43] highr_0.8              htmlwidgets_1.3        rlang_0.3.4           
-## [46] RSQLite_2.1.1          rstudioapi_0.10        acepack_1.4.1         
-## [49] dplyr_0.8.1            RCurl_1.95-4.12        magrittr_1.5          
-## [52] GenomeInfoDbData_1.2.1 Formula_1.2-3          Matrix_1.2-17         
-## [55] Rcpp_1.0.2             munsell_0.5.0          yaml_2.2.0            
-## [58] stringi_1.4.3          zlibbioc_1.30.0        pkgbuild_1.0.3        
-## [61] plyr_1.8.4             blob_1.1.1             grid_3.6.1            
-## [64] crayon_1.3.4           lattice_0.20-38        splines_3.6.1         
-## [67] annotate_1.62.0        locfit_1.5-9.1         knitr_1.22            
-## [70] ps_1.3.0               pillar_1.4.0           geneplotter_1.62.0    
-## [73] pkgload_1.0.2          XML_3.98-1.19          glue_1.3.1            
-## [76] evaluate_0.13          latticeExtra_0.6-28    BiocManager_1.30.4    
-## [79] data.table_1.12.2      remotes_2.0.4          gtable_0.3.0          
-## [82] purrr_0.3.2            assertthat_0.2.1       ggplot2_3.1.1         
-## [85] xfun_0.6               xtable_1.8-4           roxygen2_6.1.1        
-## [88] survival_2.44-1.1      tibble_2.1.1           AnnotationDbi_1.46.0  
-## [91] memoise_1.1.0          cluster_2.1.0</code></pre>
+##   [1] colorspace_1.4-1       rprojroot_1.3-2        htmlTable_1.13.1      
+##   [4] XVector_0.24.0         base64enc_0.1-3        fs_1.3.0              
+##   [7] rstudioapi_0.10        roxygen2_6.1.1         remotes_2.0.4         
+##  [10] bit64_0.9-7            fansi_0.4.0            lubridate_1.7.4       
+##  [13] AnnotationDbi_1.46.0   xml2_1.2.0             splines_3.6.1         
+##  [16] geneplotter_1.62.0     knitr_1.22             zeallot_0.1.0         
+##  [19] pkgload_1.0.2          jsonlite_1.6           Formula_1.2-3         
+##  [22] broom_0.5.2            annotate_1.62.0        cluster_2.1.0         
+##  [25] httr_1.4.0             BiocManager_1.30.4     compiler_3.6.1        
+##  [28] backports_1.1.4        assertthat_0.2.1       Matrix_1.2-17         
+##  [31] lazyeval_0.2.2         cli_1.1.0              acepack_1.4.1         
+##  [34] htmltools_0.3.6        prettyunits_1.0.2      tools_3.6.1           
+##  [37] gtable_0.3.0           glue_1.3.1             GenomeInfoDbData_1.2.1
+##  [40] Rcpp_1.0.2             slam_0.1-45            cellranger_1.1.0      
+##  [43] vctrs_0.1.0            nlme_3.1-140           xfun_0.6              
+##  [46] ps_1.3.0               rvest_0.3.3            devtools_2.0.2        
+##  [49] XML_3.98-1.19          zlibbioc_1.30.0        scales_1.0.0          
+##  [52] hms_0.4.2              RColorBrewer_1.1-2     yaml_2.2.0            
+##  [55] memoise_1.1.0          gridExtra_2.3          rpart_4.1-15          
+##  [58] latticeExtra_0.6-28    stringi_1.4.3          RSQLite_2.1.1         
+##  [61] highr_0.8              genefilter_1.66.0      desc_1.2.0            
+##  [64] checkmate_1.9.3        pkgbuild_1.0.3         rlang_0.3.4           
+##  [67] pkgconfig_2.0.2        commonmark_1.7         bitops_1.0-6          
+##  [70] lpsymphony_1.12.0      evaluate_0.13          lattice_0.20-38       
+##  [73] htmlwidgets_1.3        bit_1.1-14             processx_3.3.0        
+##  [76] tidyselect_0.2.5       plyr_1.8.4             magrittr_1.5          
+##  [79] bookdown_0.9           R6_2.4.0               generics_0.0.2        
+##  [82] Hmisc_4.2-0            DBI_1.0.0              haven_2.1.0           
+##  [85] pillar_1.4.0           foreign_0.8-71         withr_2.1.2           
+##  [88] survival_2.44-1.1      RCurl_1.95-4.12        nnet_7.3-12           
+##  [91] modelr_0.1.4           crayon_1.3.4           fdrtool_1.2.15        
+##  [94] utf8_1.1.4             rmarkdown_1.12         usethis_1.5.0         
+##  [97] readxl_1.3.1           locfit_1.5-9.1         grid_3.6.1            
+## [100] blob_1.1.1             callr_3.2.0            digest_0.6.20         
+## [103] xtable_1.8-4           munsell_0.5.0          sessioninfo_1.1.1</code></pre>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
