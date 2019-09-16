@@ -21,6 +21,7 @@ Depends:
 Suggests:
     knitr,  
     rmarkdown,
+    testthat,
     BiocStyle
 VignetteBuilder:
     knitr
