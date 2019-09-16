@@ -10,7 +10,7 @@
 #' @usage data(SLBP_K562_w50s20_chr1_to_10_filtered)
 #'
 #' @format An object of class \code{"DESeq"};
-
+#'
 #' @examples
 #' library(DEWSeq)
 #' data(SLBP_K562_w50s20_chr1_to_10_filtered)
