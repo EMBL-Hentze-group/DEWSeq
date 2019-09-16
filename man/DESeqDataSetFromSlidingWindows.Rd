@@ -12,11 +12,11 @@ DESeqDataSetFromSlidingWindows(countData, colData, design, tidy = FALSE,
 
 \item{colData}{phenotype data}
 
-\item{design}{design of the experiment}
+\item{design}{design of the experiment, see \code{\link[DESeq2:DESeqDataSet]{DESeqDataSet}}}
 
-\item{tidy}{If TRUE, first column is of countData is treated as rownames (defalt: FALSE)}
+\item{tidy}{If TRUE, first column is of countData is treated as rownames (defalt: FALSE), see \code{\link[DESeq2:DESeqDataSet]{DESeqDataSet}}}
 
-\item{ignoreRank}{ignore rank}
+\item{ignoreRank}{ignore rank, see \code{\link[DESeq2:DESeqDataSet]{DESeqDataSet}}}
 
 \item{annotObj}{can either be a data.frame or a file name, see details}
 
