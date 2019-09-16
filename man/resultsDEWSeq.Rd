@@ -4,18 +4,14 @@
 \alias{resultsDEWSeq}
 \title{extract DEWseq results}
 \usage{
-resultsDEWSeq(object, annotationFile, contrast, name, listValues = c(1,
-  -1), cooksCutoff, test, addMLE = FALSE, tidy = FALSE,
-  parallel = FALSE, BPPARAM = bpparam(), minmu = 0.5,
-  begin0based = TRUE)
+resultsDEWSeq(object, contrast, name, listValues = c(1, -1), cooksCutoff,
+  test, addMLE = FALSE, tidy = FALSE, parallel = FALSE,
+  BPPARAM = bpparam(), minmu = 0.5, start0based = TRUE)
 }
 \arguments{
 \item{object}{a DESeqDataSet, on which one of the following functions has already been called:
 \code{\link[DESeq2:nbinomWaldTest]{nbinomWaldTest}}\cr
 \code{\link[DESeq2:nbinomLRT]{nbinomLRT}} is NOT supported in this version}
-
-\item{annotationFile}{sliding window annotation file, can be plain either text or .gz file,
-the file MUST be <TAB> separated. See Details for a description of the columns and column names expected in this file.}
 
 \item{contrast}{this argument specifies what comparison to extract from the \code{object} to build a results table.}
 
@@ -43,7 +39,7 @@ If not specified, the parameters last registered with
 
 \item{minmu}{lower bound on the estimated count (used when calculating contrasts)}
 
-\item{begin0based}{TRUE (default) or FALSE. If TRUE, then the start positions in \code{annotationFile} are  considered to be 0-based}
+\item{start0based}{TRUE (default) or FALSE. If TRUE, then the start positions in \code{annotationFile} are  considered to be 0-based}
 }
 \value{
 data.frame
@@ -65,7 +61,7 @@ For further details, please refer documentation for
 \itemize{
   \item \code{chromosome}: chromosome name
   \item \code{unique_id}: unique id of the window, \code{rownames(object)} must match this column
-  \item \code{begin}: window start co-ordinate, see parameter \code{begin0based}
+  \item \code{begin}: window start co-ordinate, see parameter \code{start0based}
   \item \code{end}: window end co-ordinate
   \item \code{strand}: strand
   \item \code{gene_id}: gene id

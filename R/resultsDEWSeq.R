@@ -26,7 +26,7 @@
 #' \itemize{
 #'   \item \code{chromosome}: chromosome name
 #'   \item \code{unique_id}: unique id of the window, \code{rownames(object)} must match this column
-#'   \item \code{begin}: window start co-ordinate, see parameter \code{begin0based}
+#'   \item \code{begin}: window start co-ordinate, see parameter \code{start0based}
 #'   \item \code{end}: window end co-ordinate
 #'   \item \code{strand}: strand
 #'   \item \code{gene_id}: gene id
@@ -48,8 +48,6 @@
 #' @param object a DESeqDataSet, on which one of the following functions has already been called:
 #' \code{\link[DESeq2:nbinomWaldTest]{nbinomWaldTest}}\cr
 #' \code{\link[DESeq2:nbinomLRT]{nbinomLRT}} is NOT supported in this version
-#' @param annotationFile sliding window annotation file, can be plain either text or .gz file,
-#' the file MUST be <TAB> separated. See Details for a description of the columns and column names expected in this file.
 #' @param contrast this argument specifies what comparison to extract from the \code{object} to build a results table.
 #' @param name the name of the individual effect (coefficient) for building a results table.
 #' \code{name} argument is ignored if \code{contrast} is specified
@@ -66,7 +64,7 @@
 #' If not specified, the parameters last registered with
 #' \code{\link{register}} will be used.
 #' @param minmu lower bound on the estimated count (used when calculating contrasts)
-#' @param begin0based TRUE (default) or FALSE. If TRUE, then the start positions in \code{annotationFile} are  considered to be 0-based
+#' @param start0based TRUE (default) or FALSE. If TRUE, then the start positions in \code{annotationFile} are  considered to be 0-based
 #'
 #' @examples
 #' # need specific examples
@@ -75,13 +73,12 @@
 #' }
 #'
 #' @return data.frame
-resultsDEWSeq <- function(object, annotationFile,
-                          contrast,name,
+resultsDEWSeq <- function(object, contrast,name,
                           listValues=c(1,-1), cooksCutoff,
                           test, addMLE=FALSE,
                           tidy=FALSE, parallel=FALSE,
                           BPPARAM=bpparam(), minmu=0.5,
-                          begin0based=TRUE) {
+                          start0based=TRUE) {
   stopifnot(is(object, "DESeqDataSet"))
   stopifnot(length(listValues)==2 & is.numeric(listValues))
   stopifnot(listValues[1] > 0 & listValues[2] < 0)
@@ -194,8 +191,24 @@ resultsDEWSeq <- function(object, annotationFile,
     # if an all zero contrast, also zero out the lfcMLE
     res$lfcMLE[ which(res$log2FoldChange == 0 & res$stat == 0) ] <- 0
   }
-  # read the annotation table and keep it for later
-  resGrange <- .readAnnotation(fname=annotationFile,uniqIds = rownames(res),begin0based=begin0based)
+  # get the row ranges object and keep it for later
+  resGrange <- rowRanges(object)[,c(1:8)]
+  neededCols <- c('unique_id','gene_id','gene_name','gene_type','gene_region','Nr_of_region',
+                  'Total_nr_of_region','window_number')
+  missingCols <- setdiff(neededCols,colnames(mcols(resGrange)))
+  if(length(missingCols)>0){
+    stop('rowRanges(object) is missing required columns, needed columns:
+         unique_id: unique id of the window
+         gene_id: gene id
+         gene_name: gene name
+         gene_type: gene type annotation
+         gene_region: gene region
+         Nr_of_region: number of the current region
+         Total_nr_of_region: total number of regions
+         window_number: window number
+         Missing columns:
+         ',paste(missingCols,collapse=", "),'')
+  }
   gc()
   # prune res object for all regions/windows with stat>=0
   res <- res[res$stat>=0,]
@@ -298,12 +311,15 @@ resultsDEWSeq <- function(object, annotationFile,
                           'window_number')
   # 'seqnames' from Granges is always a factor!
   deseqRes$chromosome <- as.character(deseqRes$chromosome)
-  if(begin0based){
+  if(start0based){
     deseqRes$begin <- pmax(deseqRes$begin-1,0)
   }
+  deseqRes <- deseqRes[,c('chromosome', 'begin','end','width',  'strand','unique_id', 'gene_id',  'gene_name','gene_type', 'gene_region', 'Nr_of_region','Total_nr_of_region',
+                          'window_number','baseMean', 'log2FoldChange', 'lfcSE','stat', 'pvalue', 'pBonferroni','pBonferroni.adj')]
   # may this helps to improve the memory usage
   rm(resOvs,nOvWindows,resGrange)
   gc()
+
   if (tidy) {
     colnms <- colnames(deseqRes)
     mcols(deseqRes,use.names=TRUE)["unique_id","type"] <- "results"
