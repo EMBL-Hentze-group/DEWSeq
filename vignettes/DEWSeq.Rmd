@@ -40,7 +40,7 @@ knitr::opts_chunk$set(tidy    = FALSE,
 # Preface 
 
 
-```{r, eval = F, echo = F}
+```{r, eval = FALSE, echo = FALSE}
 #**Note:** if you use DEWSeq in published research, please cite:
 #
 #> Authors. (Year)
@@ -87,7 +87,7 @@ will fall of at the crosslink site.
 
 
 
-```{r, fig.cap = "Crosslink site trunction at reverse transcription", echo =F}
+```{r, fig.cap = "Crosslink site trunction at reverse transcription", echo =FALSE}
 knitr::include_graphics("truncation.png")
 ```
 
@@ -104,7 +104,7 @@ them rather hard to compare. After all it is a heuristic, iCLIP/eCLIP rely
 on single-nucleotide positions.
 
 
-```{r, fig.cap = "Truncation sites (often referred to as crosslink sites) are the neighboring position of the aligned read.", fig.small = T, echo = F} 
+```{r, fig.cap = "Truncation sites (often referred to as crosslink sites) are the neighboring position of the aligned read.", fig.small = TRUE, echo = FALSE} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("truncationsite.png")
 ```
@@ -120,7 +120,7 @@ modes [@Hentze2018], some bind sequence specific, some have preference for
 structures (like stem-loops), some like to bind RNA modifications,
 others are mostly found at UTRs etc. and most of them do not have a known RNA-binding domain and bind with disordered regions to unkown preferences. 
 
-```{r, fig.cap = "Different binding modes of RNA-binding proteins", fig.wide = T, echo = F} 
+```{r, fig.cap = "Different binding modes of RNA-binding proteins", fig.wide = TRUE, echo = FALSE} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("binding_modes.png")
 ```
@@ -134,7 +134,7 @@ of the RNA binding and ensures no disassociation of the complexes in further ste
 crosslinkers with lasers can go up to ~10-20% crosslinking efficiency depending
 on protein and setup. 
 
-```{r, fig.cap = "Chance of crosslinking", fig.small = T, echo = F} 
+```{r, fig.cap = "Chance of crosslinking", fig.small = TRUE, echo = FALSE} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("crosslinking_chance.png")
 ```
@@ -176,7 +176,7 @@ preprocessing) and test for significant enrichment in the IP over the control.
 For this, we extended `r Biocpkg("DESeq2")` for a one-sided wald test to filter windows with negative wald stat values and do a right-tailed test on the remaining windows.
 
 
-```{r, fig.cap = "Sliding window approach with single-nucleotide position count data", echo = F} 
+```{r, fig.cap = "Sliding window approach with single-nucleotide position count data", echo = FALSE} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("dewseqoverview.png")
 ```
@@ -195,7 +195,7 @@ DEWSeq we correct the p-value for each window with Bonferroni with the number
 of overlaps. 
 
 
-```{r, fig.cap = "Sliding window approach with single-nucleotide position count data", echo = F, fig.small = T} 
+```{r, fig.cap = "Sliding window approach with single-nucleotide position count data", echo = FALSE, fig.small = TRUE} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("overlapping_sliding_windows.png")
 ```
@@ -312,7 +312,7 @@ Tip: You can use Sailfish, Kallisto, RSEM, Salmon or any (pseudo)aligner to
 get an estimation of the different expression levels of transcripts. Use this to 
 filter the annotation before flattening it. 
 
-```{r, echo = F, eval = F}
+```{r, echo = FALSE, eval = FALSE}
 # Analysis strategies for CLIP data
 ```
 
@@ -324,7 +324,7 @@ DEWSeq uses a sliding window approach with DESeq2 for enriched binding sites.
 
 First step is to load the library with this command
 
-```{r load library, eval = T}
+```{r load library, eval = TRUE}
 require(DEWSeq)
 ```
 
@@ -334,15 +334,15 @@ require(DEWSeq)
 
 Use this command to load the ENCODE SLBP data set.
 
-```{r load test data, eval = T}
-data(SLBP_K562_w50s20_chr1_to_10_filtered)
+```{r load test data, eval = TRUE}
+data(SLBP_K562_w50s20)
 ```
 
 This data contains two IP and one input control (SMI) samples which
 is not ideal, however it is small enough as test data. 
 
-```{r head of test data, eval = T}
-ddw <- SLBP_K562_w50s20_chr1_to_10_filtered
+```{r head of test data, eval = TRUE}
+ddw <- SLBP_K562_w50s20
 ddw
 ```
 
@@ -358,14 +358,14 @@ which can be prepared with htseq-clip (see above)
 For this, we recommend data.table or tidyr packages to read in the data swiftly.
 To data data.table is significantly faster than tidyr.
 
-```{r loading tidyverse, eval = T}
+```{r loading tidyverse, eval = TRUE}
 library(tidyverse)
 library(data.table)
 ```
 
 First we read in counts 
 
-```{r read in count matrix, eval = F}
+```{r read in count matrix, eval = FALSE}
 countData <- fread("path/swcounts/count_matrix.txt.gz", sep = "\t")
 
 # or alternatively with tidyr:
@@ -374,7 +374,7 @@ countData <- fread("path/swcounts/count_matrix.txt.gz", sep = "\t")
 
 Then we read in the annotation data frame 
 
-```{r read in annotation, eval = F}
+```{r read in annotation, eval = FALSE}
 annotationData <- fread("path/annotation/annotation.txt.gz", sep = "\t")
 
 # or alternatively with tidyr:
@@ -382,7 +382,7 @@ annotationData <- fread("path/annotation/annotation.txt.gz", sep = "\t")
 ```
 
 Finally we have to create a sample description
-```{r create colData, eval = F}
+```{r create colData, eval = FALSE}
 colData <- data.frame(
   row.names = colnames(countData), 
   type      = factor(
@@ -394,11 +394,11 @@ colData <- data.frame(
 
 This function will parse the annotation file and create a DESeq object
 
-```{r example import, eval = F}
+```{r example import, eval = FALSE}
 ddw <- DESeqDataSetFromSlidingWindows(countData  = countData,
                                       colData    = colData,
                                       annotation = annotationData,
-                                      tidy       = T,
+                                      tidy       = TRUE,
                                       design     = ~type)
 ```
 
@@ -411,7 +411,7 @@ Prefiltering becomes even more important with large numbers of sliding windows.
 Please find more details here:
 [http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#pre-filtering](DESeq2 vignette on pre-filtering)
 
-```{r row filtering, eval = T}
+```{r row filtering, eval = TRUE}
 keep <- rowSums(counts(ddw)) >= 10
 ddw <- ddw[keep,]
 ```
@@ -420,7 +420,7 @@ ddw <- ddw[keep,]
 
 The standard procedure to estimate size factors is 
 
-```{r estimate size factors, eval = F}
+```{r estimate size factors, eval = FALSE}
 ddw <- estimateSizeFactors(ddw)
 ```
 
@@ -430,7 +430,7 @@ ddw <- estimateSizeFactors(ddw)
 CLIP data often shows high expression of RNA contaminations, therefore you might 
 want to normalise based on protein coding genes only
 
-```{r filter for mRNAs, eval = T}
+```{r filter for mRNAs, eval = TRUE}
 ddw_mRNAs <- ddw[ rowData(ddw)[,"gene_type"] == "protein_coding", ]
 ddw <- estimateSizeFactors(ddw_mRNAs)
 rm(ddw_mRNAs)
@@ -441,7 +441,7 @@ rm(ddw_mRNAs)
 Estimate the dispersions and perform the wald test with these two functions.
 Please note, currently, DEWSeq does not support LRT tests.
 
-```{r estimate dispersions and wald test, eval = T}
+```{r estimate dispersions and wald test, eval = TRUE}
 ddw <- estimateDispersions(ddw)
 ddw <- nbinomWaldTest(ddw)
 ```
@@ -455,17 +455,17 @@ features, e.g. a gene) and then perform Bonferroni for each window.
 These family-wise corrected windows will corrected for multiple testing 
 with Benjamini-Hochberg.
 
-```{r DEWSeq results, eval = T}
+```{r DEWSeq results, eval = TRUE}
 resultWindows <- resultsDEWSeq(ddw,
                               contrast = c("type", "IP", "SMI"),
-                              tidy = T) %>% as_tibble
+                              tidy = TRUE) %>% as_tibble
 
 resultWindows
 ```
 
 You might be interested to correct for multiple hypothesis testing with IHW.
 
-```{r IHW multiple hypothesis correction, eval = T, warning = F}
+```{r IHW multiple hypothesis correction, eval = TRUE, warning = FALSE}
 suppressPackageStartupMessages(require(IHW))
 
 resultWindows[,"p_adj_IHW"] <- adj_pvalues(ihw(pBonferroni ~ baseMean, 
@@ -477,21 +477,19 @@ resultWindows[,"p_adj_IHW"] <- adj_pvalues(ihw(pBonferroni ~ baseMean,
 
 Here some basic stats about the differentially expressed windows:
 
-```{r windows tables, eval = T}
+```{r windows tables, eval = TRUE}
 resultWindows <- resultWindows %>% mutate(significant = resultWindows$p_adj_IHW < 0.05)
 
 sum(resultWindows$significant)
 ```
-`r sum(resultWindows$significant)` windows are significant and are coming from 
-these `r resultWindows %>% filter(significant)  %>% .[["gene_name"]] %>% unique %>% length` 
-genes:
+`r sum(resultWindows$significant)` windows are significant. Here are the top 20 from `r resultWindows %>% filter(significant)  %>% .[["gene_name"]] %>% unique %>% length` genes:
 
 ```{r how genes form windows}
-resultWindows %>% filter(significant) %>% arrange(desc(log2FoldChange))  %>% .[["gene_name"]] %>% unique
+resultWindows %>% filter(significant) %>% arrange(desc(log2FoldChange))  %>% .[["gene_name"]] %>% unique %>% head(20)
 ```
 
-SLBP is an histone-RNA binding protein, so the majority of the hits
-are coming from histone genes. 
+SLBP is an histone-RNA binding protein, so we are quite happy to see that the
+majority of the hits are coming from histone genes. 
 
 ## Combining regions
 
@@ -499,7 +497,7 @@ are coming from histone genes.
 windows. Now we would like to combine overlapping windows to a binding region.
 
 
-```{r extractRegions, eval = T, results = "hide"}
+```{r extractRegions, eval = TRUE, results = "hide"}
 resultRegions <- extractRegions(windowRes  = resultWindows,
                                 padjCol    = "p_adj_IHW",
                                 padjThresh = 0.05, 
@@ -511,31 +509,24 @@ Since we already corrected for the family wise error, we use the
 provide metrics for best and worst p-adjusted value, as well as best and 
 worst log2 fold change.
 
-```{r resultRegions output, eval = T}
+```{r resultRegions output, eval = TRUE}
 resultRegions
 ```
 
-`r nrow(resultRegions)` binding regions were found
+`r nrow(resultRegions)` binding regions were found which can exported as
+BED file so you can browse the regions in your genome browser of choice
+or use it for further analyses.
 
-```{r nrow of resultRegions}
-nrow(resultRegions)
-```
-
-We can export them as a BED file, so you can browse the regions in your
-genome browser of choice. 
-
-```{r toBED output, eval = F}
+```{r toBED output, eval = FALSE}
 toBED(windowRes = resultWindows,
       regionRes = resultRegions,
       fileName  = "enrichedWindowsRegions.bed")
 ```
 
 Further analysis which can be done is enrichment of gene types, sequence
-motif analysis of the regions, secondary structure analysis of binding regions
-and other functional analyses. 
+motif analysis of the regions, secondary structure analysis of binding regions and other functional analyses. 
 
-
-```{r eval = F, echo = F}
+```{r eval = FALSE, echo = FALSE}
 ## Plotting
 
 # Simple Enrichment
@@ -553,8 +544,8 @@ and other functional analyses.
 
 ### Loading Testdata
 
-#```{r loading region test data, eval = F}
-## eval = T
+#```{r loading region test data, eval = FALSE}
+## eval = TRUE
 #data(YBX3eCLIPregion)
 #```
 
