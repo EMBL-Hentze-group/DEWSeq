@@ -29,9 +29,12 @@ vignette: >
 ---
 
 ```{r setup, echo=FALSE, results="hide"}
-knitr::opts_chunk$set(tidy=FALSE, cache=FALSE,
-                      dev="png",
-                      message=FALSE, error=FALSE, warning=TRUE)
+knitr::opts_chunk$set(tidy    = FALSE,
+                      cache   = FALSE,
+                      dev     = "png",
+                      message = FALSE,
+                      error   = FALSE,
+                      warning = TRUE)
 ```	
 
 # Preface 
@@ -84,7 +87,7 @@ will fall of at the crosslink site.
 
 
 
-```{r, fig.cap = "Crosslink site trunction at reverse transcription", fig.small=T,echo =F}
+```{r, fig.cap = "Crosslink site trunction at reverse transcription", echo =F}
 knitr::include_graphics("truncation.png")
 ```
 
