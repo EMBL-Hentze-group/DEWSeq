@@ -4,7 +4,7 @@
 #'
 #' @importFrom GenomicRanges findOverlaps
 #' @importFrom methods is
-#' @importFrom SummarizedExperiment assays colData
+#' @importFrom SummarizedExperiment assays colData rowRanges
 #' @importFrom S4Vectors na.omit
 #' @importFrom stats p.adjust pnorm pt qf terms terms.formula
 #' @importFrom utils packageVersion

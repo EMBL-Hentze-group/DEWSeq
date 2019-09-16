@@ -20,7 +20,7 @@ DESeqDataSetFromSlidingWindows(countData, colData, design, tidy = FALSE,
 
 \item{annotObj}{can either be a data.frame or a file name, see details}
 
-\item{start0based}{TRUE (default) or FALSE. If TRUE, then the start positions in \code{windowRes} is  considered to be 0-based}
+\item{start0based}{TRUE (default) or FALSE. If TRUE, then the start positions in \code{annotObj} is  considered to be 0-based}
 }
 \value{
 DESeq object
@@ -30,8 +30,9 @@ create DESeq data object from sliding window counts,
 phenotype data and annotation data
 }
 \details{
-If annotObj is a file name, the input file MUST be <TAB> separated, and supports reading in .gz files.\cr
-This function checks for the following columns:\cr
+If \code{annotObj} is a file name, the input file MUST be <TAB> separated, and supports reading in .gz files. If \code{annotObj} is a data.frame,
+\code{colnames(annotObj)} MUST not be empty.\cr
+This function checks for the following columns after reading in the file or on data.frame:\cr
  chromosome: chromosome name \cr
  unique_id: unique id of the window \cr
  begin: window start co-ordinate \cr

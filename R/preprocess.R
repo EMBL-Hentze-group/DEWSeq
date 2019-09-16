@@ -1,5 +1,6 @@
 
 #' @export
+#' @importFrom methods as
 #' @importFrom BiocGenerics sort
 #' @importFrom GenomeInfoDb sortSeqlevels
 #' @importFrom GenomicRanges makeGRangesFromDataFrame
@@ -15,11 +16,12 @@
 #' @param tidy If TRUE, first column is of countData is treated as rownames (defalt: FALSE)
 #' @param ignoreRank ignore rank
 #' @param annotObj can either be a data.frame or a file name, see details
-#' @param start0based TRUE (default) or FALSE. If TRUE, then the start positions in \code{windowRes} is  considered to be 0-based
+#' @param start0based TRUE (default) or FALSE. If TRUE, then the start positions in \code{annotObj} is  considered to be 0-based
 #'
 #' @details
-#' If annotObj is a file name, the input file MUST be <TAB> separated, and supports reading in .gz files.\cr
-#' This function checks for the following columns:\cr
+#' If \code{annotObj} is a file name, the input file MUST be <TAB> separated, and supports reading in .gz files. If \code{annotObj} is a data.frame,
+#' \code{colnames(annotObj)} MUST not be empty.\cr
+#' This function checks for the following columns after reading in the file or on data.frame:\cr
 #'  chromosome: chromosome name \cr
 #'  unique_id: unique id of the window \cr
 #'  begin: window start co-ordinate \cr

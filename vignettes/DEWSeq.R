@@ -1,11 +1,9 @@
-## ----setup, echo=FALSE, results="hide"-----------------------------------
-#  DEWSeq package version: `r packageVersion("DESeq2")` <- this goes into abstract
-
+## ----setup, echo=FALSE, results="hide"-------------------------------------
 knitr::opts_chunk$set(tidy=FALSE, cache=FALSE,
                       dev="png",
                       message=FALSE, error=FALSE, warning=TRUE)
 
-## ---- eval = F, echo = F-------------------------------------------------
+## ---- eval = F, echo = F---------------------------------------------------
 #  #**Note:** if you use DEWSeq in published research, please cite:
 #  #
 #  #> Authors. (Year)
