@@ -474,6 +474,25 @@ resultWindows[,"p_adj_IHW"] <- adj_pvalues(ihw(pBonferroni ~ baseMean,
                      nfolds = 10))
 ```
 
+
+Here some basic stats about the differentially expressed windows:
+
+```{r windows tables, eval = T}
+resultWindows <- resultWindows %>% mutate(significant = resultWindows$p_adj_IHW < 0.05)
+
+sum(resultWindows$significant)
+```
+`r sum(resultWindows$significant)` windows are significant and are coming from 
+these `r resultWindows %>% filter(significant)  %>% .[["gene_name"]] %>% unique %>% length` 
+genes:
+
+```{r how genes form windows}
+resultWindows %>% filter(significant) %>% arrange(desc(log2FoldChange))  %>% .[["gene_name"]] %>% unique
+```
+
+SLBP is an histone-RNA binding protein, so the majority of the hits
+are coming from histone genes. 
+
 ## Combining regions
 
 `resultWindows` contains information about the differential expression of
@@ -495,6 +514,25 @@ worst log2 fold change.
 ```{r resultRegions output, eval = T}
 resultRegions
 ```
+
+`r nrow(resultRegions)` binding regions were found
+
+```{r nrow of resultRegions}
+nrow(resultRegions)
+```
+
+We can export them as a BED file, so you can browse the regions in your
+genome browser of choice. 
+
+```{r toBED output, eval = F}
+toBED(windowRes = resultWindows,
+      regionRes = resultRegions,
+      fileName  = "enrichedWindowsRegions.bed")
+```
+
+Further analysis which can be done is enrichment of gene types, sequence
+motif analysis of the regions, secondary structure analysis of binding regions
+and other functional analyses. 
 
 
 ```{r eval = F, echo = F}
@@ -520,10 +558,16 @@ resultRegions
 #data(YBX3eCLIPregion)
 #```
 
-# Discussion
 # FAQ
 ```
 
+# Discussion
+
+In this vignette, we left out plotting of estimates dispersions and other 
+quality control plots like MA plots out. Please find very detailed explanation 
+of those in the `r Biocpkg("DESeq2")` vignette. 
+
+The authors very much welcome any feedback, comments and suggestions.
 
 # Session Info
 
