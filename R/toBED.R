@@ -20,10 +20,12 @@
 #' @return write to file
 #'
 #' @examples
-#' # need specific examples
-#' \dontrun{
-#' 'toBED(windowRes=windowRes,regionRes=regionRes,fileName="enrichedWindowsRegions.bed")'
-#' }
+#'
+#' data(slbpRegions)
+#' data(slbpWindows)
+#' outFile <- tempfile('SLBP_visualization.bed')
+#' # the results are written to a temp file in this example
+#' toBED(slbpWindows,slbpRegions,outFile,padjCol='pBonferroni.adj')
 #'
 
 toBED <- function(windowRes,regionRes,fileName,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,trackName='sliding windows',
@@ -42,7 +44,7 @@ toBED <- function(windowRes,regionRes,fileName,padjCol='padj',padjThresh=0.05,lo
      ',log2FoldChangeCol,': log2foldchange column.
       Missing columns: ',paste(missingCols,collapse=", "),'')
     }
-  rRequiredCols <- c('chromosome','regionStartId','region_begin','region_end','strand','padj_avg')
+  rRequiredCols <- c('chromosome','regionStartId','region_begin','region_end','strand','padj_mean')
   missingCols <- setdiff(rRequiredCols,colnames(regionRes))
   if(length(missingCols)>0){
     stop('Input "regionRes" data.frame is missing required columns, needed columns:
@@ -52,9 +54,10 @@ toBED <- function(windowRes,regionRes,fileName,padjCol='padj',padjThresh=0.05,lo
         region_end: region end co-ordinate
         strand: strand
         windows_in_region: total number of windows in the given region
-        padj_avg: avg. padj value in the region.
+        padj_mean: avg. padj value in the region.
       Missing columns: ',paste(missingCols,collapse=", "),'')
   }
+  windowRes <- as.data.frame(windowRes)
   windowRes$unique_id <- as.character(windowRes$unique_id)
   regionRes$regionStartId <- paste(as.character(regionRes$regionStartId),'region',sep='@')
   windowRes <- windowRes[ windowRes[,padjCol]<=padjThresh & windowRes[,log2FoldChangeCol]>=log2FoldChangeThresh, ]
@@ -64,12 +67,14 @@ toBED <- function(windowRes,regionRes,fileName,padjCol='padj',padjThresh=0.05,lo
   regionRes <- regionRes[ regionRes$windows_in_region>1, ]
   windowRes <- windowRes[with(windowRes,order(chromosome,begin)),]
   regionRes <- regionRes[with(regionRes,order(chromosome,region_begin)),]
+  regionRes$strand <- as.character(regionRes$strand)
+  windowRes$strand <- as.character(windowRes$strand)
   # RGB color space for a red color, to show windows/regions as up regulated
   itemRGB <- '237,28,36' # #ed1c24
   windowRes$RGB <- itemRGB
   regionRes$RGB <- itemRGB
   windowRes <- windowRes[,c('chromosome','begin','end','unique_id',padjCol,'strand','begin','end','RGB')]
-  regionRes <- regionRes[,c('chromosome','region_begin','region_end','regionStartId','padj_avg','strand','region_begin','region_end','RGB')]
+  regionRes <- regionRes[,c('chromosome','region_begin','region_end','regionStartId','padj_mean','strand','region_begin','region_end','RGB')]
   # convert pvalues to bed scores with range 100-1000
   bedrange <- c(100,1000) # min max values for bed score
   allMin <- 1-padjThresh
@@ -78,9 +83,9 @@ toBED <- function(windowRes,regionRes,fileName,padjCol='padj',padjThresh=0.05,lo
   windowRes[,padjCol] <- 1-windowRes[,padjCol]
   windowRes[,padjCol] <- round(((windowRes[,padjCol]-allMin)/(allMax-allMin))*(bedrange[2]-bedrange[1])+bedrange[1])
   # regions
-  rmin <- floor(min(regionRes$padj_avg))
-  regionRes$padj_avg <- 1-regionRes$padj_avg
-  regionRes$padj_avg <- round(((regionRes$padj_avg-allMin)/(allMax-allMin))*(bedrange[2]-bedrange[1])+bedrange[1])
+  rmin <- floor(min(regionRes$padj_mean))
+  regionRes$padj_mean <- 1-regionRes$padj_mean
+  regionRes$padj_mean <- round(((regionRes$padj_mean-allMin)/(allMax-allMin))*(bedrange[2]-bedrange[1])+bedrange[1])
   # now start writing
   write(sprintf('track name="%s" description="%s" visibility=2 itemRgb="On" useScore=1',trackName,description),file=fileName)
   for(i in seq_len(nrow(regionRes))){

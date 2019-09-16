@@ -21,6 +21,10 @@ knitr::include_graphics("truncation.png")
 # fig.width=200, out.width="200px"
 knitr::include_graphics("truncationsite.png")
 
+## ----libs, message=FALSE---------------------------------------------------
+library("IHW")
+library("tidyverse")
+
 ## ---- fig.cap = "Different binding modes of RNA-binding proteins", fig.wide = TRUE, echo = FALSE----
 # fig.width=200, out.width="200px"
 knitr::include_graphics("binding_modes.png")
@@ -106,8 +110,6 @@ resultWindows <- resultsDEWSeq(ddw,
 resultWindows
 
 ## ----IHW multiple hypothesis correction, eval = TRUE, warning = FALSE------
-suppressPackageStartupMessages(require(IHW))
-
 resultWindows[,"p_adj_IHW"] <- adj_pvalues(ihw(pBonferroni ~ baseMean, 
                      data = resultWindows,
                      alpha = 0.05,

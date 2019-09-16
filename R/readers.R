@@ -31,6 +31,8 @@
 #' @param start0based TRUE (default) or FALSE. If TRUE, then the start
 #' @param threads number of threads for fread (default: 10)
 #' positions are considered to be 0-based
+#'
+#'
 #' @return data.frame or GRanges object
 .readAnnotation <- function(fname,uniqIds=NULL,asGRange=TRUE,checkWindowNumber=TRUE,start0based=TRUE,threads=10){
   neededCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name','gene_type','gene_region','Nr_of_region',

@@ -81,9 +81,11 @@ columns:\cr
  explanation of these columns.
 }
 \examples{
-# need specific examples
-\dontrun{
-'windowRes <- resultsDEWSeq(object=dds,annotationFile="/path/to/annotation.gz")'
-}
+
+data("slbpDds")
+slbpDds <- estimateSizeFactors(slbpDds)
+slbpDds <- estimateDispersions(slbpDds)
+slbpDds <- nbinomWaldTest(slbpDds)
+slbpWindows <- resultsDEWSeq(slbpDds)
 
 }

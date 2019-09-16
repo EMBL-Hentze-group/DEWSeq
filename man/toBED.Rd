@@ -37,9 +37,11 @@ extract significant windows, create regions by merging adjacent significant wind
 Finally, write the output as a BED file for visualization.
 }
 \examples{
-# need specific examples
-\dontrun{
-'toBED(windowRes=windowRes,regionRes=regionRes,fileName="enrichedWindowsRegions.bed")'
-}
+
+data(slbpRegions)
+data(slbpWindows)
+outFile <- tempfile('SLBP_visualization.bed')
+# the results are written to a temp file in this example
+toBED(slbpWindows,slbpRegions,outFile,padjCol='pBonferroni.adj')
 
 }

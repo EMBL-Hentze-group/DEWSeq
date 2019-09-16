@@ -24,6 +24,7 @@ bibliography: library.bib
 vignette: >
   %\VignetteIndexEntry{Analyzing eCLIP/iCLIP data with DEWSeq}
   %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteDepends{IHW}
   %\VignetteEncoding{UTF-8}
   %\usepackage[utf8]{inputenc}
 ---
@@ -108,6 +109,14 @@ on single-nucleotide positions.
 # fig.width=200, out.width="200px"
 knitr::include_graphics("truncationsite.png")
 ```
+
+load required packages for the rest of this vignette
+
+```{r libs, message=FALSE}
+library("IHW")
+library("tidyverse")
+```
+
 
 ## The idea behind DEWSeq 
 
@@ -468,8 +477,6 @@ resultWindows
 You might be interested to correct for multiple hypothesis testing with IHW.
 
 ```{r IHW multiple hypothesis correction, eval = TRUE, warning = FALSE}
-suppressPackageStartupMessages(require(IHW))
-
 resultWindows[,"p_adj_IHW"] <- adj_pvalues(ihw(pBonferroni ~ baseMean, 
                      data = resultWindows,
                      alpha = 0.05,

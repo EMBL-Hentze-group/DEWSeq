@@ -17,7 +17,8 @@ Imports:
     utils
 Depends:
     DESeq2,
-    BiocParallel
+    BiocParallel,
+    IHW
 Suggests:
     knitr,  
     rmarkdown,

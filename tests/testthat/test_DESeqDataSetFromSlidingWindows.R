@@ -15,7 +15,7 @@ test_that("DESeqDataSetFromSlidingWindows throws proper errors during object con
                         Total_nr_of_region=c(6,7,9,10,16,15,10,12,6,38),window_number=c(287,614,145,329,487,855,851,630,498,858))
   expect_error(DESeqDataSetFromSlidingWindows(matrix(0,10,4),phenoDat,annotDf),'rownames of countData cannot be empty')
   expect_error(DESeqDataSetFromSlidingWindows(data.frame(matrix(0,10,4)),phenoDat,annotObj=matrix(0,10,4)),'annotObj MUST be a data.frame or character')
-  errMsg <- 'Input annotation file is missing required columns, needed columns:
+  errMsg <- 'Input annotation data.frame is missing required columns, needed columns:
          chromosome: chromosome name
          unique_id: unique id of the window
          begin: window start co-ordinate

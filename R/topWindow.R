@@ -72,10 +72,11 @@
 #'
 #'
 #' @examples
-#' # need specific examples
-#' \dontrun{
-#' 'topWindoPerRegionStats <- topWindowStats(windowRes=windowRes,normalizedCount=normCount)'
-#' }
+#'
+#' data(slbpWindows)
+#' data(slbpVst)
+#' slbpList <- topWindowStats(slbpWindows,padjCol = 'pBonferroni.adj',normalizedCounts = slbpVst,
+#' treatmentCols = c('IP1','IP2'),treatmentName = 'SLBP',controlName = 'SMI')
 #'
 #' @return data.frame
 topWindowStats <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,start0based=TRUE, normalizedCounts,
@@ -139,7 +140,7 @@ topWindowStats <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
   meanWindowCols <- paste(colnames(normalizedCounts),'meanWindow',sep='.')
   meanMean <- paste(c(treatmentName,controlName),'mean.meanWindow',sep='.')
   outCols <- c(c('gene_id','region_begin','region_end','region_length','strand','regionStartId','chromosome','gene_name','gene_region','gene_type',
-                 'Nr_of_region','Total_nr_of_region',paste0(log2FoldChangeCol,'_min'),paste0(log2FoldChangeCol,'_mean'),paste0(log2FoldChangeCol,'_max'),
+                 'Nr_of_region','Total_nr_of_region',paste0('min.',log2FoldChangeCol),paste0('mean.',log2FoldChangeCol),paste0('max.',log2FoldChangeCol),
                  'unique_id.log2FCWindow','begin.log2FCWindow','end.log2FCWindow',paste0(log2FoldChangeCol,'.log2FCWindow')),log2FCMean, log2FCWindowCols,
                c('unique_id.meanWindow','begin.meanWindow','end.meanWindow',paste0(log2FoldChangeCol,'.meanWindow')),meanMean,meanWindowCols)
   outDat <- cbind(as.data.frame(sigReduce)[,c(1:5)],data.frame(matrix(data=NA,nrow=nrow(mcols(sigReduce)),ncol = length(outCols)-5)))
@@ -162,9 +163,9 @@ topWindowStats <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
     outDat[i,'Total_nr_of_region'] <- mcols(sigRange)[min(mergeInd),'Total_nr_of_region']
     #get the window with minimum/maximum log2 Foldchange
     # fill log2FoldChange first
-    outDat[i,paste0(log2FoldChangeCol,'_min')] <- min(unlist(mcols(sigRange)[mergeInd,log2FoldChangeCol]))
-    outDat[i,paste0(log2FoldChangeCol,'_mean')] <- mean(unlist(mcols(sigRange)[mergeInd,log2FoldChangeCol]))
-    outDat[i,paste0(log2FoldChangeCol,'_max')] <- max(unlist(mcols(sigRange)[mergeInd,log2FoldChangeCol]))
+    outDat[i,paste0('min.',log2FoldChangeCol)] <- min(unlist(mcols(sigRange)[mergeInd,log2FoldChangeCol]))
+    outDat[i,paste0('mean.',log2FoldChangeCol)] <- mean(unlist(mcols(sigRange)[mergeInd,log2FoldChangeCol]))
+    outDat[i,paste0('max.',log2FoldChangeCol)] <- max(unlist(mcols(sigRange)[mergeInd,log2FoldChangeCol]))
     log2FCInd <- callFn(mcols(sigRange)[mergeInd,log2FoldChangeCol])
     outDat[i,'unique_id.log2FCWindow'] <- mcols(sigRange)[mergeInd[log2FCInd],'unique_id']
     outDat[i,'begin.log2FCWindow'] <- start(sigRange[mergeInd[log2FCInd]])
@@ -195,7 +196,7 @@ topWindowStats <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChan
     outDat$begin.log2FCWindow <- outDat$begin.log2FCWindow-1
     outDat$begin.meanWindow <- pmax(outDat$begin.meanWindow-1,0)
   }
-  colOrder <- c(c('chromosome','gene_id','gene_name','gene_region','gene_type','regionStartId','region_begin','region_end','width','strand','Nr_of_region','Total_nr_of_region',
+  colOrder <- c(c('chromosome','gene_id','gene_name','gene_region','gene_type','regionStartId','region_begin','region_end','region_length','strand','Nr_of_region','Total_nr_of_region',
                   paste0('min.',log2FoldChangeCol),paste0('mean.',log2FoldChangeCol),paste0('max.',log2FoldChangeCol),'unique_id.log2FCWindow','begin.log2FCWindow','end.log2FCWindow',
                   paste0(log2FoldChangeCol,'.log2FCWindow')),log2FCMean,log2FCWindowCols,c('unique_id.meanWindow','begin.meanWindow','end.meanWindow',paste0(log2FoldChangeCol,'.meanWindow')),
                 meanMean,meanWindowCols)

@@ -45,4 +45,14 @@ This function checks for the following columns after reading in the file or on d
  Nr_of_region: number of the current region \cr
  Total_nr_of_region: total number of regions \cr
  window_number: window number \cr
+
+ @examples
+
+data("SLBP_K562_w50s20")
+slbpDat <- counts(SLBP_K562_w50s20)
+phenoDat <- DataFrame(conditions=as.factor(c(rep('IP',2),'SMI')),row.names = colnames(slbpDat))
+phenoDat$conditions <- relevel(phenoDat$conditions,ref='SMI')
+annotDat <- as.data.frame(rowRanges(SLBP_K562_w50s20))
+colnames(annotDat)[1:2] <- c('chromosome','begin')
+slbpDds <- DESeqDataSetFromSlidingWindows(countData = countData,colData = phenoDat,annotObj = annotDat,design=~conditions)
 }

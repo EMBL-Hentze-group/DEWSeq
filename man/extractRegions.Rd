@@ -65,10 +65,9 @@ The output data.frame from this function will have the following columns:
 }
 }
 \examples{
-# need specific examples
-\dontrun{
-'regionRes <- extractRegions(windowRes)'
-}
 
+data("slbpWindows")
+# using default cut-off thresholds, 'pBonferroni.adj' padj value
+slbpRegions <- extractRegions(slbpWindows,padjCol = 'pBonferroni.adj')
 
 }

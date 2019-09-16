@@ -35,6 +35,18 @@
 #'  Total_nr_of_region: total number of regions \cr
 #'  window_number: window number \cr
 #'
+#'  @examples
+#'
+#' data("SLBP_K562_w50s20")
+#' slbpDat <- counts(SLBP_K562_w50s20)
+#' phenoDat <- DataFrame(conditions=as.factor(c(rep('IP',2),'SMI')),row.names = colnames(slbpDat))
+#' phenoDat$conditions <- relevel(phenoDat$conditions,ref='SMI')
+#' annotDat <- as.data.frame(rowRanges(SLBP_K562_w50s20))
+# by default chromsome column 'seqnames' and begin co-ordinate column is 'start'
+# rename it
+#' colnames(annotDat)[1:2] <- c('chromosome','begin')
+#' slbpDds <- DESeqDataSetFromSlidingWindows(countData = countData,colData = phenoDat,annotObj = annotDat,design=~conditions)
+#'
 #' @return DESeq object
 DESeqDataSetFromSlidingWindows <- function(countData, colData, annotObj, design, tidy=FALSE,ignoreRank=FALSE, start0based=TRUE){
 
@@ -61,7 +73,7 @@ DESeqDataSetFromSlidingWindows <- function(countData, colData, annotObj, design,
                     'Total_nr_of_region','window_number')
     missingCols <- setdiff(neededCols,colnames(annotObj))
     if(length(missingCols)>0){
-      stop('Input annotation file is missing required columns, needed columns:
+      stop('Input annotation data.frame is missing required columns, needed columns:
          chromosome: chromosome name
          unique_id: unique id of the window
          begin: window start co-ordinate
@@ -77,15 +89,14 @@ DESeqDataSetFromSlidingWindows <- function(countData, colData, annotObj, design,
          Missing columns:
          ',paste(missingCols,collapse=", "),'')
     }
-    if(length(intersect(as.character(annotObj$unique_id),rownames(countData)))==0){
-      stop('There are no common unique ids between the countData and annotObj. Please check your data sets!')
-    }
     annotData <- annotObj
     rownames(annotData) <- annotData$unique_id
   }else{
     stop('annotObj MUST be a data.frame or character')
   }
-  if(length(setdiff(rownames(countData),rownames(annotData)))>0){
+  if(length(intersect(as.character(annotData$unique_id),rownames(countData)))==0){
+    stop('There are no common unique ids between the countData and annotObj. Please check your data sets!')
+  }else if(length(setdiff(rownames(countData),rownames(annotData)))>0){
     warning('Cannot find chromosomal positions for all entries in countData.
             countData rows with missing annotation will be removed !')
   }
