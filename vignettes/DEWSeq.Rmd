@@ -82,14 +82,15 @@ detection studies, a lot of them without known RNA-binding
 function [@Hentze2018].
 
 It is of great interest to detect binding sites of RBPs to 
-understand processes sucha s RNA splicing, localisation, 
-modification and degradation. Individual nucleotide resolution
-crosslinking and immunoprecipitation (iCLIP) [@Konig2010] and 
+study underlying mechanisms of their RNA binding. Individual 
+nucleotide resolution crosslinking and immunoprecipitation (iCLIP) 
+[@Konig2010] and 
 the derived protocol enhanced CLIP (eCLIP) [@VanNostrand2016]
 sequencing protocols rely on UV crosslinking inducing covalent
 bonds of RNA and proteins in close proximity. When reverse
-transcribing the RNA, a majority of the time the reverse 
-transcriptase will fall of at the crosslink site. Althrough
+transcribing the RNA fragment bound to the protein, a majority
+of the time the reverse transcriptase will fall of at the
+crosslink site. Althrough
 eCLIP introduces updates in chemistry, the use of a size-matched 
 input (SMI) control sample is an essential addition to the protocol
 which can be also adapted to iCLIP or similar protocols.
@@ -103,21 +104,25 @@ In iCLIP and eCLIP, truncation events are extracted as one nucleotide position
 next to the cDNA fragment (aligned read). In the classical protocols real 
 truncations cannot be distinguished from read-through reads or other 
 reads coming for otherwise truncated reads, like it can happen at 
-RNA modification sites or at crosslinking sites from other proteins. This this might be individual for many proteins (and the
+RNA modification sites or at crosslinking sites from other proteins.
+This this might be individual for many proteins (and the
 remaining polypoptide of the digested protein). Other protocols like HITS-CLIP
 and PAR-CLIP [@Hafner2010] rely exclusively on read-through events only 
 (although using other reverse transcriptases). Hybrid approaches do exist but
 the technical difficulty of said protocols and many optimizations steps makes 
-them rather hard to compare. After all it is a heuristic, iCLIP/eCLIP rely 
-on single-nucleotide positions.
-
+them rather hard to combine.
 
 ```{r, fig.cap = "Truncation sites (often referred to as crosslink sites) are the neighboring position of the aligned read.", fig.small = TRUE, echo = FALSE} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("truncationsite.png")
 ```
 
-load required packages for the rest of this vignette
+In summary, iCLIP and eCLIP protocols provide count data for single-nucleotide
+positions which are subjected to many heuristic events which are described 
+in the next chapter.
+
+
+We will need required packages for the rest of this vignette
 
 ```{r libs, message=FALSE}
 library("IHW")
@@ -134,21 +139,27 @@ library("tidyverse")
 Unlike transcription factors, RNA-binding proteins have many different binding
 modes [@Hentze2018], some bind sequence specific, some have preference for 
 structures (like stem-loops), some like to bind RNA modifications,
-others are mostly found at UTRs etc. and most of them do not have a known RNA-binding domain and bind with disordered regions to unkown preferences. 
+others are mostly found at UTRs etc. and most of them do not have
+a known RNA-binding domain and bind using disordered regions with unknown 
+target preferences. 
 
 ```{r, fig.cap = "Different binding modes of RNA-binding proteins", fig.wide = TRUE, echo = FALSE} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("binding_modes.png")
 ```
-All these different binding smode result in different crosslinking patterns.
+All these different binding modes can result in different crosslinking patterns,
+hence different truncation event patterns.
 
 #### Chance of crosslinking
 
-UV crosslinking at 254 nm is used to induce covalent (very strong!) chemical
+UV crosslinking at 254 nm is used to induce covalent (very strong) chemical
 bonds within very close proximity of RNAs to proteins. This allows a "snapshot"
-of the RNA binding and ensures no disassociation of the complexes in further steps. Unfortunately, thisprocess is very inefficient, typically crosslinking with Stratlinker(R) UV crosslinkers do have an effecticity of ~1-3% or less. Newer
-crosslinkers with lasers can go up to ~10-20% crosslinking efficiency depending
-on protein and setup. 
+of the RNA binding and ensures no disassociation of the RNA-protein complexes
+in further steps. This process is very unfortunately rather inefficient. 
+Typically, crosslinking with Stratlinker(R) UV crosslinkers do have an
+effecticity of ~1-3% or less (depending on UV lamp intensity and time of 
+irradiation). Newer crosslinkers with lasers can go up to ~10-20% crosslinking
+efficiency depending on protein and setup. 
 
 ```{r, fig.cap = "Chance of crosslinking", fig.small = TRUE, echo = FALSE} 
 # fig.width=200, out.width="200px"
@@ -157,64 +168,84 @@ knitr::include_graphics("crosslinking_chance.png")
 
 Depending on the type of protein and the binding mode, this can result in 
 different crosslinking pattern for each protein. Crosslinking will also 
-affect nearby proteins. Therefore it is of great importance that crosslink 
-sites are enriched compared to proper input controls.
+affect other proteins, and the IP step will only enrich for RNA fragments
+bound to the RNA and crosslinked samples show a certain background 
+different to normal expression patterns measured by RNA-sequencing.
 
 #### Background and antibodies
 
-When you IP your (crosslinked) protein and perform sequencing without any
-RNA digestion, you are basically performing RIP-seq or HITS-CLIP (the 
-crosslinked variatn). These studies nicely show that the enrichment of your
-protein with antibodies against protein tags or native epitops will enrich
-RNA targets, however will still result in almost full transcriptomic 
-background. Depending on your antibody, your purification method (beads) and
-many other factors, this can vary for different proteins. 
+##### Enrichment of targets
 
-When you take a close look to the first iCLIP analysis protocols (and protocols
-to date), you will notice that snoRNAs, lincRNAs and other short RNAs are 
-excluded from the protocol because they were treated as contaminants. It was 
-shown that size matched input (SMI) controls can 
-control for different artifacts from crosslinking and library preparation
-[@VanNostrand2016].
+Immunoprecipitating your (crosslinked) protein and performing sequencing 
+without any RNA digestion is called RIP-seq (without crosslinking) or 
+HITS-CLIP (with crosslinking). These studies nicely show that the
+enrichment of your protein with antibodies recognizing protein tags or
+native epitops will also enrich RNA fragments bound to the protein.
+However it is clear that the IPed samples contain almost a full transcriptomic 
+(random) background. Depending on the specificity of your antibody, 
+your purification method (e.g. type of beads) and many other factors, 
+this can vary for different proteins. The authors do not know any cases 
+where IP steps exclusively purify targets, if you find any cases, please
+contact the authors, we would really like to know.
 
-#### RNase concentrations and protein protection
+##### Contaminants vs background  
 
-To only sequence the binding sites, rather than the whole RNA, one has to 
-digest RNA not protected by your protein. Your RNase and its concentration
-will result in different length of the RNA fragment. Also, if your protein
-is stacked tighly together protecting a larger area from digestion,
-the crosslinking pattern can be affected as well [@Haberman2017]. 
+If you take a close look to the first iCLIP analysis protocols 
+(and lot of protocols to date), you will notice that snoRNAs, lincRNAs
+and other short RNAs are excluded from the protocol althought they 
+make up a majority of the signal. They were either treated as contaminants
+and dismissed right away, or more recently it was recommended to intersect the 
+data with an orthogonal data like RNA-seq knockouts and only look at the
+regions of interest. As already mentioned, it was shown that size-matched
+input (SMI) controls can control for different artifacts from crosslinking 
+and library preparation [@VanNostrand2016] and after correction it is 
+possible to detected real lincRNC, snoRNA etc binders. 
 
-```{r digestion pattern image, fig.cap = "Different RNase concentrations will result in different fragment sizes.", fig.small=TRUE, echo = FALSE} 
+Crosslinked samples do have a different backgroud compared to expression
+levels (as detected with RNA-seq). Therefore it is of great importance 
+to compare the IPed sample to a proper input control. *SMI controls
+can be easily applied for any CLIP samples*.  
+
+#### RNA fragment length and RNase concentrations
+
+To narrow down the target RNAs to the binding site region, RNase is used
+to digest RNA not protected by your protein. Using different RNase
+concentration will result in different RNA fragment lengths.
+Also, if your protein is stacked tighly together protecting a 
+larger area from digestion, this can result in longer RNA fragments 
+which can affect the crosslinking pattern [@Haberman2017]. 
+
+```{r, fig.cap = "Different RNase concentrations will result in different fragment sizes.", fig.small=TRUE, echo = FALSE} 
 knitr::include_graphics("digestionpatterns.png")
 ```
 
 #### Read-throughs
 
-iCLIP and eCLIP rely that reverse transcriptases truncate on crosslink sites. 
-HITS-CLIP and PAR-CLIP rely on reverse transcriptases reading through the 
-crosslink sites. Both methods use different reverse transcriptases with 
-different likelihood of truncating or reading through. A parameter for this
-might also be the polypeptide which is left after protein digestion which
-is different from protein to protein.
+iCLIP and eCLIP depend on the truncation of the reverse transcriptase
+at crosslink sites. In contrast, HITS-CLIP and PAR-CLIP need reverse
+transcriptases reading through the crosslink sites. 
+Both methods use different reverse transcriptases with 
+different likelihood of truncating or reading through. 
+The chance of this event will also be affected by the
+polypeptide which is left after protein digestion of the protein of interest.
 
-```{r readthrough image, fig.cap = "Read-throughs", fig.small = T, echo = FALSE} 
+```{r, fig.cap = "Read-throughs", fig.small = T, echo = FALSE} 
 knitr::include_graphics("readthrough.png")
 ```
 
 "Read-throughs" can truncate at a crosslink site from the same proteins,
-a different protein, or stall at the end of the RNA fragment. Due to the 
-low crosslinking efficency the crosslinking of multiple proteins is usually
-less likely. 
+a different protein, a RNA modifications, any other unknown events or
+finish at the end of an RNA fragment. Due to the low efficency 
+the crosslinking of multiple proteins is usually less likely, however 
+not no improbable.
 
 ##### Early truncations 
 
 Early truncations can also appear on a long RNA fragment with multiple 
 crosslink sites from different proteins or multiple crosslink sites 
 from the same protein. Again, although low crosslinking
-efficency should make this less likely to have multiple crosslink sites
-at once, those events might occur. If more early truncation events occur, 
-the binding of 
+efficency reduces the chance of having multiple crosslink sites
+at once, those events occur stochastically. 
 
 ```{r early truncation, fig.cap = "Early truncations.", echo = FALSE} 
 knitr::include_graphics("earlytruncation.png")
@@ -223,12 +254,12 @@ knitr::include_graphics("earlytruncation.png")
 
 ### Method
 
-#### Sliding window testing 
+#### Differentially expressed sliding windows 
 
-Because of the properties of iCLIP/eCLIP data described above, we use a sliding
+Because of the properties of eCLIP or iCLIP data described above, we use a sliding
 window approach (where different window and step sizes can be chosen in the 
 preprocessing) and test for significant enrichment in the IP over the control.
-For this, we extended `r Biocpkg("DESeq2")` for a one-sided wald test to filter windows with negative wald stat values and do a right-tailed test on the remaining windows.
+For this, we extended `r Biocpkg("DESeq2")` for a one-sided wald test to filter windows with negative wald stat values and do a right-tailed test on the remaining windows. The filtering step increases the performance when testing millions of windows. 
 
 ```{r deseq overview image, fig.cap = "Sliding window approach with single-nucleotide position count data", echo = FALSE} 
 knitr::include_graphics("dewseqoverview.png")
@@ -236,9 +267,15 @@ knitr::include_graphics("dewseqoverview.png")
 
 #### Combining significant windows
 
-Since this truncation sites or crosslinking sites are only one nucleotide, 
-in contrary to large fragments detected in ChIP-seq. ChIP-seq binding regions
-share coverage from same cDNA fragments and therefore `r Biocpkg("csaw")` 
+Contrary to large fragments detected in ChIP-seq, the truncation sites 
+are only one nucleotide. To combine windows, `r Biocpkg("csaw")` 
+defines ChIP-seq binding regions which are then subjected to multiple
+hypothesis correction.
+
+
+  ##TODO##
+In ChIP-seq cDNA fragments share coverage from same 
+and therefore
 implements the SIMES method to join coverage blocks and treats them
 as one entity for multiple hypothesis correction. Since the single-nucleotide
 do not have the same property as cDNA fragments and each gene in eCLIP/iCLIP
