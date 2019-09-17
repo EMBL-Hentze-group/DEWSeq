@@ -185,23 +185,8 @@ will result in different length of the RNA fragment. Also, if your protein
 is stacked tighly together protecting a larger area from digestion,
 the crosslinking pattern can be affected as well [@Haberman2017]. 
 
-```{r digestionpattern image, fig.cap = "Different RNase concentrations will result in different fragment sizes.", echo = FALSE} 
+```{r digestion pattern image, fig.cap = "Different RNase concentrations will result in different fragment sizes.", fig.small=TRUE, echo = FALSE} 
 knitr::include_graphics("digestionpatterns.png")
-```
-
-
-### Method
-
-#### Sliding window testing 
-
-Because of the properties of iCLIP/eCLIP data described above, we use a sliding
-window approach (where different window and step sizes can be chosen in the 
-preprocessing) and test for significant enrichment in the IP over the control.
-For this, we extended `r Biocpkg("DESeq2")` for a one-sided wald test to filter windows with negative wald stat values and do a right-tailed test on the remaining windows.
-
-
-```{r deseq overview image, fig.cap = "Sliding window approach with single-nucleotide position count data", echo = FALSE} 
-knitr::include_graphics("dewseqoverview.png")
 ```
 
 #### Read-throughs
@@ -209,8 +194,9 @@ knitr::include_graphics("dewseqoverview.png")
 iCLIP and eCLIP rely that reverse transcriptases truncate on crosslink sites. 
 HITS-CLIP and PAR-CLIP rely on reverse transcriptases reading through the 
 crosslink sites. Both methods use different reverse transcriptases with 
-different likelihood of truncating or reading through. As mentioned before 
-this might be a different for different proteins.   
+different likelihood of truncating or reading through. A parameter for this
+might also be the polypeptide which is left after protein digestion which
+is different from protein to protein.
 
 ```{r readthrough image, fig.cap = "Read-through and early truncations", echo = FALSE} 
 knitr::include_graphics("readthrough.png")
@@ -226,6 +212,24 @@ less likely.
 Early truncations can also appear on a long RNA fragment with multiple 
 crosslink sites from different proteins. Again, although low crosslinking
 efficency should make this less likely.
+
+```{r readthrough image, fig.cap = "Read-through and early truncations", echo = FALSE} 
+knitr::include_graphics("earlytruncation.png")
+```
+
+
+### Method
+
+#### Sliding window testing 
+
+Because of the properties of iCLIP/eCLIP data described above, we use a sliding
+window approach (where different window and step sizes can be chosen in the 
+preprocessing) and test for significant enrichment in the IP over the control.
+For this, we extended `r Biocpkg("DESeq2")` for a one-sided wald test to filter windows with negative wald stat values and do a right-tailed test on the remaining windows.
+
+```{r deseq overview image, fig.cap = "Sliding window approach with single-nucleotide position count data", echo = FALSE} 
+knitr::include_graphics("dewseqoverview.png")
+```
 
 #### Combining significant windows
 
@@ -422,7 +426,7 @@ Then we read in the annotation data frame
 ```{r read in annotation, eval = FALSE}
 annotationData <- fread("path/annotation/annotation.txt.gz", sep = "\t")
 
-# or alternatively with tidyr:
+#or alternatively with tidyr:
 #annotationData <- read_tsv("path/annotation/annotation.txt.gz")
 ```
 
