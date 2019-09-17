@@ -641,12 +641,16 @@ motif analysis of the regions, secondary structure analysis of binding regions a
 
 # Discussion
 
-#### What about quality control plots etc?
+## QC 
+
+### What about quality control plots etc?
 
 In this vignette, we left out plotting of estimates dispersions and other 
 quality control plots like MA or PCA plots. 
 Please find very detailed explanation 
 of those in the `r Biocpkg("DESeq2")` vignette. 
+
+## Normalisation
 
 #### Advanced normalisation
 
@@ -656,7 +660,7 @@ In general, it is a good strategy to call differentially
 expressed windows, then exclude that regions for 
 normalisation and rerun the workflow.
 
-#### Feedback
+## Feedback
 
 The authors very much welcome any feedback, comments and suggestions.
 

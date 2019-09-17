@@ -290,7 +290,13 @@ $(document).ready(function () {
 <li><a href="#differential-expressed-windows-analysis"><span class="toc-section-number">4.5</span> Differential expressed windows analysis</a></li>
 <li><a href="#combining-regions"><span class="toc-section-number">4.6</span> Combining regions</a></li>
 </ul></li>
-<li><a href="#discussion"><span class="toc-section-number">5</span> Discussion</a></li>
+<li><a href="#discussion"><span class="toc-section-number">5</span> Discussion</a><ul>
+<li><a href="#qc"><span class="toc-section-number">5.1</span> QC</a><ul>
+<li><a href="#what-about-quality-control-plots-etc"><span class="toc-section-number">5.1.1</span> What about quality control plots etc?</a></li>
+</ul></li>
+<li><a href="#normalisation"><span class="toc-section-number">5.2</span> Normalisation</a></li>
+<li><a href="#feedback"><span class="toc-section-number">5.3</span> Feedback</a></li>
+</ul></li>
 <li><a href="#session-info"><span class="toc-section-number">6</span> Session Info</a></li>
 <li><a href="#references">References</a></li>
 </ul>
@@ -668,17 +674,23 @@ resultWindows</code></pre></div>
 </div>
 <div id="discussion" class="section level1">
 <h1><span class="header-section-number">5</span> Discussion</h1>
-<div id="what-about-quality-control-plots-etc" class="section level4">
-<h4><span class="header-section-number">5.0.0.1</span> What about quality control plots etc?</h4>
+<div id="qc" class="section level2">
+<h2><span class="header-section-number">5.1</span> QC</h2>
+<div id="what-about-quality-control-plots-etc" class="section level3">
+<h3><span class="header-section-number">5.1.1</span> What about quality control plots etc?</h3>
 <p>In this vignette, we left out plotting of estimates dispersions and other quality control plots like MA or PCA plots. Please find very detailed explanation of those in the <em><a href="https://bioconductor.org/packages/3.9/DESeq2">DESeq2</a></em> vignette.</p>
 </div>
+</div>
+<div id="normalisation" class="section level2">
+<h2><span class="header-section-number">5.2</span> Normalisation</h2>
 <div id="advanced-normalisation" class="section level4">
-<h4><span class="header-section-number">5.0.0.2</span> Advanced normalisation</h4>
+<h4><span class="header-section-number">5.2.0.1</span> Advanced normalisation</h4>
 <p>Normalisation might be adjusted for your proteins.</p>
 <p>In general, it is a good strategy to call differentially expressed windows, then exclude that regions for normalisation and rerun the workflow.</p>
 </div>
-<div id="feedback" class="section level4">
-<h4><span class="header-section-number">5.0.0.3</span> Feedback</h4>
+</div>
+<div id="feedback" class="section level2">
+<h2><span class="header-section-number">5.3</span> Feedback</h2>
 <p>The authors very much welcome any feedback, comments and suggestions.</p>
 </div>
 </div>
