@@ -374,7 +374,7 @@ Figure 4: <span class="caption-title">Chance of crosslinking</span><br>
 <div id="contaminants-vs-background" class="section level5">
 <h5><span class="header-section-number">2.2.1.3.2</span> Contaminants vs background</h5>
 <p>If you take a close look to the first iCLIP analysis protocols (and lot of protocols to date), you will notice that snoRNAs, lincRNAs and other short RNAs are excluded from the protocol althought they make up a majority of the signal. They were either treated as contaminants and dismissed right away, or more recently it was recommended to intersect the data with an orthogonal data like RNA-seq knockouts and only look at the regions of interest. As already mentioned, it was shown that size-matched input (SMI) controls can control for different artifacts from crosslinking and library preparation <span class="citation">(Eric L Van Nostrand et al. 2016)</span> and after correction it is possible to detected real lincRNC, snoRNA etc binders.</p>
-<p>Crosslinked samples do have a different backgroud compared to expression levels (as detected with RNA-seq). Therefore it is of great importance to compare the IPed sample to a proper input control. <em>SMI controls can be easily applied for any CLIP samples</em>.</p>
+<p>Crosslinked samples do have a different backgroud compared to expression levels (as detected with RNA-seq). Therefore it is of great importance to compare the IPed sample to a proper input control. <em>SMI controls can be easily applied for any CLIP protocols</em>.</p>
 </div>
 </div>
 <div id="rna-fragment-length-and-rnase-concentrations" class="section level4">
@@ -668,8 +668,19 @@ resultWindows</code></pre></div>
 </div>
 <div id="discussion" class="section level1">
 <h1><span class="header-section-number">5</span> Discussion</h1>
-<p>In this vignette, we left out plotting of estimates dispersions and other quality control plots like MA plots out. Please find very detailed explanation of those in the <em><a href="https://bioconductor.org/packages/3.9/DESeq2">DESeq2</a></em> vignette.</p>
+<div id="what-about-quality-control-plots-etc" class="section level4">
+<h4><span class="header-section-number">5.0.0.1</span> What about quality control plots etc?</h4>
+<p>In this vignette, we left out plotting of estimates dispersions and other quality control plots like MA or PCA plots. Please find very detailed explanation of those in the <em><a href="https://bioconductor.org/packages/3.9/DESeq2">DESeq2</a></em> vignette.</p>
+</div>
+<div id="advanced-normalisation" class="section level4">
+<h4><span class="header-section-number">5.0.0.2</span> Advanced normalisation</h4>
+<p>Normalisation might be adjusted for your proteins.</p>
+<p>In general, it is a good strategy to call differentially expressed windows, then exclude that regions for normalisation and rerun the workflow.</p>
+</div>
+<div id="feedback" class="section level4">
+<h4><span class="header-section-number">5.0.0.3</span> Feedback</h4>
 <p>The authors very much welcome any feedback, comments and suggestions.</p>
+</div>
 </div>
 <div id="session-info" class="section level1">
 <h1><span class="header-section-number">6</span> Session Info</h1>

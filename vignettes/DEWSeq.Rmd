@@ -204,7 +204,7 @@ possible to detected real lincRNC, snoRNA etc binders.
 Crosslinked samples do have a different backgroud compared to expression
 levels (as detected with RNA-seq). Therefore it is of great importance 
 to compare the IPed sample to a proper input control. *SMI controls
-can be easily applied for any CLIP samples*.  
+can be easily applied for any CLIP protocols*.  
 
 #### RNA fragment length and RNase concentrations
 
@@ -641,9 +641,22 @@ motif analysis of the regions, secondary structure analysis of binding regions a
 
 # Discussion
 
+#### What about quality control plots etc?
+
 In this vignette, we left out plotting of estimates dispersions and other 
-quality control plots like MA plots out. Please find very detailed explanation 
+quality control plots like MA or PCA plots. 
+Please find very detailed explanation 
 of those in the `r Biocpkg("DESeq2")` vignette. 
+
+#### Advanced normalisation
+
+Normalisation might be adjusted for your proteins.
+
+In general, it is a good strategy to call differentially
+expressed windows, then exclude that regions for 
+normalisation and rerun the workflow.
+
+#### Feedback
 
 The authors very much welcome any feedback, comments and suggestions.
 
