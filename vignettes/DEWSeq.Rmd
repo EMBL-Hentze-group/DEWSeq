@@ -1,5 +1,5 @@
 ---
-title: "Analyzing eCLIP/iCLIP data with DEWSeq"
+title: "Analyzing eCLIP and iCLIP data with DEWSeq"
 author:
 - name: Sudeep Sahadevan
   affiliation: European Molecular Biology Laboratory, Heidelberg, Germany
@@ -9,12 +9,15 @@ author:
 date: "`r format(Sys.Date(), '%m/%d/%Y')`"
 package: DEWSeq
 abstract: >
-  In the analysis for RNA-binding protein targets is the detection of 
-  differentially expressed regions. In eCLIP or iCLIP sequencing or similiar
-  protocols provide count data for individual nucleotide. DEWSeq implements
-  a sliding window approach for the analysis of enriched regions in the IP
-  over input control samples. This vignette explains properties of i/eCLIP
-  and how to perform an analysis with count data from sliding windows.
+  The identification of RNA-binding protein targets is very similar in
+  methodology to the detection of differentially expressed regions. 
+  Protocols such as eCLIP or iCLIP sequencing provide count data for
+  individual nucleotides. DEWSeq implements a sliding window approach for
+  the analysis of enriched regions in the immunoprecipitation (IP) sample 
+  compared to size-matched input (SMI) control samples. This vignette 
+  explains properties of eCLIP and iCLIP data related methods and 
+  and shows how to perform a sliding-window differentially expressed 
+  window approach to detect RNA-binding protein binidng sites.
 output:
   BiocStyle::html_document:
     highlight: pygments
@@ -63,7 +66,8 @@ Please get familiar with this Bioconductor package before you are using DEWSeq
 
 ## Acknowledgements
 
-Wolfgang Huber and Matthias Hentze for mentoring, advice and discussion. Benjamin Lang and Gian Tartaglia for great help with functional analysis and benchmarking. Mike Love, Simon Anders, Bernd Klaus and Frederick Ziebell for comments and discussion.
+Wolfgang Huber and Matthias Hentze for mentoring, advice and discussion. Benjamin Lang and Gian Tartaglia for great help with functional analysis and benchmarking,
+as well as feedback to the vignette. Mike Love, Simon Anders, Bernd Klaus and Frederick Ziebell for comments and discussion.
 
 # Introduction 
 
@@ -72,31 +76,34 @@ Wolfgang Huber and Matthias Hentze for mentoring, advice and discussion. Benjami
 RNA-binding proteins (RBPs) play a key role in the life-time 
 of RNAs. They are involved in RNA synthesis, stability, 
 degradation, transport and translation and play an 
-important layer of regulation in the cell. Over 1900 
-RBPs were detected [@Hentze2018] in different high-throughput 
+important layer of regulation in the cell. Over 1900 mouse 
+and over 1400 human RBPs were detected in different high-throughput 
 detection studies, a lot of them without known RNA-binding
-function.
+function [@Hentze2018].
 
-It is of great interest to detect binding sites of RBPs. 
-individual nucleotide resolution crosslinking 
-and immunoprecipitation (iCLIP) [@Konig2010] and the derived protocol
-enhanced CLIP (eCLIP) [@VanNostrand2016] sequencing protocols
-rely on UV crosslinking inducing covalent bonds of RNA
-and proteins in close proximity. When reverse transcribing
-the RNA, a majority of the time the reverse transcriptase 
-will fall of at the crosslink site.
-
-
+It is of great interest to detect binding sites of RBPs to 
+understand processes sucha s RNA splicing, localisation, 
+modification and degradation. Individual nucleotide resolution
+crosslinking and immunoprecipitation (iCLIP) [@Konig2010] and 
+the derived protocol enhanced CLIP (eCLIP) [@VanNostrand2016]
+sequencing protocols rely on UV crosslinking inducing covalent
+bonds of RNA and proteins in close proximity. When reverse
+transcribing the RNA, a majority of the time the reverse 
+transcriptase will fall of at the crosslink site. Althrough
+eCLIP introduces updates in chemistry, the use of a size-matched 
+input (SMI) control sample is an essential addition to the protocol
+which can be also adapted to iCLIP or similar protocols.
 
 ```{r, fig.cap = "Crosslink site trunction at reverse transcription", echo =FALSE}
 knitr::include_graphics("truncation.png")
 ```
 
 
-In iCLIP and eCLIP truncation events are extracted as one nucleotide position
+In iCLIP and eCLIP, truncation events are extracted as one nucleotide position
 next to the cDNA fragment (aligned read). In the classical protocols real 
 truncations cannot be distinguished from read-through reads or other 
-interferences. This this might be individual for many proteins (and the
+reads coming for otherwise truncated reads, like it can happen at 
+RNA modification sites or at crosslinking sites from other proteins. This this might be individual for many proteins (and the
 remaining polypoptide of the digested protein). Other protocols like HITS-CLIP
 and PAR-CLIP [@Hafner2010] rely exclusively on read-through events only 
 (although using other reverse transcriptases). Hybrid approaches do exist but
@@ -173,9 +180,15 @@ control for different artifacts from crosslinking and library preparation
 #### RNase concentrations and protein protection
 
 To only sequence the binding sites, rather than the whole RNA, one has to 
-digest RNA not protected by your protein. If your protein is stacking and 
-therefore protecting a larger area from digestion, the crosslinking pattern
-can be affected as well [@Haberman2017]. 
+digest RNA not protected by your protein. Your RNase and its concentration
+will result in different length of the RNA fragment. Also, if your protein
+is stacked tighly together protecting a larger area from digestion,
+the crosslinking pattern can be affected as well [@Haberman2017]. 
+
+```{r digestionpattern image, fig.cap = "Different RNase concentrations will result in different fragment sizes.", echo = FALSE} 
+knitr::include_graphics("digestionpatterns.png")
+```
+
 
 ### Method
 
@@ -187,11 +200,32 @@ preprocessing) and test for significant enrichment in the IP over the control.
 For this, we extended `r Biocpkg("DESeq2")` for a one-sided wald test to filter windows with negative wald stat values and do a right-tailed test on the remaining windows.
 
 
-```{r, fig.cap = "Sliding window approach with single-nucleotide position count data", echo = FALSE} 
-# fig.width=200, out.width="200px"
+```{r deseq overview image, fig.cap = "Sliding window approach with single-nucleotide position count data", echo = FALSE} 
 knitr::include_graphics("dewseqoverview.png")
 ```
 
+#### Read-throughs
+
+iCLIP and eCLIP rely that reverse transcriptases truncate on crosslink sites. 
+HITS-CLIP and PAR-CLIP rely on reverse transcriptases reading through the 
+crosslink sites. Both methods use different reverse transcriptases with 
+different likelihood of truncating or reading through. As mentioned before 
+this might be a different for different proteins.   
+
+```{r readthrough image, fig.cap = "Read-through and early truncations", echo = FALSE} 
+knitr::include_graphics("readthrough.png")
+```
+
+"Read-throughs" can truncate at a crosslink site from the same proteins,
+a different protein, or stall at the end of the RNA fragment. Due to the 
+low crosslinking efficency the crosslinking of multiple proteins is usually
+less likely. 
+
+##### Early truncations 
+
+Early truncations can also appear on a long RNA fragment with multiple 
+crosslink sites from different proteins. Again, although low crosslinking
+efficency should make this less likely.
 
 #### Combining significant windows
 
@@ -532,7 +566,7 @@ toBED(windowRes = resultWindows,
       fileName  = "enrichedWindowsRegions.bed")
 ```
 
-Further analysis which can be done is enrichment of gene types, sequence
+Further analyses which can be done is enrichment of gene types, sequence
 motif analysis of the regions, secondary structure analysis of binding regions and other functional analyses. 
 
 ```{r eval = FALSE, echo = FALSE}
