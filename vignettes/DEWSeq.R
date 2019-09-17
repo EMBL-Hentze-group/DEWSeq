@@ -33,8 +33,16 @@ knitr::include_graphics("binding_modes.png")
 # fig.width=200, out.width="200px"
 knitr::include_graphics("crosslinking_chance.png")
 
-## ---- fig.cap = "Sliding window approach with single-nucleotide position count data", echo = FALSE----
-# fig.width=200, out.width="200px"
+## ----digestion pattern image, fig.cap = "Different RNase concentrations will result in different fragment sizes.", fig.small=TRUE, echo = FALSE----
+knitr::include_graphics("digestionpatterns.png")
+
+## ----readthrough image, fig.cap = "Read-throughs", fig.small = T, echo = FALSE----
+knitr::include_graphics("readthrough.png")
+
+## ----early truncation, fig.cap = "Early truncations.", echo = FALSE--------
+knitr::include_graphics("earlytruncation.png")
+
+## ----deseq overview image, fig.cap = "Sliding window approach with single-nucleotide position count data", echo = FALSE----
 knitr::include_graphics("dewseqoverview.png")
 
 ## ---- fig.cap = "Sliding window approach with single-nucleotide position count data", echo = FALSE, fig.small = TRUE----
@@ -67,7 +75,7 @@ library(data.table)
 ## ----read in annotation, eval = FALSE--------------------------------------
 #  annotationData <- fread("path/annotation/annotation.txt.gz", sep = "\t")
 #  
-#  # or alternatively with tidyr:
+#  #or alternatively with tidyr:
 #  #annotationData <- read_tsv("path/annotation/annotation.txt.gz")
 
 ## ----create colData, eval = FALSE------------------------------------------

@@ -198,7 +198,7 @@ different likelihood of truncating or reading through. A parameter for this
 might also be the polypeptide which is left after protein digestion which
 is different from protein to protein.
 
-```{r readthrough image, fig.cap = "Read-through and early truncations", echo = FALSE} 
+```{r readthrough image, fig.cap = "Read-throughs", fig.small = T, echo = FALSE} 
 knitr::include_graphics("readthrough.png")
 ```
 
@@ -210,10 +210,13 @@ less likely.
 ##### Early truncations 
 
 Early truncations can also appear on a long RNA fragment with multiple 
-crosslink sites from different proteins. Again, although low crosslinking
-efficency should make this less likely.
+crosslink sites from different proteins or multiple crosslink sites 
+from the same protein. Again, although low crosslinking
+efficency should make this less likely to have multiple crosslink sites
+at once, those events might occur. If more early truncation events occur, 
+the binding of 
 
-```{r readthrough image, fig.cap = "Read-through and early truncations", echo = FALSE} 
+```{r early truncation, fig.cap = "Early truncations.", echo = FALSE} 
 knitr::include_graphics("earlytruncation.png")
 ```
 
