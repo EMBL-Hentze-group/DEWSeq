@@ -33,10 +33,10 @@ knitr::include_graphics("binding_modes.png")
 # fig.width=200, out.width="200px"
 knitr::include_graphics("crosslinking_chance.png")
 
-## ----digestion pattern image, fig.cap = "Different RNase concentrations will result in different fragment sizes.", fig.small=TRUE, echo = FALSE----
+## ---- fig.cap = "Different RNase concentrations will result in different fragment sizes.", fig.small=TRUE, echo = FALSE----
 knitr::include_graphics("digestionpatterns.png")
 
-## ----readthrough image, fig.cap = "Read-throughs", fig.small = T, echo = FALSE----
+## ---- fig.cap = "Read-throughs", fig.small = T, echo = FALSE---------------
 knitr::include_graphics("readthrough.png")
 
 ## ----early truncation, fig.cap = "Early truncations.", echo = FALSE--------
