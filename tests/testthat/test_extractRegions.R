@@ -23,4 +23,18 @@ test_that("extractRegions throws expected errors and warnings",{
     Please lower your significance cut-off thresholds and manually check if there are any significant windows under the threshold'
   expect_warning(extractRegions(windowRes = slbpWindows,padjCol = 'pSlidingWindows.adj',
                                 log2FoldChangeThresh = 20),warnMsg)
+  expect_null(suppressWarnings(extractRegions(windowRes = slbpWindows,padjCol = 'pSlidingWindows.adj',
+                                              log2FoldChangeThresh = 20)))
+  expectedResults <- c("ENSG00000184678.10:exon0001W00087", "ENSG00000184260.5:exon0001W00017", "ENSG00000196890.4:exon0001W00020",
+                       "ENSG00000188486.3:exon0001W00053", "ENSG00000278705.1:exon0001W00004", "ENSG00000197061.4:exon0001W00020",
+                       "ENSG00000180596.7:exon0001W00430", "ENSG00000180573.9:exon0001W00028", "ENSG00000168298.6:exon0001W00029",
+                       "ENSG00000168298.6:exon0001W00034", "ENSG00000158373.8:exon0001W00018", "ENSG00000282988.1:exon0002W00061",
+                       "ENSG00000282988.1:intron0001W00159", "ENSG00000277224.2:exon0001W00020", "ENSG00000276966.2:exon0001W00021",
+                       "ENSG00000273802.2:exon0001W00053", "ENSG00000277075.2:exon0001W00022", "ENSG00000275713.2:exon0001W00018",
+                       "ENSG00000158406.4:exon0001W00373", "ENSG00000124635.8:intron0001W00321", "ENSG00000196787.3:exon0001W00022",
+                       "ENSG00000276180.1:exon0001W00052", "ENSG00000185130.5:exon0001W00002", "ENSG00000196747.4:exon0001W00022",
+                       "ENSG00000278828.1:exon0001W00021", "ENSG00000197238.4:exon0001W00011", "ENSG00000273542.1:exon0001W00001",
+                       "ENSG00000233822.4:exon0001W00065", "ENSG00000233822.4:exon0004W01400", "ENSG00000197153.4:intron0001W00115",
+                       "ENSG00000274641.1:exon0001W00018", "ENSG00000169398.19:intron0010W12981")
+  expect_equal(extractRegions(windowRes = slbpWindows,padjCol = 'pSlidingWindows.adj',log2FoldChangeThresh = 10)$regionStartId,expectedResults)
 })
