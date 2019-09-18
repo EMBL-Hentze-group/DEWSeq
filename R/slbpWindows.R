@@ -1,0 +1,17 @@
+#' ENCODE eCLIP data SLBP in K562
+#'
+#' This is a DESeq results object for ENCODE eCLIP data: SLBP in K562 cell lines
+#' This is used as an example dataset for a runnable example. This dataset is the output
+#' from running the example code for the function \code{\link{resultsDEWSeq}}
+#'
+#' @docType data
+#'
+#' @usage data(slbpWindows)
+#'
+#' @format An object of class \code{"DESeqResults"};
+#'
+#' @examples
+#'
+#' data(slbpWindows)
+#' slbpWindows
+"slbpWindows"
