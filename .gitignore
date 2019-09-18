@@ -41,3 +41,5 @@ vignettes/*.pdf
 .renviron
 .rprofile
 
+doc
+Meta
