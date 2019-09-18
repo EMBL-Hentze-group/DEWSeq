@@ -107,7 +107,8 @@ extractRegions <- function(windowRes,
   windowRes <- na.omit(windowRes[,requiredCols])
   sigDat <- windowRes[ windowRes[,padjCol]<=padjThresh & windowRes[,log2FoldChangeCol]>=log2FoldChangeThresh, ]
   if(nrow(sigDat)==0){
-    message('There are no significant windows/regions under the current threshold!\nPlease lower your significance cut-off thresholds and manually check if there are any significant windows under the threshold')
+    warning('There are no significant windows/regions under the current threshold!
+    Please lower your significance cut-off thresholds and manually check if there are any significant windows under the threshold')
     return(NULL)
   }
   geneRange <- makeGRangesFromDataFrame(sigDat,seqnames.field = 'gene_id',start.field = 'begin',end.field = 'end',strand.field = 'strand',

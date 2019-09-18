@@ -57,7 +57,7 @@ For further details, please refer documentation for
  \code{\link[DESeq2:results]{results}} function in DESeq2 package
 }
 \details{
-\code{annotationFile} is expected to have the following columns:
+The output object is expected to have the following columns:
 \itemize{
   \item \code{chromosome}: chromosome name
   \item \code{unique_id}: unique id of the window, \code{rownames(object)} must match this column
@@ -73,12 +73,11 @@ For further details, please refer documentation for
   \item \code{window_number}: window number
 }
 
-The output data.frame from this function will have all the columns listed
-above, along with the DESeq2 \code{\link[DESeq2:results]{results}}
-columns:\cr
+In addtion to the listed above, the output is also expected to have defaut columns from running\cr
+\code{\link[DESeq2:results]{results}} function from DESeq2, such as:\cr
 \code{baseMean}, \code{log2FoldChange}, \code{lfcSE}, \code{stat},
-\code{pvalue}, \code{padj}. Please consult DESeq2 vignettes for an
- explanation of these columns.
+\code{pvalue}, \code{padj}.\cr
+Please consult DESeq2 vignettes and manual for an explanation of these columns.
 }
 \examples{
 

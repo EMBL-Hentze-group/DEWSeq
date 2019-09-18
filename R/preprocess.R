@@ -10,6 +10,28 @@
 #' @description create DESeq data object from sliding window counts,
 #' phenotype data and annotation data
 #'
+#' @details
+#' If \code{annotObj} is a file name, the input file MUST be <TAB> separated, and supports reading in .gz files. \cr
+#' If \code{annotObj} is a data.frame, \code{colnames(annotObj)} MUST not be empty.\cr
+#' This function checks for the following columns after reading in the file or on data.frame:
+#' \itemize{
+#'   \item \code{chromosome}: chromosome name
+#'   \item \code{unique_id}: unique id of the window, \code{rownames(object)} must match this column
+#'   \item \code{begin}: window start co-ordinate, see parameter \code{start0based}
+#'   \item \code{end}: window end co-ordinate
+#'   \item \code{strand}: strand
+#'   \item \code{gene_id}: gene id
+#'   \item \code{gene_name}: gene name
+#'   \item \code{gene_type}: gene type annotation
+#'   \item \code{gene_region}: gene region
+#'   \item \code{Nr_of_region}: number of the current region
+#'   \item \code{Total_nr_of_region}: total number of regions
+#'   \item \code{window_number}: window number
+#' }
+#'
+#' The chromosomal locations and annotations of the windows can be accessed from the returned object using:\cr
+#' \code{rowRanges(object)}
+#'
 #' @param countData sliding window count data
 #' @param colData phenotype data
 #' @param annotObj can either be a data.frame or a file name, see details
@@ -18,34 +40,17 @@
 #' @param ignoreRank ignore rank, see \code{\link[DESeq2:DESeqDataSet]{DESeqDataSet}}
 #' @param start0based TRUE (default) or FALSE. If TRUE, then the start positions in \code{annotObj} is  considered to be 0-based
 #'
-#' @details
-#' If \code{annotObj} is a file name, the input file MUST be <TAB> separated, and supports reading in .gz files. If \code{annotObj} is a data.frame,
-#' \code{colnames(annotObj)} MUST not be empty.\cr
-#' This function checks for the following columns after reading in the file or on data.frame:\cr
-#'  chromosome: chromosome name \cr
-#'  unique_id: unique id of the window \cr
-#'  begin: window start co-ordinate \cr
-#'  end: window end co-ordinate \cr
-#'  strand: strand \cr
-#'  gene_id: gene id \cr
-#'  gene_name: gene name \cr
-#'  gene_type: gene type annotation \cr
-#'  gene_region: gene region \cr
-#'  Nr_of_region: number of the current region \cr
-#'  Total_nr_of_region: total number of regions \cr
-#'  window_number: window number \cr
-#'
-#'  @examples
+#' @examples
 #'
 #' data("SLBP_K562_w50s20")
 #' slbpDat <- counts(SLBP_K562_w50s20)
 #' phenoDat <- DataFrame(conditions=as.factor(c(rep('IP',2),'SMI')),row.names = colnames(slbpDat))
 #' phenoDat$conditions <- relevel(phenoDat$conditions,ref='SMI')
 #' annotDat <- as.data.frame(rowRanges(SLBP_K562_w50s20))
-# by default chromsome column 'seqnames' and begin co-ordinate column is 'start'
-# rename it
+#' # by default chromsome column 'seqnames' and begin co-ordinate column is 'start'
+#' # rename it
 #' colnames(annotDat)[1:2] <- c('chromosome','begin')
-#' slbpDds <- DESeqDataSetFromSlidingWindows(countData = countData,colData = phenoDat,annotObj = annotDat,design=~conditions)
+#' slbpDds <- DESeqDataSetFromSlidingWindows(countData = slbpDat,colData = phenoDat,annotObj = annotDat,design=~conditions)
 #'
 #' @return DESeq object
 DESeqDataSetFromSlidingWindows <- function(countData, colData, annotObj, design, tidy=FALSE,ignoreRank=FALSE, start0based=TRUE){

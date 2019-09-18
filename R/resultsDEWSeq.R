@@ -22,7 +22,7 @@
 #'  \code{\link[DESeq2:results]{results}} function in DESeq2 package
 #'
 #' @details
-#' \code{annotationFile} is expected to have the following columns:
+#' The output object is expected to have the following columns:
 #' \itemize{
 #'   \item \code{chromosome}: chromosome name
 #'   \item \code{unique_id}: unique id of the window, \code{rownames(object)} must match this column
@@ -38,12 +38,11 @@
 #'   \item \code{window_number}: window number
 #' }
 #'
-#' The output data.frame from this function will have all the columns listed
-#' above, along with the DESeq2 \code{\link[DESeq2:results]{results}}
-#' columns:\cr
+#' In addtion to the listed above, the output is also expected to have defaut columns from running\cr
+#' \code{\link[DESeq2:results]{results}} function from DESeq2, such as:\cr
 #' \code{baseMean}, \code{log2FoldChange}, \code{lfcSE}, \code{stat},
-#' \code{pvalue}, \code{padj}. Please consult DESeq2 vignettes for an
-#'  explanation of these columns.
+#' \code{pvalue}, \code{padj}.\cr
+#' Please consult DESeq2 vignettes and manual for an explanation of these columns.
 #'
 #' @param object a DESeqDataSet, on which one of the following functions has already been called:
 #' \code{\link[DESeq2:nbinomWaldTest]{nbinomWaldTest}}\cr
@@ -81,7 +80,16 @@ resultsDEWSeq <- function(object, contrast,name,
                           tidy=FALSE, parallel=FALSE,
                           BPPARAM=bpparam(), minmu=0.5,
                           start0based=TRUE) {
-  stopifnot(is(object, "DESeqDataSet"))
+  if(!is(object, "DESeqDataSet")){
+    stop("object MUST be of class DESeqDataSet!")
+  }
+  neededCols <- c('unique_id','gene_id','gene_name','gene_type','gene_region','Nr_of_region',
+                    'Total_nr_of_region','window_number')
+  missingCols <- setdiff(neededCols,colnames(mcols(rowRanges(slbpDds))))
+  if(length(missingCols)>0){
+    stop('The following colums are missing from rowRanges(object):',
+         paste(missingCols,collapse=", "),'')
+  }
   stopifnot(length(listValues)==2 & is.numeric(listValues))
   stopifnot(listValues[1] > 0 & listValues[2] < 0)
   if (!"results" %in% mcols(mcols(object))$type) {
@@ -95,7 +103,7 @@ resultsDEWSeq <- function(object, contrast,name,
     object <- DESeq2:::makeWaldTest(object)
   }
   if (test == "LRT") {
-    stop("this function do not support Likelihood ratio test!")
+    stop("this function do not support likelihood ratio test!")
   }
 
   if (addMLE) {
