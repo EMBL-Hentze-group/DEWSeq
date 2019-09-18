@@ -13,7 +13,7 @@
 #' @description This is a modified version of the
 #'      \code{\link[DESeq2:results]{results}} function.
 #'
-#' This function uses chromosomal positions given in the \code{annotationFile}
+#' This function uses chromosomal positions given in the \code{rowRanges(dds)}
 #' to identify overlapping windows in \code{dds} object. For each window,
 #' the number of overlapping windows are counted, and the p-value is
 #'  adjusted for FWER using bonferroni correction.
@@ -22,27 +22,7 @@
 #'  \code{\link[DESeq2:results]{results}} function in DESeq2 package
 #'
 #' @details
-#' The output object is expected to have the following columns:
-#' \itemize{
-#'   \item \code{chromosome}: chromosome name
-#'   \item \code{unique_id}: unique id of the window, \code{rownames(object)} must match this column
-#'   \item \code{begin}: window start co-ordinate, see parameter \code{start0based}
-#'   \item \code{end}: window end co-ordinate
-#'   \item \code{strand}: strand
-#'   \item \code{gene_id}: gene id
-#'   \item \code{gene_name}: gene name
-#'   \item \code{gene_type}: gene type annotation
-#'   \item \code{gene_region}: gene region
-#'   \item \code{Nr_of_region}: number of the current region
-#'   \item \code{Total_nr_of_region}: total number of regions
-#'   \item \code{window_number}: window number
-#' }
-#'
-#' In addtion to the listed above, the output is also expected to have defaut columns from running\cr
-#' \code{\link[DESeq2:results]{results}} function from DESeq2, such as:\cr
-#' \code{baseMean}, \code{log2FoldChange}, \code{lfcSE}, \code{stat},
-#' \code{pvalue}, \code{padj}.\cr
-#' Please consult DESeq2 vignettes and manual for an explanation of these columns.
+#' For a detailed description of the column use \code{mcols(output)$description}
 #'
 #' @param object a DESeqDataSet, on which one of the following functions has already been called:
 #' \code{\link[DESeq2:nbinomWaldTest]{nbinomWaldTest}}\cr
@@ -73,7 +53,13 @@
 #' slbpDds <- nbinomWaldTest(slbpDds)
 #' slbpWindows <- resultsDEWSeq(slbpDds)
 #'
-#' @return data.frame
+#' \dontrun{
+#' # for a description of the columns in slbpWindows use
+#' mcols(slbpWindows)$description
+#' }
+#'
+#'
+#' @return DESeqResults object
 resultsDEWSeq <- function(object, contrast,name,
                           listValues=c(1,-1), cooksCutoff,
                           test, addMLE=FALSE,
@@ -329,14 +315,25 @@ resultsDEWSeq <- function(object, contrast,name,
   # may this helps to improve the memory usage
   rm(resOvs,nOvWindows,resGrange)
   gc()
+  rownames(deseqRes) <- deseqRes$unique_id
+  mcols(deseqRes,use.names=TRUE)["chromosome","description"] <- "chromosome name"
+  mcols(deseqRes,use.names=TRUE)["begin","description"] <- "chromosomal start position"
+  mcols(deseqRes,use.names=TRUE)["end","description"] <- "chromosomal stop position"
+  mcols(deseqRes,use.names=TRUE)["width","description"] <- "length in base pairs"
+  mcols(deseqRes,use.names=TRUE)["strand","description"] <- "strand"
+  mcols(deseqRes,use.names=TRUE)["unique_id","description"] <- "unique id for the window (row names)"
+  mcols(deseqRes,use.names=TRUE)["gene_id","description"] <- "gene id"
+  mcols(deseqRes,use.names=TRUE)["gene_name","description"] <- "gene name"
+  mcols(deseqRes,use.names=TRUE)["gene_type","description"] <- "gene type (protein_coding, miRNA, pseudogene,...)"
+  mcols(deseqRes,use.names=TRUE)["gene_region","description"] <- "gene region (intron, exon/CDS, 5'UTR,...)"
+  mcols(deseqRes,use.names=TRUE)["Nr_of_region","description"] <- "nth 'gene_region' out of 'Total_nr_of_region'"
+  mcols(deseqRes,use.names=TRUE)["Total_nr_of_region","description"] <- "Total number of gene_region in this gene"
+  mcols(deseqRes,use.names=TRUE)["window_number","description"] <- "this is the nth sliding window of this gene"
+  mcols(deseqRes,use.names=TRUE)["pSlidingWindows","description"] <- "FWER corrected p-value for sliding windows"
+  mcols(deseqRes,use.names=TRUE)["pSlidingWindows.adj","description"] <- "FDR corrected 'pSlidingWindows'"
 
   if (tidy) {
-    colnms <- colnames(deseqRes)
-    mcols(deseqRes,use.names=TRUE)["unique_id","type"] <- "results"
-    mcols(deseqRes,use.names=TRUE)["unique_id","description"] <- "unique id for the window/region(row names)"
-    deseqRes <- deseqRes[,c("unique_id",setdiff(colnms,'unique_id'))]
     rownames(deseqRes) <- NULL
-    deseqRes <- as.data.frame(deseqRes)
   }
   return(deseqRes)
 }

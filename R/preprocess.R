@@ -29,8 +29,9 @@
 #'   \item \code{window_number}: window number
 #' }
 #'
-#' The chromosomal locations and annotations of the windows can be accessed from the returned object using:\cr
-#' \code{rowRanges(object)}
+#' This function creates a \code{\link[DESeq2:DESeqDataSet]{DESeqDataSet}} using supplied countData, phenotype data
+#' and annotation data. The chromosomal locations and annotations of the sliding windows
+#' (parsed from \code{annotObj}) can be accessed from the returned object using: \code{rowRanges(object)}
 #'
 #' @param countData sliding window count data
 #' @param colData phenotype data
@@ -51,7 +52,7 @@
 #' phenoDat <- DataFrame(conditions=as.factor(c(rep('IP',2),'SMI')),row.names = colnames(slbpDat))
 #' phenoDat$conditions <- relevel(phenoDat$conditions,ref='SMI')
 #' annotDat <- as.data.frame(rowRanges(SLBP_K562_w50s20))
-#' # by default chromsome column 'seqnames' and begin co-ordinate column is 'start'
+#' # by default chromsome column is 'seqnames' and begin co-ordinate column is 'start'
 #' # rename it
 #' colnames(annotDat)[1:2] <- c('chromosome','begin')
 #' slbpDds <- DESeqDataSetFromSlidingWindows(countData = slbpDat,colData = phenoDat,annotObj = annotDat,design=~conditions)
