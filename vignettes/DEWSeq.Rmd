@@ -362,7 +362,7 @@ Generally the steps for preprocessing are:
   custom tools depending on your protocol and single-read or paired-end setup.
   Please use tools which consider sequencing errors in the UMI and read 
   sequences.
-* Sort and index bam files (samtools or similar)
+* Sort and index bam files ([samtools](http://samtools.sourceforge.net) or similar)
 
 Eventually, you will end up with sorted *.bam* files.
 
@@ -432,6 +432,7 @@ is not ideal, however it is small enough as test data.
 
 ```{r head of test data, eval = TRUE}
 ddw <- SLBP_K562_w50s20
+rm(SLBP_K562_w50s20)
 ddw
 ```
 
@@ -447,7 +448,7 @@ which can be prepared with htseq-clip (see above)
 For this, we recommend data.table or tidyr packages to read in the data swiftly.
 To data data.table is significantly faster than tidyr.
 
-```{r loading tidyverse, eval = TRUE}
+```{r loading tidyverse, eval = TRUE, results='hide'}
 library(tidyverse)
 library(data.table)
 ```
@@ -498,7 +499,7 @@ rowAnnotation.
 
 Prefiltering becomes even more important with large numbers of sliding windows. 
 Please find more details here:
-[http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#pre-filtering](DESeq2 vignette on pre-filtering)
+[DESeq2 vignette on pre-filtering](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#pre-filtering)
 
 ```{r row filtering, eval = TRUE}
 keep <- rowSums(counts(ddw)) >= 10
@@ -507,36 +508,95 @@ ddw <- ddw[keep,]
 
 ## Estimating Size Factors
 
+For library normalisation, rather than modifying the raw counts,
+DESeq2 estimates size factors which are incorportated in the anlaysis.
+For more information, please refer to the DESeq2 vignette.
+
 The standard procedure to estimate size factors is 
 
 ```{r estimate size factors, eval = FALSE}
+```{r estimate size factors, eval = TRUE}
 ddw <- estimateSizeFactors(ddw)
+sizeFactors(ddw)
 ```
-
 
 ### Estimate size factors based on a specific set of RNAs
 
-CLIP data often shows high expression of RNA contaminations, therefore you might 
-want to normalise based on protein coding genes only
+CLIP data often shows high expression levels of small RNAs like snoRNAs,
+lincRNAs etc, therefore you might want to normalise based on protein coding
+genes only.
 
 ```{r filter for mRNAs, eval = TRUE}
 ddw_mRNAs <- ddw[ rowData(ddw)[,"gene_type"] == "protein_coding", ]
-ddw <- estimateSizeFactors(ddw_mRNAs)
-rm(ddw_mRNAs)
+ddw_mRNAs <- estimateSizeFactors(ddw_mRNAs)
+sizeFactors(ddw) <- sizeFactors(ddw_mRNAs)
+sizeFactors(ddw)
 ```
+
+### Estimate size factor for assymetric data
+
+In general, when there is asymmetry in the data,
+like enrichment in IP over control,
+it is a good pratice to call differentially
+expressed features with DESeq2 and then exclude them for 
+normalisation. This might be adjusted for your proteins.
+
+First we identify significant windows in IP or the controls.
+
+```{r tmp significant windows}
+ddw_tmp <- ddw
+ddw_tmp <- estimateDispersions(ddw_tmp, fitType = "local", quiet = TRUE)
+ddw_tmp <- nbinomWaldTest(ddw_tmp)
+
+tmp_significant_windows <- 
+                results(ddw_tmp,
+                    contrast = c("type", "IP", "SMI"),
+                    tidy = TRUE,
+                    filterFun = ihw) %>% 
+                dplyr::filter(padj < 0.05) %>% 
+                .[["row"]]
+rm("ddw_tmp")
+```
+
+Then we exclude those for the estimation of the size factors
+```{r}
+ddw_mRNAs <- ddw_mRNAs[ !rownames(ddw_mRNAs) %in% tmp_significant_windows, ]
+ddw_mRNAs <- estimateSizeFactors(ddw_mRNAs)
+sizeFactors(ddw) <- sizeFactors(ddw_mRNAs)
+
+rm( list = c("tmp_significant_windows", "ddw_mRNAs"))
+
+sizeFactors(ddw)
+```
+
 
 ## Differential expressed windows analysis
 
-Estimate the dispersions and perform the wald test with these two functions.
-Please note, currently, DEWSeq does not support LRT tests.
+### Estimate dispersions and wald test
+
+The next step is to estimate the dispersions and perform the wald test
+with these two functions. *Please note, currently, DEWSeq does not support 
+LRT tests.* 
+
+Please read up on fitType in the `r Biocpkg("DESeq2")` package and adjust
+according to your data set.
 
 ```{r estimate dispersions and wald test, eval = TRUE}
-ddw <- estimateDispersions(ddw)
+ddw <- estimateDispersions(ddw, fitType = "local", quiet = TRUE)
 ddw <- nbinomWaldTest(ddw)
 ```
 
-This performes a one-sided signficance test, looking for enrichment in the
-IP samples vs the SMI controls. Also it will perform a correction
+You can check the dispersion estimates with the following function:
+
+```{r, fig.cap = "Dispersion Estimates", fig.wide = TRUE}
+plotDispEsts(ddw)
+```
+
+### Significance testing 
+
+In the next step we perform a one-sided signficance test, looking for
+enrichment in the IP samples vs the SMI controls. 
+Also it will perform a correction
 for p-values of overlapping windows: The function will determine how many 
 overlapping windows for each window there are (this can vary at the end of 
 features, e.g. a gene) and then perform Bonferroni for each window. 
@@ -565,14 +625,23 @@ resultWindows[,"p_adj_IHW"] <- adj_pvalues(ihw(pBonferroni ~ baseMean,
 Here some basic stats about the differentially expressed windows:
 
 ```{r windows tables, eval = TRUE}
-resultWindows <- resultWindows %>% mutate(significant = resultWindows$p_adj_IHW < 0.05)
+resultWindows <- resultWindows %>% 
+                      mutate(significant = resultWindows$p_adj_IHW < 0.05)
 
 sum(resultWindows$significant)
 ```
-`r sum(resultWindows$significant)` windows are significant. Here are the top 20 from `r resultWindows %>% filter(significant)  %>% .[["gene_name"]] %>% unique %>% length` genes:
+`r sum(resultWindows$significant)` windows are significant. 
+Here are the top 20 from 
+`r resultWindows %>% filter(significant) %>% .[["gene_name"]] %>% unique %>% length` 
+genes:
 
 ```{r how genes form windows}
-resultWindows %>% filter(significant) %>% arrange(desc(log2FoldChange))  %>% .[["gene_name"]] %>% unique %>% head(20)
+resultWindows %>%
+   filter(significant) %>% 
+   arrange(desc(log2FoldChange)) %>% 
+   .[["gene_name"]] %>% 
+   unique %>% 
+   head(20)
 ```
 
 SLBP is an histone-RNA binding protein, so we are quite happy to see that the
@@ -611,7 +680,8 @@ toBED(windowRes = resultWindows,
 ```
 
 Further analyses which can be done is enrichment of gene types, sequence
-motif analysis of the regions, secondary structure analysis of binding regions and other functional analyses. 
+motif analysis of the regions, secondary structure analysis of binding 
+regions and other functional analyses. 
 
 ```{r eval = FALSE, echo = FALSE}
 ## Plotting
@@ -640,27 +710,6 @@ motif analysis of the regions, secondary structure analysis of binding regions a
 ```
 
 # Discussion
-
-## QC 
-
-### What about quality control plots etc?
-
-In this vignette, we left out plotting of estimates dispersions and other 
-quality control plots like MA or PCA plots. 
-Please find very detailed explanation 
-of those in the `r Biocpkg("DESeq2")` vignette. 
-
-## Normalisation
-
-#### Advanced normalisation
-
-Normalisation might be adjusted for your proteins.
-
-In general, it is a good strategy to call differentially
-expressed windows, then exclude that regions for 
-normalisation and rerun the workflow.
-
-## Feedback
 
 The authors very much welcome any feedback, comments and suggestions.
 
