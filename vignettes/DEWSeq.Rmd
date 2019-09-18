@@ -43,12 +43,11 @@ knitr::opts_chunk$set(tidy    = FALSE,
 
 # Preface 
 
-
-```{r, eval = FALSE, echo = FALSE}
+```{r citaction, eval = FALSE, echo = FALSE}
 #**Note:** if you use DEWSeq in published research, please cite:
 #
 #> Authors. (Year)
-#> Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2.
+#> Title
 #> *Genome Biology*, **15**:550.
 #> [10.1186/s13059-014-0550-8](http://dx.doi.org/10.1186/s13059-014-0550-8)
 ```
@@ -66,8 +65,10 @@ Please get familiar with this Bioconductor package before you are using DEWSeq
 
 ## Acknowledgements
 
-Wolfgang Huber and Matthias Hentze for mentoring, advice and discussion. Benjamin Lang and Gian Tartaglia for great help with functional analysis and benchmarking,
-as well as feedback to the vignette. Mike Love, Simon Anders, Bernd Klaus and Frederick Ziebell for comments and discussion.
+Wolfgang Huber and Matthias Hentze for mentoring, advice and discussion. 
+Benjamin Lang and Gian Tartaglia for great help with functional analysis
+and benchmarking, as well as feedback to the vignette. Mike Love, Simon Anders, 
+Bernd Klaus and Frederick Ziebell for comments and discussion.
 
 # Introduction 
 
@@ -95,7 +96,7 @@ eCLIP introduces updates in chemistry, the use of a size-matched
 input (SMI) control sample is an essential addition to the protocol
 which can be also adapted to iCLIP or similar protocols.
 
-```{r, fig.cap = "Crosslink site trunction at reverse transcription", echo =FALSE}
+```{r, fig.cap = "Crosslink site trunction at reverse transcription", echo = FALSE}
 knitr::include_graphics("truncation.png")
 ```
 
@@ -256,10 +257,13 @@ knitr::include_graphics("earlytruncation.png")
 
 #### Differentially expressed sliding windows 
 
-Because of the properties of eCLIP or iCLIP data described above, we use a sliding
-window approach (where different window and step sizes can be chosen in the 
-preprocessing) and test for significant enrichment in the IP over the control.
-For this, we extended `r Biocpkg("DESeq2")` for a one-sided wald test to filter windows with negative wald stat values and do a right-tailed test on the remaining windows. The filtering step increases the performance when testing millions of windows. 
+Because of the properties of eCLIP or iCLIP data described above, we use a 
+sliding window approach (where different window and step sizes can be chosen in 
+the preprocessing) and test for significant enrichment in the IP over the
+control. For this, we extended `r Biocpkg("DESeq2")` for a one-sided wald 
+test to filter windows with negative wald stat values and do a right-tailed
+test on the remaining windows. The filtering step increases the performance 
+when testing millions of windows. 
 
 ```{r deseq overview image, fig.cap = "Sliding window approach with single-nucleotide position count data", echo = FALSE} 
 knitr::include_graphics("dewseqoverview.png")
@@ -352,17 +356,21 @@ Generally the steps for preprocessing are:
   [cutadapt](https://cutadapt.readthedocs.io))
 * Second trimming step (extremely important for paired-end (standard) eCLIP
   libraries). This is needed because a 'bug' in the standard paired-end eCLIP
-  protocol. Hint: Single-read seCLIP [@VanNostrand2017] has a lot of advantages to standard,
+  protocol. Hint: Single-read seCLIP [@VanNostrand2017] has a lot of advantages 
+  to standard,
   paired-end eCLIP, one of them is that you can skip this preprocessing step.
-* Quality Control ([fastqc](https://github.com/s-andrews/FastQC) with [multiqc](https://multiqc.info/) summary statistics or similar).
-* Alignment ([Novoalign](http://www.novocraft.com/products/novoalign/), [STAR](https://github.com/alexdobin/STAR), or other (splice-aware) aligners, depending
-  on your organisms)
+* Quality Control ([fastqc](https://github.com/s-andrews/FastQC) with
+  [multiqc](https://multiqc.info/) summary statistics or similar).
+* Alignment ([Novoalign](http://www.novocraft.com/products/novoalign/), 
+  [STAR](https://github.com/alexdobin/STAR), or other (splice-aware) aligners, 
+  depending on your organisms)
 * PCR duplication removal also called UMI evaluation
   [Je Suite](https://gbcs.embl.de/portal/tiki-index.php?page=Je) or 
   custom tools depending on your protocol and single-read or paired-end setup.
   Please use tools which consider sequencing errors in the UMI and read 
   sequences.
-* Sort and index bam files ([samtools](http://samtools.sourceforge.net) or similar)
+* Sort and index bam files ([samtools](http://samtools.sourceforge.net) or
+  similar)
 
 Eventually, you will end up with sorted *.bam* files.
 
@@ -457,18 +465,23 @@ First we read in counts
 
 ```{r read in count matrix, eval = FALSE}
 countData <- fread("path/swcounts/count_matrix.txt.gz", sep = "\t")
+```
 
-# or alternatively with tidyr:
-# countData <- read_tsv("path/swcounts/count_matrix.txt.gz")
+or alternatively with tidyr (slower):
+
+```{r read count matrix tidyr, eval = FALSE}
+countData <- read_tsv("path/swcounts/count_matrix.txt.gz")
 ```
 
 Then we read in the annotation data frame 
 
 ```{r read in annotation, eval = FALSE}
 annotationData <- fread("path/annotation/annotation.txt.gz", sep = "\t")
+```
+or alternatively with tidyr (slower):
 
-#or alternatively with tidyr:
-#annotationData <- read_tsv("path/annotation/annotation.txt.gz")
+```{r read annotation tidyr, eval = FALSE}
+annotationData <- read_tsv("path/annotation/annotation.txt.gz")
 ```
 
 Finally we have to create a sample description
@@ -683,7 +696,7 @@ Further analyses which can be done is enrichment of gene types, sequence
 motif analysis of the regions, secondary structure analysis of binding 
 regions and other functional analyses. 
 
-```{r eval = FALSE, echo = FALSE}
+```{r notes for further dev, eval = FALSE, echo = FALSE}
 ## Plotting
 
 # Simple Enrichment
