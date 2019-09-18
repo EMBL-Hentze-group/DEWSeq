@@ -12,15 +12,19 @@ DESeqDataSetFromSlidingWindows(countData, colData, annotObj, design,
 
 \item{colData}{phenotype data}
 
-\item{annotObj}{can either be a data.frame or a file name, see details}
+\item{annotObj}{can either be a data.frame or a file name,
+see details}
 
-\item{design}{design of the experiment, see \code{\link[DESeq2:DESeqDataSet]{DESeqDataSet}}}
+\item{design}{design of the experiment,
+see \code{\link[DESeq2:DESeqDataSet]{DESeqDataSet}}}
 
-\item{tidy}{If TRUE, first column is of countData is treated as rownames (defalt: FALSE), see \code{\link[DESeq2:DESeqDataSet]{DESeqDataSet}}}
+\item{tidy}{If TRUE, first column is of countData is treated as rownames
+(defalt: FALSE), see \code{\link[DESeq2:DESeqDataSet]{DESeqDataSet}}}
 
 \item{ignoreRank}{ignore rank, see \code{\link[DESeq2:DESeqDataSet]{DESeqDataSet}}}
 
-\item{start0based}{TRUE (default) or FALSE. If TRUE, then the start positions in \code{annotObj} is  considered to be 0-based}
+\item{start0based}{TRUE (default) or FALSE.
+If TRUE, then the start positions in \code{annotObj} is  considered to be 0-based}
 }
 \value{
 DESeq object

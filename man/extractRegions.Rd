@@ -11,15 +11,21 @@ extractRegions(windowRes, padjCol = "padj", padjThresh = 0.05,
 \arguments{
 \item{windowRes}{output data.frame from \code{\link{resultsDEWSeq}}}
 
-\item{padjCol}{name of the adjusted pvalue column (default: padj)}
+\item{padjCol}{name of the adjusted pvalue column
+(default: padj)}
 
-\item{padjThresh}{threshold for p-adjusted value (default: 0.05)}
+\item{padjThresh}{threshold for p-adjusted value
+(default: 0.05)}
 
-\item{log2FoldChangeCol}{name of the log2foldchange column (default: log2FoldChange)}
+\item{log2FoldChangeCol}{name of the log2foldchange column
+(default: log2FoldChange)}
 
-\item{log2FoldChangeThresh}{threshold for log2foldchange value (default:1)}
+\item{log2FoldChangeThresh}{threshold for log2foldchange value
+(default:1)}
 
-\item{begin0based}{TRUE (default) or FALSE. If TRUE, then the start positions in \code{windowRes} is  considered to be 0-based}
+\item{begin0based}{TRUE (default) or FALSE.
+If TRUE, then the start positions in \code{windowRes}
+is  considered to be 0-based}
 }
 \value{
 data.frame
@@ -43,11 +49,13 @@ extract significant windows from output of
 The output data.frame from this function will have the following columns:
 \itemize{
  \item \code{chromosome}: chromosome name
- \item \code{regionStartId}: \code{unique_id} of the left most window, where a enriched region begins
+ \item \code{regionStartId}: \code{unique_id} of the left most window,
+ where an enriched region begins
  \item \code{region_begin}: starting position of the enriched region
  \item \code{region_end}: ending position of the enriched region
  \item \code{strand}: strand info
- \item \code{windows_in_region}: total number of windows that make up the enriched region
+ \item \code{windows_in_region}: total number of windows
+  that make up the enriched region
  \item \code{region_length}: length of the enrched region
  \item \code{gene_id}: gene id
  \item \code{gene_name}: gene name

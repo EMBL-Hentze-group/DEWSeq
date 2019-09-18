@@ -21,5 +21,6 @@ test_that("extractRegions throws expected errors and warnings",{
   expect_error(extractRegions(windowRes = slbpWindows),errorMsg)
   warnMsg <- 'There are no significant windows/regions under the current threshold!
     Please lower your significance cut-off thresholds and manually check if there are any significant windows under the threshold'
-  expect_warning(extractRegions(windowRes = slbpWindows,padjCol = 'pBonferroni.adj',log2FoldChangeThresh = 20),warnMsg)
+  expect_warning(extractRegions(windowRes = slbpWindows,padjCol = 'pBonferroni.adj',
+                                log2FoldChangeThresh = 20),warnMsg)
 })

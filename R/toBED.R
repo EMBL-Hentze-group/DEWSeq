@@ -28,9 +28,12 @@
 #' toBED(slbpWindows,slbpRegions,outFile,padjCol='pBonferroni.adj')
 #'
 
-toBED <- function(windowRes,regionRes,fileName,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,trackName='sliding windows',
-                                                                                                                            description='sliding windows'){
-    wRequiredCols <- c('unique_id','chromosome','begin','end','strand',padjCol,log2FoldChangeCol)
+toBED <- function(windowRes,regionRes,fileName,
+                  padjCol='padj',padjThresh=0.05,
+                  log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,
+                  trackName='sliding windows',description='sliding windows'){
+    wRequiredCols <- c('unique_id','chromosome','begin','end','strand',
+                       padjCol,log2FoldChangeCol)
     missingCols <- setdiff(wRequiredCols,colnames(windowRes))
     if(length(missingCols)>0){
     stop('Input "windowRes" data.frame is missing required columns, needed columns:
@@ -44,7 +47,8 @@ toBED <- function(windowRes,regionRes,fileName,padjCol='padj',padjThresh=0.05,lo
      ',log2FoldChangeCol,': log2foldchange column.
       Missing columns: ',paste(missingCols,collapse=", "),'')
     }
-  rRequiredCols <- c('chromosome','regionStartId','region_begin','region_end','strand','padj_mean')
+  rRequiredCols <- c('chromosome','regionStartId','region_begin','region_end',
+                     'strand','padj_mean')
   missingCols <- setdiff(rRequiredCols,colnames(regionRes))
   if(length(missingCols)>0){
     stop('Input "regionRes" data.frame is missing required columns, needed columns:
@@ -60,21 +64,24 @@ toBED <- function(windowRes,regionRes,fileName,padjCol='padj',padjThresh=0.05,lo
   windowRes <- as.data.frame(windowRes)
   windowRes$unique_id <- as.character(windowRes$unique_id)
   regionRes$regionStartId <- paste(as.character(regionRes$regionStartId),'region',sep='@')
-  windowRes <- windowRes[ windowRes[,padjCol]<=padjThresh & windowRes[,log2FoldChangeCol]>=log2FoldChangeThresh, ]
+  windowRes <- windowRes[ windowRes[,padjCol]<=padjThresh &
+                            windowRes[,log2FoldChangeCol]>=log2FoldChangeThresh, ]
   if(nrow(windowRes)==0){
       stop('There are no significant windows/regions under the current threshold!')
   }
   regionRes <- regionRes[ regionRes$windows_in_region>1, ]
-  windowRes <- windowRes[with(windowRes,order(chromosome,begin)),]
-  regionRes <- regionRes[with(regionRes,order(chromosome,region_begin)),]
+  windowRes <- windowRes[order(windowRes$chromosome,windowRes$begin),]
+  regionRes <- regionRes[order(regionRes$chromosome,regionRes$region_begin),]
   regionRes$strand <- as.character(regionRes$strand)
   windowRes$strand <- as.character(windowRes$strand)
   # RGB color space for a red color, to show windows/regions as up regulated
   itemRGB <- '237,28,36' # #ed1c24
   windowRes$RGB <- itemRGB
   regionRes$RGB <- itemRGB
-  windowRes <- windowRes[,c('chromosome','begin','end','unique_id',padjCol,'strand','begin','end','RGB')]
-  regionRes <- regionRes[,c('chromosome','region_begin','region_end','regionStartId','padj_mean','strand','region_begin','region_end','RGB')]
+  windowRes <- windowRes[,c('chromosome','begin','end','unique_id',
+                            padjCol,'strand','begin','end','RGB')]
+  regionRes <- regionRes[,c('chromosome','region_begin','region_end','regionStartId',
+                            'padj_mean','strand','region_begin','region_end','RGB')]
   # convert pvalues to bed scores with range 100-1000
   bedrange <- c(100,1000) # min max values for bed score
   allMin <- 1-padjThresh
