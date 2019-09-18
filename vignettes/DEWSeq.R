@@ -118,7 +118,7 @@ resultWindows <- resultsDEWSeq(ddw,
 resultWindows
 
 ## ----IHW multiple hypothesis correction, eval = TRUE, warning = FALSE------
-resultWindows[,"p_adj_IHW"] <- adj_pvalues(ihw(pBonferroni ~ baseMean, 
+resultWindows[,"p_adj_IHW"] <- adj_pvalues(ihw(pSlidingWindows ~ baseMean, 
                      data = resultWindows,
                      alpha = 0.05,
                      nfolds = 10))
