@@ -290,7 +290,7 @@ resultsDEWSeq <- function(object, contrast,name,
   names(nOvWindows) <- rownames(mcols(resGrange))
   nOvWindows <- nOvWindows[rownames(res)]
   # adjusted p-values for overlapping windows using Bonferroni correction
-  res$pBonferroni <- pmin(res$pvalue*nOvWindows,1)
+  res$pSlidingWindows <- pmin(res$pvalue*nOvWindows,1)
   # if original baseMean was positive, but now zero due to replaced counts, fill in results
   if ( sum(mcols(object)$replace, na.rm=TRUE) > 0) {
     nowZeroIds <- intersect(rownames(res),rownames(object)[which(mcols(object)$replace & mcols(object)$baseMean == 0)])
@@ -300,11 +300,11 @@ resultsDEWSeq <- function(object, contrast,name,
       res[nowZeroIds,"lfcSE"] <- 0
       res[nowZeroIds,"stat"] <- 0
       res[nowZeroIds,"pvalue"] <- 1
-      res[nowZeroIds,"pBonferroni"] <- 1
+      res[nowZeroIds,"pSlidingWindows"] <- 1
     }
   }
   # correct the window p-values for FDR on the genome level
-  res$pBonferroni.adj <- p.adjust(res[,'pBonferroni'], method = 'BH')
+  res$pSlidingWindows.adj <- p.adjust(res[,'pSlidingWindows'], method = 'BH')
   # add prior information
   deseq2.version <- packageVersion("DESeq2")
   if (!attr(object,"betaPrior")) {
@@ -316,7 +316,7 @@ resultsDEWSeq <- function(object, contrast,name,
   }
   # make results object
   deseqRes <- DESeqResults(cbind(res,as.data.frame(resGrange[rownames(res),])), priorInfo=priorInfo)
-  colnames(deseqRes) <- c('baseMean', 'log2FoldChange', 'lfcSE','stat', 'pvalue', 'pBonferroni','pBonferroni.adj', 'chromosome', 'begin','end',
+  colnames(deseqRes) <- c('baseMean', 'log2FoldChange', 'lfcSE','stat', 'pvalue', 'pSlidingWindows','pSlidingWindows.adj', 'chromosome', 'begin','end',
                           'width',  'strand','unique_id', 'gene_id',  'gene_name','gene_type', 'gene_region', 'Nr_of_region','Total_nr_of_region',
                           'window_number')
   # 'seqnames' from Granges is always a factor!
@@ -325,7 +325,7 @@ resultsDEWSeq <- function(object, contrast,name,
     deseqRes$begin <- pmax(deseqRes$begin-1,0)
   }
   deseqRes <- deseqRes[,c('chromosome', 'begin','end','width',  'strand','unique_id', 'gene_id',  'gene_name','gene_type', 'gene_region', 'Nr_of_region','Total_nr_of_region',
-                          'window_number','baseMean', 'log2FoldChange', 'lfcSE','stat', 'pvalue', 'pBonferroni','pBonferroni.adj')]
+                          'window_number','baseMean', 'log2FoldChange', 'lfcSE','stat', 'pvalue', 'pSlidingWindows','pSlidingWindows.adj')]
   # may this helps to improve the memory usage
   rm(resOvs,nOvWindows,resGrange)
   gc()

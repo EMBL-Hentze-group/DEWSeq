@@ -75,7 +75,7 @@ The output data.frame from this function will have the following columns:
 \examples{
 
 data("slbpWindows")
-# using default cut-off thresholds, 'pBonferroni.adj' padj value
-slbpRegions <- extractRegions(slbpWindows,padjCol = 'pBonferroni.adj')
+# using default cut-off thresholds, 'pSlidingWindows.adj' padj value
+slbpRegions <- extractRegions(slbpWindows,padjCol = 'pSlidingWindows.adj')
 
 }
