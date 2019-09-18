@@ -4,9 +4,9 @@
 .Ruserdata
 .renviron
 .rprofile
-.rproj
-.rproj.user
-.rhistory
+.Rproj
+.Rproj.user
+.Rhistory
 .rapp.history
 .o
 .sl
@@ -15,7 +15,7 @@
 .a
 .dll
 .def
-.ds_store
+.DS_Store
 unsrturl.bst
 .log
 .aux
