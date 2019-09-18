@@ -3,10 +3,10 @@
 .Rapp.history
 
 # Session Data files
-.RData
+*.RData
 
 # User-specific files
-.Ruserdata
+*.Ruserdata
 
 # Example code in package build process
 *-Ex.R
@@ -20,6 +20,7 @@
 # RStudio files
 
 .Rproj
+*.Rproj
 .Rproj.user/
 
 # produced vignettes
@@ -40,3 +41,5 @@ vignettes/*.pdf
 .renviron
 .rprofile
 
+doc
+Meta
