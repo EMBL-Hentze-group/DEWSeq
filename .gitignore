@@ -7,6 +7,8 @@
 .Rproj
 .Rproj.user
 .Rhistory
+vignettes/*.html
+vignettes/*.pdf
 .rapp.history
 .o
 .sl
