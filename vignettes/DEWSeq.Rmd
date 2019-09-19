@@ -19,7 +19,7 @@ abstract: >
   and shows how to perform a sliding-window differentially expressed 
   window approach to detect RNA-binding protein binidng sites.
 output:
-  BiocStyle::html_document:
+  rmarkdown::html_document:
     highlight: pygments
     toc: true
     fig_width: 5
