@@ -274,26 +274,27 @@ knitr::include_graphics("dewseqoverview.png")
 Contrary to large fragments detected in ChIP-seq, the truncation sites 
 are only one nucleotide. To combine windows, `r Biocpkg("csaw")` 
 defines ChIP-seq binding regions which are then subjected to multiple
-hypothesis correction.
+hypothesis correction. In ChIP-seq many windows share coverage from large
+cDNA fragments and therefore `r Biocpkg("csaw")` performs multiple hypothesis
+correction on binding site with the SIMES method. SIMES joins coverage blocks
+and treats them as one entity for multiple hypothesis correction. In large,
+SIMES punished p-values for long stretches of overlapping windows. Please
+refer to the `r Biocpkg("csawUserGuide")` for detailed description. 
 
 
-  ##TODO##
-In ChIP-seq cDNA fragments share coverage from same 
-and therefore
-implements the SIMES method to join coverage blocks and treats them
-as one entity for multiple hypothesis correction. Since the single-nucleotide
-do not have the same property as cDNA fragments and each gene in eCLIP/iCLIP
-data has transcriptomic background with often large coverage blocks, in
-DEWSeq we correct the p-value for each window with Bonferroni with the number
-of overlaps. 
-
+Single-nucleotide truncation events do not have the same property as cDNA
+fragments and the transcriptomic background for each gene in eCLIP or iCLIP
+often results in large coverage blocks. As seen in the picture below, the
+windows do only share information with the overlapping windows. Therefore, 
+DEWSeq corrects the p-value for each
+overlapping window with the number of overlaps using Bonferroni. 
 
 ```{r, fig.cap = "Sliding window approach with single-nucleotide position count data", echo = FALSE, fig.small = TRUE} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("overlapping_sliding_windows.png")
 ```
 
-Then we apply multiple hypothesis correction.
+Then we apply multiple hypothesis correction on the corrected p-values.
 
 ## Prerequisits for DEWSeq
 
@@ -639,7 +640,7 @@ Here some basic stats about the differentially expressed windows:
 
 ```{r windows tables, eval = TRUE}
 resultWindows <- resultWindows %>% 
-                      mutate(significant = resultWindows$p_adj_IHW < 0.05)
+                      mutate(significant = resultWindows$p_adj_IHW < 0.01)
 
 sum(resultWindows$significant)
 ```
@@ -669,7 +670,7 @@ windows. Now we would like to combine overlapping windows to a binding region.
 ```{r extractRegions, eval = TRUE, results = "hide"}
 resultRegions <- extractRegions(windowRes  = resultWindows,
                                 padjCol    = "p_adj_IHW",
-                                padjThresh = 0.05, 
+                                padjThresh = 0.01, 
                                 log2FoldChangeThresh = 0.5) %>% as_tibble
 ```
 
