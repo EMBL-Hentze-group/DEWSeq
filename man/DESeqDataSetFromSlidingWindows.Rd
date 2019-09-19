@@ -60,11 +60,13 @@ and annotation data. The chromosomal locations and annotations of the sliding wi
 
 data("SLBP_K562_w50s20")
 slbpDat <- counts(SLBP_K562_w50s20)
-phenoDat <- DataFrame(conditions=as.factor(c(rep('IP',2),'SMI')),row.names = colnames(slbpDat))
+phenoDat <- DataFrame(conditions=as.factor(c(rep('IP',2),'SMI')),
+row.names = colnames(slbpDat))
 phenoDat$conditions <- relevel(phenoDat$conditions,ref='SMI')
 annotDat <- as.data.frame(rowRanges(SLBP_K562_w50s20))
-# by default chromsome column is 'seqnames' and begin co-ordinate column is 'start'
-# rename it
+# by default chromsome column is 'seqnames'
+# and begin co-ordinate column is 'start'
+# rename these columns
 colnames(annotDat)[1:2] <- c('chromosome','begin')
 slbpDds <- DESeqDataSetFromSlidingWindows(countData = slbpDat,
 colData = phenoDat,annotObj = annotDat,design=~conditions)

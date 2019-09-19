@@ -27,6 +27,7 @@ data.frame or GRanges object
 }
 \description{
 read annotation data for windows
+This is an unexported lowlevel function to read annotations from a file.
 The file MUST be tab separated and MUST have the following columns:\cr
  chromosome: chromosome name \cr
  unique_id: unique id of the window \cr
@@ -41,3 +42,4 @@ The file MUST be tab separated and MUST have the following columns:\cr
  Total_nr_of_region: total number of regions \cr
  window_number: window number \cr
 }
+\keyword{internal}

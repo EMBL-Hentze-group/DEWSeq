@@ -90,7 +90,8 @@ The output data.frame of this function has the following columns:
 
 data(slbpWindows)
 data(slbpVst)
-slbpList <- topWindowStats(slbpWindows,padjCol = 'pSlidingWindows.adj',normalizedCounts = slbpVst,
-treatmentCols = c('IP1','IP2'),treatmentName = 'SLBP',controlName = 'SMI')
+slbpList <- topWindowStats(slbpWindows,padjCol = 'pSlidingWindows.adj',
+normalizedCounts = slbpVst, treatmentCols = c('IP1','IP2'),
+treatmentName = 'SLBP',controlName = 'SMI')
 
 }
