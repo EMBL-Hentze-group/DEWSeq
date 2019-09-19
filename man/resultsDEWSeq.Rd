@@ -42,13 +42,13 @@ If not specified, the parameters last registered with
 \item{start0based}{TRUE (default) or FALSE. If TRUE, then the start positions in \code{annotationFile} are  considered to be 0-based}
 }
 \value{
-data.frame
+DESeqResults object
 }
 \description{
 This is a modified version of the
      \code{\link[DESeq2:results]{results}} function.
 
-This function uses chromosomal positions given in the \code{annotationFile}
+This function uses chromosomal positions given in the \code{rowRanges(dds)}
 to identify overlapping windows in \code{dds} object. For each window,
 the number of overlapping windows are counted, and the p-value is
  adjusted for FWER using bonferroni correction.
@@ -57,27 +57,7 @@ For further details, please refer documentation for
  \code{\link[DESeq2:results]{results}} function in DESeq2 package
 }
 \details{
-The output object is expected to have the following columns:
-\itemize{
-  \item \code{chromosome}: chromosome name
-  \item \code{unique_id}: unique id of the window, \code{rownames(object)} must match this column
-  \item \code{begin}: window start co-ordinate, see parameter \code{start0based}
-  \item \code{end}: window end co-ordinate
-  \item \code{strand}: strand
-  \item \code{gene_id}: gene id
-  \item \code{gene_name}: gene name
-  \item \code{gene_type}: gene type annotation
-  \item \code{gene_region}: gene region
-  \item \code{Nr_of_region}: number of the current region
-  \item \code{Total_nr_of_region}: total number of regions
-  \item \code{window_number}: window number
-}
-
-In addtion to the listed above, the output is also expected to have defaut columns from running\cr
-\code{\link[DESeq2:results]{results}} function from DESeq2, such as:\cr
-\code{baseMean}, \code{log2FoldChange}, \code{lfcSE}, \code{stat},
-\code{pvalue}, \code{padj}.\cr
-Please consult DESeq2 vignettes and manual for an explanation of these columns.
+For a detailed description of the column use \code{mcols(output)$description}
 }
 \examples{
 
@@ -86,5 +66,11 @@ slbpDds <- estimateSizeFactors(slbpDds)
 slbpDds <- estimateDispersions(slbpDds)
 slbpDds <- nbinomWaldTest(slbpDds)
 slbpWindows <- resultsDEWSeq(slbpDds)
+
+\dontrun{
+# for a description of the columns in slbpWindows use
+mcols(slbpWindows)$description
+}
+
 
 }

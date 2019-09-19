@@ -75,8 +75,9 @@
 #'
 #' data(slbpWindows)
 #' data(slbpVst)
-#' slbpList <- topWindowStats(slbpWindows,padjCol = 'pSlidingWindows.adj',normalizedCounts = slbpVst,
-#' treatmentCols = c('IP1','IP2'),treatmentName = 'SLBP',controlName = 'SMI')
+#' slbpList <- topWindowStats(slbpWindows,padjCol = 'pSlidingWindows.adj',
+#' normalizedCounts = slbpVst, treatmentCols = c('IP1','IP2'),
+#' treatmentName = 'SLBP',controlName = 'SMI')
 #'
 #' @return data.frame
 topWindowStats <- function(windowRes,padjCol='padj',padjThresh=0.05,log2FoldChangeCol='log2FoldChange',log2FoldChangeThresh=1,start0based=TRUE, normalizedCounts,
