@@ -159,7 +159,7 @@ resultWindows[,"p_adj_IHW"] <- adj_pvalues(ihw(pSlidingWindows ~ baseMean,
 
 ## ----windows tables, eval = TRUE-----------------------------------------
 resultWindows <- resultWindows %>% 
-                      mutate(significant = resultWindows$p_adj_IHW < 0.05)
+                      mutate(significant = resultWindows$p_adj_IHW < 0.01)
 
 sum(resultWindows$significant)
 
@@ -174,7 +174,7 @@ resultWindows %>%
 ## ----extractRegions, eval = TRUE, results = "hide"-----------------------
 resultRegions <- extractRegions(windowRes  = resultWindows,
                                 padjCol    = "p_adj_IHW",
-                                padjThresh = 0.05, 
+                                padjThresh = 0.01, 
                                 log2FoldChangeThresh = 0.5) %>% as_tibble
 
 ## ----resultRegions output, eval = TRUE-----------------------------------

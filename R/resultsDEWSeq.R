@@ -73,7 +73,7 @@ resultsDEWSeq <- function(object, contrast,name,
   }
   neededCols <- c('unique_id','gene_id','gene_name','gene_type','gene_region','Nr_of_region',
                     'Total_nr_of_region','window_number')
-  missingCols <- setdiff(neededCols,colnames(mcols(rowRanges(slbpDds))))
+  missingCols <- setdiff(neededCols,colnames(mcols(rowRanges(object))))
   if(length(missingCols)>0){
     stop('The following colums are missing from rowRanges(object):',
          paste(missingCols,collapse=", "),'')
