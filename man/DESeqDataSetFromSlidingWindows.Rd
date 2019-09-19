@@ -66,6 +66,7 @@ annotDat <- as.data.frame(rowRanges(SLBP_K562_w50s20))
 # by default chromsome column is 'seqnames' and begin co-ordinate column is 'start'
 # rename it
 colnames(annotDat)[1:2] <- c('chromosome','begin')
-slbpDds <- DESeqDataSetFromSlidingWindows(countData = slbpDat,colData = phenoDat,annotObj = annotDat,design=~conditions)
+slbpDds <- DESeqDataSetFromSlidingWindows(countData = slbpDat,
+colData = phenoDat,annotObj = annotDat,design=~conditions)
 
 }

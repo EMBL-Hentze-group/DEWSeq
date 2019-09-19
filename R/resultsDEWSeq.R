@@ -61,10 +61,12 @@
 #'
 #' @return DESeqResults object
 resultsDEWSeq <- function(object, contrast,name,
-                          listValues=c(1,-1), cooksCutoff,
-                          test, addMLE=FALSE,
-                          tidy=FALSE, parallel=FALSE,
-                          BPPARAM=bpparam(), minmu=0.5,
+                          listValues=c(1,-1),
+                          cooksCutoff,test,
+                          addMLE=FALSE,tidy=FALSE,
+                          parallel=FALSE,
+                          BPPARAM=bpparam(),
+                          minmu=0.5,
                           start0based=TRUE) {
   if(!is(object, "DESeqDataSet")){
     stop("object MUST be of class DESeqDataSet!")
