@@ -27,7 +27,6 @@ bibliography: library.bib
 vignette: >
   %\VignetteIndexEntry{Analyzing eCLIP/iCLIP data with DEWSeq}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteDepends{IHW}
   %\VignetteEncoding{UTF-8}
   %\usepackage[utf8]{inputenc}
 ---
