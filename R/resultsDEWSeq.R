@@ -296,36 +296,47 @@ resultsDEWSeq <- function(object, contrast,name,
                       betaPriorVar=betaPriorVar)
   }
   # make results object
-  deseqRes <- DESeqResults(cbind(res,as.data.frame(resGrange[rownames(res),])), priorInfo=priorInfo)
+  deseqRes <- DESeqResults(cbind(res,as.data.frame(resGrange[rownames(res),])),priorInfo=priorInfo)
   colnames(deseqRes) <- c('baseMean', 'log2FoldChange', 'lfcSE','stat', 'pvalue', 'pSlidingWindows','pSlidingWindows.adj', 'chromosome', 'begin','end',
                           'width',  'strand','unique_id', 'gene_id',  'gene_name','gene_type', 'gene_region', 'Nr_of_region','Total_nr_of_region',
                           'window_number')
   # 'seqnames' from Granges is always a factor!
   deseqRes$chromosome <- as.character(deseqRes$chromosome)
+  deseqRes$strand <- as.character(deseqRes$strand)
   if(start0based){
     deseqRes$begin <- pmax(deseqRes$begin-1,0)
   }
   deseqRes <- deseqRes[,c('chromosome', 'begin','end','width',  'strand','unique_id', 'gene_id',  'gene_name','gene_type', 'gene_region', 'Nr_of_region','Total_nr_of_region',
                           'window_number','baseMean', 'log2FoldChange', 'lfcSE','stat', 'pvalue', 'pSlidingWindows','pSlidingWindows.adj')]
+  resType <- c('character','integer','integer','integer','character','character','character','character','character','character','integer',
+               'integer','integer','numeric','numeric','numeric','numeric','numeric','numeric','numeric')
+  resDes <- c("chromosome","chromosomal start position","chromosomal stop position","length in base pairs", "strand","unique id for the window (row names)",
+              "gene id", "gene name", "gene type (protein_coding, miRNA, pseudogene,...)","gene region (intron, exon/CDS, 5'UTR,...)",
+              "nth 'gene_region' out of 'Total_nr_of_region'", "Total number of gene_region in this gene", "this is the nth sliding window of this gene",
+              mcols(res,use.names = TRUE)["baseMean","description"], mcols(res,use.names = TRUE)["log2FoldChange","description"],
+              mcols(res,use.names = TRUE)["lfcSE","description"], mcols(res,use.names = TRUE)["stat","description"],
+              mcols(res,use.names = TRUE)["pvalue","description"], "FWER corrected p-value for sliding windows",
+              "FDR corrected 'pSlidingWindows'")
+  mcols(deseqRes) <- DataFrame(type=resType,description=resDes)
   # may this helps to improve the memory usage
   rm(resOvs,nOvWindows,resGrange)
   gc()
   rownames(deseqRes) <- deseqRes$unique_id
-  mcols(deseqRes,use.names=TRUE)["chromosome","description"] <- "chromosome name"
-  mcols(deseqRes,use.names=TRUE)["begin","description"] <- "chromosomal start position"
-  mcols(deseqRes,use.names=TRUE)["end","description"] <- "chromosomal stop position"
-  mcols(deseqRes,use.names=TRUE)["width","description"] <- "length in base pairs"
-  mcols(deseqRes,use.names=TRUE)["strand","description"] <- "strand"
-  mcols(deseqRes,use.names=TRUE)["unique_id","description"] <- "unique id for the window (row names)"
-  mcols(deseqRes,use.names=TRUE)["gene_id","description"] <- "gene id"
-  mcols(deseqRes,use.names=TRUE)["gene_name","description"] <- "gene name"
-  mcols(deseqRes,use.names=TRUE)["gene_type","description"] <- "gene type (protein_coding, miRNA, pseudogene,...)"
-  mcols(deseqRes,use.names=TRUE)["gene_region","description"] <- "gene region (intron, exon/CDS, 5'UTR,...)"
-  mcols(deseqRes,use.names=TRUE)["Nr_of_region","description"] <- "nth 'gene_region' out of 'Total_nr_of_region'"
-  mcols(deseqRes,use.names=TRUE)["Total_nr_of_region","description"] <- "Total number of gene_region in this gene"
-  mcols(deseqRes,use.names=TRUE)["window_number","description"] <- "this is the nth sliding window of this gene"
-  mcols(deseqRes,use.names=TRUE)["pSlidingWindows","description"] <- "FWER corrected p-value for sliding windows"
-  mcols(deseqRes,use.names=TRUE)["pSlidingWindows.adj","description"] <- "FDR corrected 'pSlidingWindows'"
+  # mcols(deseqRes,use.names=TRUE)["chromosome","description"] <- "chromosome name"
+  # mcols(deseqRes,use.names=TRUE)["begin","description"] <- "chromosomal start position"
+  # mcols(deseqRes,use.names=TRUE)["end","description"] <- "chromosomal stop position"
+  # mcols(deseqRes,use.names=TRUE)["width","description"] <- "length in base pairs"
+  # mcols(deseqRes,use.names=TRUE)["strand","description"] <- "strand"
+  # mcols(deseqRes,use.names=TRUE)["unique_id","description"] <- "unique id for the window (row names)"
+  # mcols(deseqRes,use.names=TRUE)["gene_id","description"] <- "gene id"
+  # mcols(deseqRes,use.names=TRUE)["gene_name","description"] <- "gene name"
+  # mcols(deseqRes,use.names=TRUE)["gene_type","description"] <- "gene type (protein_coding, miRNA, pseudogene,...)"
+  # mcols(deseqRes,use.names=TRUE)["gene_region","description"] <- "gene region (intron, exon/CDS, 5'UTR,...)"
+  # mcols(deseqRes,use.names=TRUE)["Nr_of_region","description"] <- "nth 'gene_region' out of 'Total_nr_of_region'"
+  # mcols(deseqRes,use.names=TRUE)["Total_nr_of_region","description"] <- "Total number of gene_region in this gene"
+  # mcols(deseqRes,use.names=TRUE)["window_number","description"] <- "this is the nth sliding window of this gene"
+  # mcols(deseqRes,use.names=TRUE)["pSlidingWindows","description"] <- "FWER corrected p-value for sliding windows"
+  # mcols(deseqRes,use.names=TRUE)["pSlidingWindows.adj","description"] <- "FDR corrected 'pSlidingWindows'"
 
   if (tidy) {
     rownames(deseqRes) <- NULL
