@@ -61,7 +61,7 @@
 #' (default: log2FoldChange)
 #' @param log2FoldChangeThresh threshold for log2foldchange value
 #' (default:1)
-#' @param begin0based TRUE (default) or FALSE.
+#' @param start0based TRUE (default) or FALSE.
 #' If TRUE, then the start positions in \code{windowRes}
 #' is  considered to be 0-based
 #'
@@ -79,7 +79,7 @@ extractRegions <- function(windowRes,
                            padjThresh           = 0.05,
                            log2FoldChangeCol    = 'log2FoldChange',
                            log2FoldChangeThresh = 1,
-                           begin0based          = TRUE){
+                           start0based          = TRUE){
   requiredCols <- c('chromosome',
                     'unique_id',
                     'begin',
@@ -126,7 +126,7 @@ extractRegions <- function(windowRes,
   geneRange <- makeGRangesFromDataFrame(sigDat,seqnames.field = 'gene_id',
                                         start.field = 'begin',end.field = 'end',
                                         strand.field = 'strand',ignore.strand=FALSE,
-                                        starts.in.df.are.0based=begin0based,
+                                        starts.in.df.are.0based=start0based,
                                         keep.extra.columns = TRUE)
   geneRange <-  sortSeqlevels(geneRange)
   geneRange <- sort(geneRange)
@@ -183,7 +183,7 @@ extractRegions <- function(windowRes,
   colnames(regionRes)[3] <- 'region_end'
   colnames(regionRes)[6] <- 'region_length'
   colnames(regionRes)[14] <- 'gene_id'
-  if(begin0based){
+  if(start0based){
     regionRes$region_begin <- pmax(regionRes$region_begin-1,0)
   }
   rownames(regionRes) <- NULL
