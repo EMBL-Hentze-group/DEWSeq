@@ -322,22 +322,6 @@ resultsDEWSeq <- function(object, contrast,name,
   rm(resOvs,nOvWindows,resGrange)
   gc()
   rownames(deseqRes) <- deseqRes$unique_id
-  # mcols(deseqRes,use.names=TRUE)["chromosome","description"] <- "chromosome name"
-  # mcols(deseqRes,use.names=TRUE)["begin","description"] <- "chromosomal start position"
-  # mcols(deseqRes,use.names=TRUE)["end","description"] <- "chromosomal stop position"
-  # mcols(deseqRes,use.names=TRUE)["width","description"] <- "length in base pairs"
-  # mcols(deseqRes,use.names=TRUE)["strand","description"] <- "strand"
-  # mcols(deseqRes,use.names=TRUE)["unique_id","description"] <- "unique id for the window (row names)"
-  # mcols(deseqRes,use.names=TRUE)["gene_id","description"] <- "gene id"
-  # mcols(deseqRes,use.names=TRUE)["gene_name","description"] <- "gene name"
-  # mcols(deseqRes,use.names=TRUE)["gene_type","description"] <- "gene type (protein_coding, miRNA, pseudogene,...)"
-  # mcols(deseqRes,use.names=TRUE)["gene_region","description"] <- "gene region (intron, exon/CDS, 5'UTR,...)"
-  # mcols(deseqRes,use.names=TRUE)["Nr_of_region","description"] <- "nth 'gene_region' out of 'Total_nr_of_region'"
-  # mcols(deseqRes,use.names=TRUE)["Total_nr_of_region","description"] <- "Total number of gene_region in this gene"
-  # mcols(deseqRes,use.names=TRUE)["window_number","description"] <- "this is the nth sliding window of this gene"
-  # mcols(deseqRes,use.names=TRUE)["pSlidingWindows","description"] <- "FWER corrected p-value for sliding windows"
-  # mcols(deseqRes,use.names=TRUE)["pSlidingWindows.adj","description"] <- "FDR corrected 'pSlidingWindows'"
-
   if (tidy) {
     rownames(deseqRes) <- NULL
   }
