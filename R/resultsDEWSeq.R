@@ -306,8 +306,8 @@ resultsDEWSeq <- function(object, contrast,name,
   if(start0based){
     deseqRes$begin <- pmax(deseqRes$begin-1,0)
   }
-  deseqRes <- deseqRes[,c('chromosome', 'begin','end','width',  'strand','unique_id', 'gene_id',  'gene_name','gene_type', 'gene_region', 'Nr_of_region','Total_nr_of_region',
-                          'window_number','baseMean', 'log2FoldChange', 'lfcSE','stat', 'pvalue', 'pSlidingWindows','pSlidingWindows.adj')]
+  deseqRes <- deseqRes[,c('chromosome', 'begin','end','width',  'strand','unique_id', 'gene_id',  'gene_name','gene_type', 'gene_region', 'Nr_of_region',
+                          'Total_nr_of_region', 'window_number','baseMean', 'log2FoldChange', 'lfcSE','stat', 'pvalue', 'pSlidingWindows','pSlidingWindows.adj')]
   resType <- c('character','integer','integer','integer','character','character','character','character','character','character','integer',
                'integer','integer','numeric','numeric','numeric','numeric','numeric','numeric','numeric')
   resDes <- c("chromosome","chromosomal start position","chromosomal stop position","length in base pairs", "strand","unique id for the window (row names)",
