@@ -142,10 +142,9 @@ DESeqDataSetFromSlidingWindows <- function(countData, colData, annotObj,
                                        end.field='end',strand.field='strand',
                                        keep.extra.columns=TRUE,starts.in.df.are.0based=start0based)
 
-  rownames(mcols(gr)) <- as.character(mcols(gr)$unique_id)
   gr <- sortSeqlevels(gr)
   gr <- sort(gr)
-  countData <- as.matrix(countData[rownames(mcols(gr)),])
+  countData <- as.matrix(countData[as.character(mcols(gr)$unique_id),])
   se <- SummarizedExperiment(assays = SimpleList(counts=countData),colData = colData,rowRanges=gr)
   return(DESeqDataSet(se, design = design, ignoreRank))
 }

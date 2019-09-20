@@ -100,10 +100,6 @@ library(data.table)
 keep <- rowSums(counts(ddw)) >= 10
 ddw <- ddw[keep,]
 
-## ----estimate size factors, eval = FALSE---------------------------------
-#  ddw <- estimateSizeFactors(ddw)
-#  sizeFactors(ddw)
-
 ## ----estimate size factors, eval = TRUE----------------------------------
 ddw <- estimateSizeFactors(ddw)
 sizeFactors(ddw)

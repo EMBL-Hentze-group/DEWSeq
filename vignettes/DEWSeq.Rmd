@@ -528,7 +528,6 @@ For more information, please refer to the DESeq2 vignette.
 
 The standard procedure to estimate size factors is 
 
-```{r estimate size factors, eval = FALSE}
 ```{r estimate size factors, eval = TRUE}
 ddw <- estimateSizeFactors(ddw)
 sizeFactors(ddw)

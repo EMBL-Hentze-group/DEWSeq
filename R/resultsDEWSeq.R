@@ -71,13 +71,6 @@ resultsDEWSeq <- function(object, contrast,name,
   if(!is(object, "DESeqDataSet")){
     stop("object MUST be of class DESeqDataSet!")
   }
-  neededCols <- c('unique_id','gene_id','gene_name','gene_type','gene_region','Nr_of_region',
-                    'Total_nr_of_region','window_number')
-  missingCols <- setdiff(neededCols,colnames(mcols(rowRanges(object))))
-  if(length(missingCols)>0){
-    stop('The following colums are missing from rowRanges(object):',
-         paste(missingCols,collapse=", "),'')
-  }
   stopifnot(length(listValues)==2 & is.numeric(listValues))
   stopifnot(listValues[1] > 0 & listValues[2] < 0)
   if (!"results" %in% mcols(mcols(object))$type) {
@@ -193,7 +186,7 @@ resultsDEWSeq <- function(object, contrast,name,
   resGrange <- rowRanges(object)[,c(1:8)]
   neededCols <- c('unique_id','gene_id','gene_name','gene_type','gene_region','Nr_of_region',
                   'Total_nr_of_region','window_number')
-  missingCols <- setdiff(neededCols,colnames(mcols(resGrange)))
+  missingCols <- setdiff(neededCols,names(mcols(resGrange)))
   if(length(missingCols)>0){
     stop('rowRanges(object) is missing required columns, needed columns:
          unique_id: unique id of the window
@@ -275,7 +268,7 @@ resultsDEWSeq <- function(object, contrast,name,
   # this way, any intron/exon junctions will not be counted, but all ovelapping windows will be counted
   resOvs <- findOverlaps(resGrange,minoverlap=1,drop.redundant=FALSE,drop.self=FALSE,ignore.strand=FALSE)
   nOvWindows <- as.data.frame(table(queryHits(resOvs)))[,2]
-  names(nOvWindows) <- rownames(mcols(resGrange))
+  names(nOvWindows) <- as.character(mcols(resGrange)$unique_id)
   nOvWindows <- nOvWindows[rownames(res)]
   # adjusted p-values for overlapping windows using Bonferroni correction
   res$pSlidingWindows <- pmin(res$pvalue*nOvWindows,1)
