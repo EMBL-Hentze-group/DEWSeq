@@ -19,9 +19,10 @@ abstract: >
   and shows how to perform a differentially expressed 
   sliding-window approach to detect RNA-binding protein's binding sites.
 output:
-  rmarkdown::html_document:
+  BiocStyle::html_document:
     highlight: pygments
     toc: true
+    toc_float: true
     fig_width: 5
 bibliography: library.bib
 vignette: >
@@ -68,7 +69,7 @@ Please get familiar with this Bioconductor package before you are using DEWSeq
 Wolfgang Huber and Matthias Hentze for mentoring, advice and discussion. 
 Benjamin Lang and Gian Tartaglia for great help with functional analysis
 and benchmarking, as well as feedback on the vignette. Ina Huppertz for 
-feeback and language improvement on the vignette. Mike Love, Simon Anders, 
+helpful feedback and language improvement on the vignette. Mike Love, Simon Anders, 
 Bernd Klaus and Frederick Ziebell for comments and discussion.
 
 # Introduction 
@@ -114,7 +115,7 @@ and PAR-CLIP [@Hafner2010] rely exclusively on read-through events
 the technical difficulty of these protocols requires many optimizations steps,
 which makes them rather hard to combine.
 
-```{r, fig.cap = "Truncation sites (often referred to as crosslink sites) are the neighboring position of the aligned read.", fig.small = TRUE, echo = FALSE} 
+```{r, fig.cap = "Truncation sites (referred to as crosslink sites) are the neighboring position of the aligned read", fig.small = TRUE, echo = FALSE} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("truncationsite.png")
 ```
@@ -249,7 +250,7 @@ from the same protein. Again, although low crosslinking
 efficiency reduces the chance of having multiple crosslink sites
 at once, those events occur stochastically. 
 
-```{r early truncation, fig.cap = "Early truncations.", echo = FALSE} 
+```{r, fig.cap = "Early truncation events", echo = FALSE} 
 knitr::include_graphics("earlytruncation.png")
 ```
 
@@ -266,7 +267,7 @@ test: first, we filter windows with negative wald test statistic values (windows
 followed a right-tailed test on the remaining windows. The advantage is that the filtering step increases performance 
 when testing millions of windows. 
 
-```{r deseq overview image, fig.cap = "Sliding window approach with single-nucleotide position count data", echo = FALSE} 
+```{r , fig.cap = "Sliding window approach with single-nucleotide position count data", echo = FALSE} 
 knitr::include_graphics("dewseqoverview.png")
 ```
 
@@ -290,7 +291,7 @@ windows do only share information with the overlapping windows. Therefore,
 DEWSeq corrects the p-value for each
 overlapping window with the number of overlaps using Bonferroni correction. 
 
-```{r, fig.cap = "Sliding window approach with single-nucleotide position count data", echo = FALSE, fig.small = TRUE} 
+```{r, fig.cap = "Combining significant windows", echo = FALSE, fig.small = TRUE} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("overlapping_sliding_windows.png")
 ```
@@ -358,11 +359,11 @@ Generally, the pre-processing steps are:
 * Read quality filtering (optional)
 * Trimming of sequencing adapters (with tools like
   [cutadapt](https://cutadapt.readthedocs.io))
-* Second trimming step ($\color{red}{\text{extremely important}}$ for standard paired-end eCLIP
+* Second trimming step (**extremely important** for standard paired-end eCLIP
   libraries). This is needed because a 'bug' in the standard paired-end eCLIP
   protocol.  
-  _Hint: Single-read seCLIP [@VanNostrand2017] has a lot of advantages 
-  to standard, paired-end eCLIP, one of them is that you can skip this preprocessing step_
+  _Hint_: Single-read seCLIP [@VanNostrand2017] has a lot of advantages 
+  to standard, paired-end eCLIP, one of them is that you can skip this preprocessing step
 * Quality Control ([fastqc](https://github.com/s-andrews/FastQC) with
   [multiqc](https://multiqc.info/) summary statistics or similar).
 * Alignment ([Novoalign](http://www.novocraft.com/products/novoalign/), 
@@ -393,7 +394,7 @@ htseq-clip performs the following steps:
 * count sites in sliding windows
 * create count matrices 
 
-```{r, fig.cap = "htseq-clip workflow", echo = FALSE, fig.small = TRUE}
+```{r, fig.cap = "htseq-clip workflow", echo = FALSE}
 knitr::include_graphics("htseq-clip.png")
 ```
 
@@ -404,8 +405,8 @@ In addition, htseq-clip can also:
    enrichment plots or DESeq2 analysis
 * calculating the site distance to exon/intron junctions
 
-htseq-clip is provided as a singularity
-container and comes with a [Snakemake](https://snakemake.readthedocs.io/en/stable/) workflow for processing on local computers,
+htseq-clip is provided as a [singularity container](https://sylabs.io/) image and comes 
+with a [Snakemake](https://snakemake.readthedocs.io/en/stable/) workflow for processing on local computers,
 servers, or computer clusters.
 
 All you need is
@@ -414,16 +415,13 @@ All you need is
  * .bam.bai index files 
  * .gff3 files (Preferrably from Gencode or similar)
 
-Please find all information, the documentation and downloads can be found here:
+Please find all information, the documentation and downloads here:
 http://www.hentze.embl.de/public/htseq-clip/
 
 Tip: You can use Sailfish, Kallisto, RSEM, Salmon or any (pseudo)aligner to 
 get an estimation of the different expression levels of transcripts. Use this to 
 filter the annotation before flattening it. 
 
-```{r, echo = FALSE, eval = FALSE}
-# Analysis strategies for CLIP data
-```
 
 # Detection of enriched regions with DEWSeq
  
@@ -654,7 +652,9 @@ resultWindows <- resultWindows %>%
 
 sum(resultWindows$significant)
 ```
+
 `r sum(resultWindows$significant)` windows are significant. 
+
 Here are the top 20 from 
 `r resultWindows %>% filter(significant) %>% .[["gene_name"]] %>% unique %>% length` 
 genes:
@@ -706,32 +706,6 @@ toBED(windowRes = resultWindows,
 Further analyses which can be done is enrichment of gene types, sequence
 motif analysis of the regions, secondary structure analysis of binding 
 regions and other functional analyses. 
-
-```{r notes for further dev, eval = FALSE, echo = FALSE}
-## Plotting
-
-# Simple Enrichment
-
-## Summing up IP 
-
-
-## Plotting enrichment IP over SMI
-
-
-
-# Region-testing with DESeq2
-
-## Loading data
-
-### Loading Testdata
-
-#```{r loading region test data, eval = FALSE}
-## eval = TRUE
-#data(YBX3eCLIPregion)
-#```
-
-# FAQ
-```
 
 # Discussion
 
