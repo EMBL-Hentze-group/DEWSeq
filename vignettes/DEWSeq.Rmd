@@ -159,8 +159,8 @@ UV crosslinking at 254 nm is used to induce covalent chemical
 bonds within very close proximity of RNAs to proteins. This provides a "snapshot"
 of the RNA binding event and ensures that no disassociation of the RNA-protein complexes
 takes place in further steps.  Typically, crosslinking with Stratlinker(R) UV crosslinkers has
-a limited efficiency of around 1-3% or less (depending on UV lamp intensity and time of 
-irradiation). Newer crosslinkers with lasers reach up to 10-20% crosslinking
+a limited efficiency of around 1% or less (depending on UV lamp intensity and time of 
+irradiation). Newer crosslinkers with lasers reach up to 5-20% crosslinking
 efficiency depending on the protein and experimental setup. 
 
 ```{r, fig.cap = "Chance of crosslinking", fig.small = TRUE, echo = FALSE} 
