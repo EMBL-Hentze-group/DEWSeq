@@ -228,7 +228,7 @@ iCLIP and eCLIP depend on the termination of the reverse transcriptase
 at crosslink sites. In contrast, HITS-CLIP and PAR-CLIP need reverse
 transcriptases reading through the crosslink sites. 
 Both methods use different reverse transcriptases with 
-different likelihood of truncating or reading through. 
+different likelihood of truncating or reading through [@Hocq2018]. 
 The chance of this event will also be affected by the
 polypeptide which is left after protein digestion of the protein of interest.
 
