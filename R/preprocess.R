@@ -141,9 +141,10 @@ DESeqDataSetFromSlidingWindows <- function(countData, colData, annotObj,
   gr <- makeGRangesFromDataFrame(df=annotData,seqnames.field='chromosome',start.field='begin',
                                        end.field='end',strand.field='strand',
                                        keep.extra.columns=TRUE,starts.in.df.are.0based=start0based)
+
   gr <- sortSeqlevels(gr)
   gr <- sort(gr)
-  countData <- as.matrix(countData[rownames(mcols(gr)),])
+  countData <- as.matrix(countData[as.character(mcols(gr)$unique_id),])
   se <- SummarizedExperiment(assays = SimpleList(counts=countData),colData = colData,rowRanges=gr)
   return(DESeqDataSet(se, design = design, ignoreRank))
 }

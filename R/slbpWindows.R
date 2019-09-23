@@ -8,10 +8,10 @@
 #'
 #' @usage data(slbpWindows)
 #'
-#' @format An object of class \code{"DESeqResults"};
+#' @format data.frame;
 #'
 #' @examples
 #'
 #' data(slbpWindows)
-#' slbpWindows
+#' head(slbpWindows)
 "slbpWindows"

@@ -4,7 +4,7 @@
 \name{slbpWindows}
 \alias{slbpWindows}
 \title{ENCODE eCLIP data SLBP in K562}
-\format{An object of class \code{"DESeqResults"};}
+\format{data.frame;}
 \usage{
 data(slbpWindows)
 }
@@ -16,6 +16,6 @@ from running the example code for the function \code{\link{resultsDEWSeq}}
 \examples{
 
 data(slbpWindows)
-slbpWindows
+head(slbpWindows)
 }
 \keyword{datasets}
