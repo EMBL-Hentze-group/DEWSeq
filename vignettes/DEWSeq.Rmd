@@ -125,14 +125,6 @@ positions which might be the result of many heuristic events. These are describe
 in the next chapter.
 
 
-We need the following packages for the rest of this vignette
-
-```{r libs, message=FALSE}
-library("IHW")
-library("tidyverse")
-```
-
-
 ## The idea behind DEWSeq 
 
 ### Understanding the signal
@@ -427,12 +419,25 @@ filter the annotation before flattening it.
  
 DEWSeq uses a sliding window approach with DESeq2 for enriched binding sites. 
 
+## Installation
+
+DEWSeq can be installed from Bioconductor as follows:
+
+```{r install, eval = FALSE}
+if(!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("DEWSeq")
+```
+
+
 ## Load the library
 
-First step is to load the library with this command
+First step is to load the required libraries with this command
 
 ```{r load library, eval = TRUE}
 require(DEWSeq)
+require(IHW)
+require(tidyverse)
 ```
 
 ## Importing data for DEWSeq
