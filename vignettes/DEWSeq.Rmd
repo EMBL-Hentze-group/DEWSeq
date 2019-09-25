@@ -69,8 +69,8 @@ Please get familiar with this Bioconductor package before you are using DEWSeq
 Wolfgang Huber and Matthias Hentze for mentoring, advice and discussion. 
 Benjamin Lang and Gian Tartaglia for great help with functional analysis
 and benchmarking, as well as feedback on the vignette. Ina Huppertz for 
-helpful feedback and language improvement on the vignette. Mike Love, Simon Anders, 
-Bernd Klaus and Frederick Ziebell for comments and discussion.
+helpful feedback and language improvement on the vignette. Mike Love, 
+Simon Anders, Bernd Klaus and Frederick Ziebell for comments and discussion.
 
 # Introduction 
 
