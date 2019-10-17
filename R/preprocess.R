@@ -66,9 +66,9 @@ DESeqDataSetFromSlidingWindows <- function(countData, colData, annotObj,
                                            design, tidy=FALSE,
                                            ignoreRank=FALSE, start0based=TRUE){
   stopifnot(ncol(countData) > 1)
-  if(is(countData,'data.table')){
+  if(is(countData,'data.table') ||is(countData,'tbl') ){
     countData <- data.frame(countData)
-    warning('countData is a data.table object, converting it to data.frame. First column will be used as rownames')
+    warning('countData is a data.table or tibble object, converting it to data.frame. First column will be used as rownames')
     if(!tidy){
       tidy <- TRUE
     }
@@ -84,6 +84,9 @@ DESeqDataSetFromSlidingWindows <- function(countData, colData, annotObj,
   if(is(annotObj,"character")){
     annotData <- .readAnnotation(fname=annotObj,asGRange=FALSE,start0based=start0based)
   }else if(is(annotObj,"data.frame")){
+    if(is(annotObj,'data.table') ||is(annotObj,'tbl') ){
+      annotObj <- data.frame(annotObj)
+    }
     neededCols <- c('chromosome','unique_id','begin','end','strand','gene_id','gene_name','gene_type','gene_region','Nr_of_region',
                     'Total_nr_of_region','window_number')
     missingCols <- setdiff(neededCols,colnames(annotObj))

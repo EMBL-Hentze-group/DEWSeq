@@ -49,5 +49,5 @@ test_that("DESeqDataSetFromSlidingWindows throws proper errors during object con
                  warnMsg)
   expect_warning(DESeqDataSetFromSlidingWindows(data.table(data.frame(uid=rownames(sampleData),sampleData))[c(1:10),],
                                                 phenoDat,annotDf,design = ~condition),
-                 'countData is a data.table object, converting it to data.frame. First column will be used as rownames')
+                 'countData is a data.table or tibble object, converting it to data.frame. First column will be used as rownames')
 })

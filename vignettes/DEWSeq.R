@@ -59,45 +59,48 @@ require(DEWSeq)
 require(IHW)
 require(tidyverse)
 
-## ----load test data, eval = TRUE-------------------------------------------
-data(SLBP_K562_w50s20)
-
-## ----head of test data, eval = TRUE----------------------------------------
-ddw <- SLBP_K562_w50s20
-rm(SLBP_K562_w50s20)
-ddw
+## ----filenames, eval = TRUE------------------------------------------------
+countFile <- file.path(system.file('extdata',package='DEWSeq'),'SLBP_K562_w50s20_counts.txt.gz')
+annotationFile <- file.path(system.file('extdata',package='DEWSeq'),'SLBP_K562_w50s20_annotation.txt.gz')
 
 ## ----loading tidyverse, eval = TRUE, results='hide'------------------------
 library(tidyverse)
 library(data.table)
 
-## ----read in count matrix, eval = FALSE------------------------------------
-#  countData <- fread("path/swcounts/count_matrix.txt.gz", sep = "\t")
+## ----read in count matrix, eval = TRUE-------------------------------------
+countData <- fread(countFile, sep = "\t")
 
-## ----read count matrix tidyr, eval = FALSE---------------------------------
-#  countData <- read_tsv("path/swcounts/count_matrix.txt.gz")
+## ----read count matrix tidyr, eval = TRUE----------------------------------
+countData <- read_tsv(countFile)
 
-## ----read in annotation, eval = FALSE--------------------------------------
-#  annotationData <- fread("path/annotation/annotation.txt.gz", sep = "\t")
+## ----read in annotation, eval = TRUE---------------------------------------
+annotationData <- fread(annotationFile, sep = "\t")
 
 ## ----read annotation tidyr, eval = FALSE-----------------------------------
-#  annotationData <- read_tsv("path/annotation/annotation.txt.gz")
+#  annotationData <- read_tsv(annotationFile)
 
-## ----create colData, eval = FALSE------------------------------------------
-#  colData <- data.frame(
-#    row.names = colnames(countData),
-#    type      = factor(
-#                  c(rep("IP", 3),    ##  change this accordingly
-#                    rep("SMI", 3)),  ##
-#                  levels = c("IP", "SMI"))
-#  )
+## ----datasummary-----------------------------------------------------------
+head(countData)
+dim(countData)
+head(annotationData)
+dim(annotationData)
 
-## ----example import, eval = FALSE------------------------------------------
-#  ddw <- DESeqDataSetFromSlidingWindows(countData  = countData,
-#                                        colData    = colData,
-#                                        annotation = annotationData,
-#                                        tidy       = TRUE,
-#                                        design     = ~type)
+## ----create colData--------------------------------------------------------
+colData <- data.frame(
+  row.names = colnames(countData)[-1], # since the first column is unique_id
+  type      = factor(
+                c(rep("IP", 2),    ##  change this accordingly
+                  rep("SMI", 1)),  ##
+                levels = c("IP", "SMI"))
+)
+
+## ----example import--------------------------------------------------------
+ddw <- DESeqDataSetFromSlidingWindows(countData  = countData,
+                                      colData    = colData,
+                                      annotObj   = annotationData,
+                                      tidy       = TRUE,
+                                      design     = ~type)
+ddw
 
 ## ----row filtering, eval = TRUE--------------------------------------------
 keep <- rowSums(counts(ddw)) >= 10

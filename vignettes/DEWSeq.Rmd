@@ -442,24 +442,16 @@ require(tidyverse)
 
 ## Importing data for DEWSeq
 
-### Load test data
 
-Use this command to load the ENCODE SLBP data set.
-
-```{r load test data, eval = TRUE}
-data(SLBP_K562_w50s20)
-```
-
-This data contains two IP and one input control (SMI) samples which
+This example uses ENCODE SLBP data set, contains two IP and one input control (SMI) samples which
 is not ideal, however it is small enough as test data. 
 
-```{r head of test data, eval = TRUE}
-ddw <- SLBP_K562_w50s20
-rm(SLBP_K562_w50s20)
-ddw
+```{r filenames, eval = TRUE}
+countFile <- file.path(system.file('extdata',package='DEWSeq'),'SLBP_K562_w50s20_counts.txt.gz')
+annotationFile <- file.path(system.file('extdata',package='DEWSeq'),'SLBP_K562_w50s20_annotation.txt.gz')
 ```
 
-### From count matrix  
+### Read data
 
 We need to read in the 
 
@@ -478,46 +470,57 @@ library(data.table)
 
 First we read in counts 
 
-```{r read in count matrix, eval = FALSE}
-countData <- fread("path/swcounts/count_matrix.txt.gz", sep = "\t")
+```{r read in count matrix, eval = TRUE}
+countData <- fread(countFile, sep = "\t")
 ```
 
 or alternatively with tidyr (slower):
 
-```{r read count matrix tidyr, eval = FALSE}
-countData <- read_tsv("path/swcounts/count_matrix.txt.gz")
+```{r read count matrix tidyr, eval = TRUE}
+countData <- read_tsv(countFile)
 ```
 
 Then we read in the annotation data frame 
 
-```{r read in annotation, eval = FALSE}
-annotationData <- fread("path/annotation/annotation.txt.gz", sep = "\t")
+```{r read in annotation, eval = TRUE}
+annotationData <- fread(annotationFile, sep = "\t")
 ```
 or alternatively with tidyr (slower):
 
 ```{r read annotation tidyr, eval = FALSE}
-annotationData <- read_tsv("path/annotation/annotation.txt.gz")
+annotationData <- read_tsv(annotationFile)
 ```
 
+Let's take a look at the data files
+
+```{r datasummary}
+head(countData)
+dim(countData)
+head(annotationData)
+dim(annotationData)
+```
+
+
 Finally we have to create a sample description
-```{r create colData, eval = FALSE}
+```{r create colData}
 colData <- data.frame(
-  row.names = colnames(countData), 
+  row.names = colnames(countData)[-1], # since the first column is unique_id
   type      = factor(
-                c(rep("IP", 3),    ##  change this accordingly
-                  rep("SMI", 3)),  ##
+                c(rep("IP", 2),    ##  change this accordingly
+                  rep("SMI", 1)),  ##
                 levels = c("IP", "SMI"))
 )
 ```
 
 This function will parse the annotation file and create a DESeq object
 
-```{r example import, eval = FALSE}
+```{r example import}
 ddw <- DESeqDataSetFromSlidingWindows(countData  = countData,
                                       colData    = colData,
-                                      annotation = annotationData,
+                                      annotObj   = annotationData,
                                       tidy       = TRUE,
                                       design     = ~type)
+ddw
 ```
 
 This will return a DESeq object with the coordinates and annotation stores as 
