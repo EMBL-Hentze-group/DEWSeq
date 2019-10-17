@@ -8,22 +8,23 @@ DESeqDataSetFromSlidingWindows(countData, colData, annotObj, design,
   tidy = FALSE, ignoreRank = FALSE, start0based = TRUE)
 }
 \arguments{
-\item{countData}{sliding window count data}
+\item{countData}{\code{data.frame} or \code{matrix}, sliding window count data}
 
-\item{colData}{phenotype data}
-
-\item{annotObj}{can either be a data.frame or a file name,
-see details}
-
-\item{design}{design of the experiment,
+\item{colData}{\code{DataFrame} or \code{data.frame}, phenotype data,
 see \code{\link[DESeq2:DESeqDataSet]{DESeqDataSet}}}
 
-\item{tidy}{If TRUE, first column is of countData is treated as rownames
+\item{annotObj}{\code{data.frame} or \code{character}, can either be a data.frame or a file name,
+see details}
+
+\item{design}{\code{formula} or \code{matrix}, design of the experiment,
+see \code{\link[DESeq2:DESeqDataSet]{DESeqDataSet}}}
+
+\item{tidy}{\code{logical}, If TRUE, first column is of countData is treated as rownames
 (defalt: FALSE), see \code{\link[DESeq2:DESeqDataSet]{DESeqDataSet}}}
 
-\item{ignoreRank}{ignore rank, see \code{\link[DESeq2:DESeqDataSet]{DESeqDataSet}}}
+\item{ignoreRank}{\code{logical}, ignore rank, see \code{\link[DESeq2:DESeqDataSet]{DESeqDataSet}}}
 
-\item{start0based}{TRUE (default) or FALSE.
+\item{start0based}{\code{logical}, TRUE (default) or FALSE.
 If TRUE, then the start positions in \code{annotObj} is  considered to be 0-based}
 }
 \value{

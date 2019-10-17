@@ -10,23 +10,23 @@ toBED(windowRes, regionRes, fileName, padjCol = "padj",
   description = "sliding windows")
 }
 \arguments{
-\item{windowRes}{output data.frame from \code{\link{resultsDEWSeq}}}
+\item{windowRes}{\code{data.frame}, output from \code{\link{resultsDEWSeq}}}
 
-\item{regionRes}{output data.frame from \code{\link{extractRegions}}}
+\item{regionRes}{\code{data.frame}, output from \code{\link{extractRegions}}}
 
-\item{fileName}{filename to save BED output}
+\item{fileName}{\code{character}, filename to save BED output}
 
-\item{padjCol}{name of the adjusted pvalue column (default: padj)}
+\item{padjCol}{\code{character}, name of the adjusted pvalue column (default: padj)}
 
-\item{padjThresh}{threshold for p-adjusted value (default: 0.05)}
+\item{padjThresh}{\code{numeric}, threshold for p-adjusted value (default: 0.05)}
 
-\item{log2FoldChangeCol}{name of the log2foldchange column (default: log2FoldChange)}
+\item{log2FoldChangeCol}{\code{character}, name of the log2foldchange column (default: log2FoldChange)}
 
-\item{log2FoldChangeThresh}{threshold for log2foldchange value (default:1)}
+\item{log2FoldChangeThresh}{\code{numeric}, threshold for log2foldchange value (default:1)}
 
-\item{trackName}{name of this track, for visualization}
+\item{trackName}{\code{character}, name of this track, for visualization}
 
-\item{description}{description of this track, for visualization}
+\item{description}{\code{character}, description of this track, for visualization}
 }
 \value{
 write to file

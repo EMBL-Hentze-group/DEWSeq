@@ -7,15 +7,15 @@
 #' extract significant windows, create regions by merging adjacent significant windows.
 #' Finally, write the output as a BED file for visualization.
 #'
-#' @param windowRes output data.frame from \code{\link{resultsDEWSeq}}
-#' @param regionRes output data.frame from \code{\link{extractRegions}}
-#' @param fileName filename to save BED output
-#' @param padjCol name of the adjusted pvalue column (default: padj)
-#' @param padjThresh threshold for p-adjusted value (default: 0.05)
-#' @param log2FoldChangeCol name of the log2foldchange column (default: log2FoldChange)
-#' @param log2FoldChangeThresh threshold for log2foldchange value (default:1)
-#' @param trackName name of this track, for visualization
-#' @param description description of this track, for visualization
+#' @param windowRes \code{data.frame}, output from \code{\link{resultsDEWSeq}}
+#' @param regionRes \code{data.frame}, output from \code{\link{extractRegions}}
+#' @param fileName \code{character}, filename to save BED output
+#' @param padjCol \code{character}, name of the adjusted pvalue column (default: padj)
+#' @param padjThresh \code{numeric}, threshold for p-adjusted value (default: 0.05)
+#' @param log2FoldChangeCol \code{character}, name of the log2foldchange column (default: log2FoldChange)
+#' @param log2FoldChangeThresh \code{numeric}, threshold for log2foldchange value (default:1)
+#' @param trackName \code{character}, name of this track, for visualization
+#' @param description \code{character}, description of this track, for visualization
 #'
 #' @return write to file
 #'

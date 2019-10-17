@@ -10,27 +10,28 @@ topWindowStats(windowRes, padjCol = "padj", padjThresh = 0.05,
   treatmentName = "treatment", controlName = "control", op = "max")
 }
 \arguments{
-\item{windowRes}{output data.frame from \code{\link{resultsDEWSeq}}}
+\item{windowRes}{\code{data.frame}, output from \code{\link{resultsDEWSeq}}}
 
-\item{padjCol}{name of the adjusted pvalue column (default: padj)}
+\item{padjCol}{\code{character}, name of the adjusted pvalue column (default: padj)}
 
-\item{padjThresh}{threshold for p-adjusted value (default: 0.05)}
+\item{padjThresh}{\code{numeric}, threshold for p-adjusted value (default: 0.05)}
 
-\item{log2FoldChangeCol}{name of the log2foldchange column (default: log2FoldChange)}
+\item{log2FoldChangeCol}{\code{character}, name of the log2foldchange column (default: log2FoldChange)}
 
-\item{log2FoldChangeThresh}{threshold for log2foldchange value (default:1)}
+\item{log2FoldChangeThresh}{\code{numeric}, threshold for log2foldchange value (default:1)}
 
-\item{start0based}{TRUE (default) or FALSE. If TRUE, then the start positions in \code{windowRes} is  considered to be 0-based}
+\item{start0based}{\code{logical}, TRUE (default) or FALSE. If TRUE, then the start positions in \code{windowRes} is  considered to be 0-based}
 
-\item{normalizedCounts}{data.frame with normalized read counts per window. \code{rownames(normalizedCounts)} and \code{unique_id} column from \code{windoeRes} must match}
+\item{normalizedCounts}{\code{data.frame} or \code{matrix}, normalized read counts per window. \code{rownames(normalizedCounts)} and \code{unique_id} column from \code{windoeRes} must match
+see \code{\link[DESeq2:counts]{counts}}, \code{\link[DESeq2:vst]{vst}} or \code{\link[DESeq2:rlog]{rlog}}}
 
-\item{treatmentCols}{column names in \code{normalizedCounts} for treatment/case samples. The remaining columns in the data.frame will be considered control samples}
+\item{treatmentCols}{\code{character vector}, column names in \code{normalizedCounts} for treatment/case samples. The remaining columns in the data.frame will be considered control samples}
 
-\item{treatmentName}{treatment name, see Details  (default: treatment)}
+\item{treatmentName}{\code{character}, treatment name, see Details  (default: treatment)}
 
-\item{controlName}{control name, see Details (default: control)}
+\item{controlName}{\code{character}, control name, see Details (default: control)}
 
-\item{op}{can be one of \code{max} (default) or \code{min}. \code{max} returns windows with maximum log2FoldChange and mean normalized expression in the \code{treatmentCols} columns,
+\item{op}{\code{character}, can be one of \code{max} (default) or \code{min}. \code{max} returns windows with maximum log2FoldChange and mean normalized expression in the \code{treatmentCols} columns,
 \code{min} returns windows with minimum log2FoldChange and mean normalized expression}
 }
 \value{

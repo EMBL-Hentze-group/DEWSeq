@@ -22,10 +22,6 @@ knitr::include_graphics("truncation.png")
 # fig.width=200, out.width="200px"
 knitr::include_graphics("truncationsite.png")
 
-## ----libs, message=FALSE---------------------------------------------------
-library("IHW")
-library("tidyverse")
-
 ## ---- fig.cap = "Different binding modes of RNA-binding proteins", fig.wide = TRUE, echo = FALSE----
 # fig.width=200, out.width="200px"
 knitr::include_graphics("binding_modes.png")
@@ -53,8 +49,15 @@ knitr::include_graphics("overlapping_sliding_windows.png")
 ## ---- fig.cap = "htseq-clip workflow", echo = FALSE------------------------
 knitr::include_graphics("htseq-clip.png")
 
+## ----install, eval = FALSE-------------------------------------------------
+#  if(!requireNamespace("BiocManager", quietly = TRUE))
+#      install.packages("BiocManager")
+#  BiocManager::install("DEWSeq")
+
 ## ----load library, eval = TRUE---------------------------------------------
 require(DEWSeq)
+require(IHW)
+require(tidyverse)
 
 ## ----load test data, eval = TRUE-------------------------------------------
 data(SLBP_K562_w50s20)

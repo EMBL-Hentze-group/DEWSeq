@@ -9,44 +9,45 @@ resultsDEWSeq(object, contrast, name, listValues = c(1, -1), cooksCutoff,
   BPPARAM = bpparam(), minmu = 0.5, start0based = TRUE)
 }
 \arguments{
-\item{object}{a DESeqDataSet, on which one of the following functions has already been called:
-\code{\link[DESeq2:nbinomWaldTest]{nbinomWaldTest}}\cr
-\code{\link[DESeq2:nbinomLRT]{nbinomLRT}} is NOT supported in this version}
+\item{object}{\code{DESeqDataSet}, on which the following functions has already been called:
+\code{\link[DESeq2:nbinomWaldTest]{nbinomWaldTest}}}
 
-\item{contrast}{this argument specifies what comparison to extract from the \code{object} to build a results table.}
+\item{contrast}{\code{character vector}, \code{list of 2 character vectors} or \code{numeric contrast vector}
+ contrast this argument specifies what comparison to extract from the \code{object} to build a results table,
+see \code{\link[DESeq2:results]{results}}}
 
-\item{name}{the name of the individual effect (coefficient) for building a results table.
+\item{name}{\code{character}, name the name of the individual effect (coefficient) for building a results table.
 \code{name} argument is ignored if \code{contrast} is specified}
 
-\item{listValues}{check \code{\link[DESeq2:results]{results}} for details of this parameter}
+\item{listValues}{\code{list}, check \code{\link[DESeq2:results]{results}} for details of this parameter}
 
-\item{cooksCutoff}{theshold on Cook's distance}
+\item{cooksCutoff}{\code{numeric}, theshold on Cook's distance}
 
-\item{test}{this is automatically detected internally if not provided.}
+\item{test}{\code{character}, this is automatically detected internally if not provided.}
 
-\item{addMLE}{if \code{betaPrior=TRUE} was used}
+\item{addMLE}{\code{logical}, if \code{betaPrior=TRUE} was used}
 
-\item{tidy}{whether to output the results table with rownames as a first column 'row'.
+\item{tidy}{\code{logical}, whether to output the results table with rownames as a first column 'row'.
 The table will also be coerced to \code{data.frame}}
 
-\item{parallel}{if FALSE, no parallelization. if TRUE, parallel
+\item{parallel}{\code{logical}, if FALSE, no parallelization. if TRUE, parallel
 execution using \code{BiocParallel}, see next argument \code{BPPARAM}}
 
-\item{BPPARAM}{an optional parameter object passed internally
+\item{BPPARAM}{\code{bpparamClass}, an optional parameter object passed internally
 to \code{\link{bplapply}} when \code{parallel=TRUE}.
 If not specified, the parameters last registered with
 \code{\link{register}} will be used.}
 
-\item{minmu}{lower bound on the estimated count (used when calculating contrasts)}
+\item{minmu}{\code{numeric}, lower bound on the estimated count (used when calculating contrasts)}
 
-\item{start0based}{TRUE (default) or FALSE. If TRUE, then the start positions in \code{annotationFile} are  considered to be 0-based}
+\item{start0based}{\code{logical}, TRUE (default) or FALSE. If TRUE, then the start positions in \code{annotationFile} are  considered to be 0-based}
 }
 \value{
 DESeqResults object
 }
 \description{
 This is a modified version of the
-     \code{\link[DESeq2:results]{results}} function.
+     \code{\link[DESeq2:results]{results}} function from DESeq2 package.
 
 This function uses chromosomal positions given in the \code{rowRanges(dds)}
 to identify overlapping windows in \code{dds} object. For each window,

@@ -25,13 +25,13 @@
 #'  Nr_of_region: number of the current region \cr
 #'  Total_nr_of_region: total number of regions \cr
 #'  window_number: window number \cr
-#' @param fname file name/path
-#' @param uniqIds filter stable and keep annotation for these unique ids
-#' @param asGRange boolean, whether to reaturn a GRange object or a data.frame
+#' @param fname \code{character}, file name/path
+#' @param uniqIds \code{character vector}, filter stable and keep annotation for these unique ids
+#' @param asGRange \code{logical}, boolean, whether to reaturn a GRange object or a data.frame
 #' object
-#' @param checkWindowNumber check window number
-#' @param start0based TRUE (default) or FALSE. If TRUE, then the start
-#' @param threads number of threads for fread (default: 10)
+#' @param checkWindowNumber \code{logical}, check window number
+#' @param start0based \code{logical}, TRUE (default) or FALSE. If TRUE, then the start
+#' @param threads \code{numeric}, number of threads for fread (default: 10)
 #' positions are considered to be 0-based
 #'
 #'

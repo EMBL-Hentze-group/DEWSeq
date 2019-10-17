@@ -52,16 +52,16 @@
 #' }
 
 #'
-#' @param windowRes output data.frame from \code{\link{resultsDEWSeq}}
-#' @param padjCol name of the adjusted pvalue column
+#' @param windowRes \code{data.frame}, output from \code{\link{resultsDEWSeq}}
+#' @param padjCol \code{character}, name of the adjusted pvalue column
 #' (default: padj)
-#' @param padjThresh threshold for p-adjusted value
+#' @param padjThresh \code{numeric}, threshold for p-adjusted value
 #' (default: 0.05)
-#' @param log2FoldChangeCol name of the log2foldchange column
+#' @param log2FoldChangeCol \code{character}, name of the log2foldchange column
 #' (default: log2FoldChange)
-#' @param log2FoldChangeThresh threshold for log2foldchange value
+#' @param log2FoldChangeThresh \code{numeric}, threshold for log2foldchange value
 #' (default:1)
-#' @param start0based TRUE (default) or FALSE.
+#' @param start0based \code{logical}, TRUE (default) or FALSE.
 #' If TRUE, then the start positions in \code{windowRes}
 #' is  considered to be 0-based
 #'

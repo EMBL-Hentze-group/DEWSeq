@@ -9,21 +9,21 @@ extractRegions(windowRes, padjCol = "padj", padjThresh = 0.05,
   start0based = TRUE)
 }
 \arguments{
-\item{windowRes}{output data.frame from \code{\link{resultsDEWSeq}}}
+\item{windowRes}{\code{data.frame}, output from \code{\link{resultsDEWSeq}}}
 
-\item{padjCol}{name of the adjusted pvalue column
+\item{padjCol}{\code{character}, name of the adjusted pvalue column
 (default: padj)}
 
-\item{padjThresh}{threshold for p-adjusted value
+\item{padjThresh}{\code{numeric}, threshold for p-adjusted value
 (default: 0.05)}
 
-\item{log2FoldChangeCol}{name of the log2foldchange column
+\item{log2FoldChangeCol}{\code{character}, name of the log2foldchange column
 (default: log2FoldChange)}
 
-\item{log2FoldChangeThresh}{threshold for log2foldchange value
+\item{log2FoldChangeThresh}{\code{numeric}, threshold for log2foldchange value
 (default:1)}
 
-\item{start0based}{TRUE (default) or FALSE.
+\item{start0based}{\code{logical}, TRUE (default) or FALSE.
 If TRUE, then the start positions in \code{windowRes}
 is  considered to be 0-based}
 }

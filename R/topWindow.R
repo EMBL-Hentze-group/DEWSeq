@@ -57,17 +57,18 @@
 #'  \item the next columns will be normalized expression values  of the meanWindow from individual treatment and control samples
 #' }
 #'
-#' @param windowRes output data.frame from \code{\link{resultsDEWSeq}}
-#' @param padjCol name of the adjusted pvalue column (default: padj)
-#' @param padjThresh threshold for p-adjusted value (default: 0.05)
-#' @param log2FoldChangeCol name of the log2foldchange column (default: log2FoldChange)
-#' @param log2FoldChangeThresh threshold for log2foldchange value (default:1)
-#' @param start0based TRUE (default) or FALSE. If TRUE, then the start positions in \code{windowRes} is  considered to be 0-based
-#' @param normalizedCounts data.frame with normalized read counts per window. \code{rownames(normalizedCounts)} and \code{unique_id} column from \code{windoeRes} must match
-#' @param treatmentCols column names in \code{normalizedCounts} for treatment/case samples. The remaining columns in the data.frame will be considered control samples
-#' @param treatmentName treatment name, see Details  (default: treatment)
-#' @param controlName control name, see Details (default: control)
-#' @param op can be one of \code{max} (default) or \code{min}. \code{max} returns windows with maximum log2FoldChange and mean normalized expression in the \code{treatmentCols} columns,
+#' @param windowRes \code{data.frame}, output from \code{\link{resultsDEWSeq}}
+#' @param padjCol \code{character}, name of the adjusted pvalue column (default: padj)
+#' @param padjThresh \code{numeric}, threshold for p-adjusted value (default: 0.05)
+#' @param log2FoldChangeCol \code{character}, name of the log2foldchange column (default: log2FoldChange)
+#' @param log2FoldChangeThresh \code{numeric}, threshold for log2foldchange value (default:1)
+#' @param start0based \code{logical}, TRUE (default) or FALSE. If TRUE, then the start positions in \code{windowRes} is  considered to be 0-based
+#' @param normalizedCounts \code{data.frame} or \code{matrix}, normalized read counts per window. \code{rownames(normalizedCounts)} and \code{unique_id} column from \code{windoeRes} must match
+#' see \code{\link[DESeq2:counts]{counts}}, \code{\link[DESeq2:vst]{vst}} or \code{\link[DESeq2:rlog]{rlog}}
+#' @param treatmentCols \code{character vector}, column names in \code{normalizedCounts} for treatment/case samples. The remaining columns in the data.frame will be considered control samples
+#' @param treatmentName \code{character}, treatment name, see Details  (default: treatment)
+#' @param controlName \code{character}, control name, see Details (default: control)
+#' @param op \code{character}, can be one of \code{max} (default) or \code{min}. \code{max} returns windows with maximum log2FoldChange and mean normalized expression in the \code{treatmentCols} columns,
 #' \code{min} returns windows with minimum log2FoldChange and mean normalized expression
 #'
 #'

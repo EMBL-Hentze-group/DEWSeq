@@ -8,18 +8,18 @@
   checkWindowNumber = TRUE, start0based = TRUE, threads = 10)
 }
 \arguments{
-\item{fname}{file name/path}
+\item{fname}{\code{character}, file name/path}
 
-\item{uniqIds}{filter stable and keep annotation for these unique ids}
+\item{uniqIds}{\code{character vector}, filter stable and keep annotation for these unique ids}
 
-\item{asGRange}{boolean, whether to reaturn a GRange object or a data.frame
+\item{asGRange}{\code{logical}, boolean, whether to reaturn a GRange object or a data.frame
 object}
 
-\item{checkWindowNumber}{check window number}
+\item{checkWindowNumber}{\code{logical}, check window number}
 
-\item{start0based}{TRUE (default) or FALSE. If TRUE, then the start}
+\item{start0based}{\code{logical}, TRUE (default) or FALSE. If TRUE, then the start}
 
-\item{threads}{number of threads for fread (default: 10)
+\item{threads}{\code{numeric}, number of threads for fread (default: 10)
 positions are considered to be 0-based}
 }
 \value{
