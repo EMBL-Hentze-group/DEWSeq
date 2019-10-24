@@ -298,19 +298,34 @@ significance testing for DEWSeq. Currently, we only allow the use of
 which will be implemented later. Please contact the authors if you would like
 to use more complex models in your analysis.
 
-### True input controls
+### Input controls
 
-Typically, CLIP-seq samples show a background which comes from
+Typically, CLIP-seq sa mples show a background which comes from
 a mix of various transcripts with different expression levels.
-Additionally, UV crosslinking does not  affect RNAs in a linear fashion, 
+Additionally, UV crosslinking does not affect RNAs in a linear fashion, 
 therefore an appropriate input control is needed for the analysis of
 eCLIP/iCLIP data. Unfortunately, total RNA-seq does not reflect the 
-UV crosslinked background, also neither IgG-, empty beads, nor similar controls are 
-appropriate input controls. We recommend size-matched input controls
-(SMI) controls as performed in the eCLIP protocol [@VanNostrand2016]. 
+UV crosslinked background. Also neither IgG-, empty beads, 
+nor similar controls seem to be appropriate input controls. Mostly, 
+IgG and empty bead controls suggest that the IP input is very clean, 
+which is not what is seen in the data. IP sample often have a 
+broad background signal and bias towards sno and lincRNAs, as well
+as other RNA types. Often, a majority of the reads in the IP come
+from such background, although the IgG and empty bead control samples
+cannot correct for that.
+
+
+We recommend size-matched input controls (SMI) controls as performed in
+the eCLIP protocol [@VanNostrand2016]. 
 This type of input control is not protocol specific, therefore can be 
-easily adapted to iCLIP or other CLIP studies. Most importantly, it can
+easily adapted to iCLIP or other CLIP studies. It proves useful to 
+exclude many false positives and can
 control for truncations caused by interferences.
+
+
+```{r, fig.cap = "Combining significant windows", echo = FALSE} 
+knitr::include_graphics("controls.png")
+```
 
 We recommend to use IgG or empty beads controls to flag (expression 
 dependent) regions for optional removal. 
