@@ -327,8 +327,18 @@ control for truncations caused by interferences.
 knitr::include_graphics("controls.png")
 ```
 
-We recommend to use IgG or empty beads controls to flag (expression 
-dependent) regions for optional removal. 
+*Empty beads* controls are usually crosslinked and control for unspecific
+background caused through beads, *IgG* controls are usually crosslinked
+and control additionally for background caused by the invariable region
+of the antibody. *No crosslink* (noCL) controls control for background 
+caused by the protein and the functional antibody. *SMI* controls are 
+crosslinked but not enriched, it controls among others for the 
+background caused by crosslinked RNA. 
+
+
+`r Biocpkg("DEWSeq")` uses SMI controls to calculate enrichment in the
+IPed samples. We recommend to use IgG or empty beads controls to flag 
+(expression dependent) regions for optional removal. 
 
 ### Replicates
 
