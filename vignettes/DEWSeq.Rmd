@@ -330,7 +330,7 @@ knitr::include_graphics("controls.png")
 *Empty beads* controls are usually crosslinked and control for unspecific
 background caused through beads, *IgG* controls are usually crosslinked
 and control additionally for background caused by the invariable region
-of the antibody. *No crosslink* (noCL) controls control for background 
+of the antibody. *No crosslink* (noCL) controls for background 
 caused by the protein and the functional antibody. *SMI* controls are 
 crosslinked but not enriched, it controls among others for the 
 background caused by crosslinked RNA. 
