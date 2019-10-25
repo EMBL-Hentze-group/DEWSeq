@@ -46,6 +46,9 @@ knitr::include_graphics("dewseqoverview.png")
 # fig.width=200, out.width="200px"
 knitr::include_graphics("overlapping_sliding_windows.png")
 
+## ---- fig.cap = "Combining significant windows", echo = FALSE--------------
+knitr::include_graphics("controls.png")
+
 ## ---- fig.cap = "htseq-clip workflow", echo = FALSE------------------------
 knitr::include_graphics("htseq-clip.png")
 
