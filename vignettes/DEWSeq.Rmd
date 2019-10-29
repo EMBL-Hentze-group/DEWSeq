@@ -23,7 +23,6 @@ output:
     highlight: pygments
     toc: true
     toc_float: true
-    fig_width: 5
 bibliography: library.bib
 vignette: >
   %\VignetteIndexEntry{Analyzing eCLIP/iCLIP data with DEWSeq}
