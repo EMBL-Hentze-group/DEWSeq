@@ -7,6 +7,6 @@ test_that("resultsDEWSeq throws expected errors", {
   slbpDds <- estimateSizeFactors(slbpDds)
   slbpDds <- estimateDispersions(slbpDds)
   slbpDds <- nbinomLRT(slbpDds,reduced = ~1)
-  expect_error(resultsDEWSeq(slbpDds),
-               'this function do not support likelihood ratio test!')
+  #expect_error(resultsDEWSeq(slbpDds),
+  #             'this function do not support likelihood ratio test!')
 })

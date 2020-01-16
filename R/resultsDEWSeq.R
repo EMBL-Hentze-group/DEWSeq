@@ -2,6 +2,8 @@
 #'
 #' @import BiocParallel DESeq2 S4Vectors
 #'
+#' @importFrom GenomeInfoDb seqnames
+#' @importFrom BiocGenerics strand
 #' @importFrom GenomicRanges findOverlaps
 #' @importFrom methods is
 #' @importFrom SummarizedExperiment assays colData rowRanges
@@ -83,9 +85,6 @@ resultsDEWSeq <- function(object, contrast,name,
   if (test == "Wald" & attr(object, "test") == "LRT") {
     # initially test was LRT, now need to add Wald statistics and p-values
     object <- DESeq2:::makeWaldTest(object)
-  }
-  if (test == "LRT") {
-    stop("this function do not support likelihood ratio test!")
   }
 
   if (addMLE) {
@@ -202,20 +201,32 @@ resultsDEWSeq <- function(object, contrast,name,
          ',paste(missingCols,collapse=", "),'')
   }
   gc()
+  # positional unique id, it is used to
+  # pick out unique chromosomal positions
+  resGrange$pos_id <- paste(as.vector(seqnames(resGrange)),start(resGrange),end(resGrange),
+                             as.vector(strand(resGrange)),sep='.')
   # prune res object for all regions/windows with stat>=0
-  res <- res[res$stat>=0,]
+  if(test == "Wald"){
+    res <- res[res$stat>=0,]
+  }else if(test == "LRT"){
+    res <- res[res$log2FoldChange>=0,]
+  }else{
+    stop("Unknown value for variable: test, must be one of Wald or LRT")
+  }
+
   if(nrow(res)==0){
     stop("Cannot find any windows/regions with log2FoldChange>=0")
   }
 
-  # recalculate p-values, in this case, only right sided test is enough
+  # for Wald test, recalculate p-values, in this case, only right sided test is enough
+  # use the default chisq. pvalue for LRT tests
   if(useT){
     # keep degrees of freedom for the regions/windows with stat>=0
     df <- mcols(object)$tDegreesFreedom
     names(df) <- rownames(object)
     df <- df[rownames(res)]
     res$pvalue <- pt(res$stat,df=df,lower.tail = FALSE)
-  }else{
+  }else if (test == "Wald"){
     res$pvalue <- pnorm(res$stat,lower.tail = FALSE)
   }
 
@@ -267,12 +278,23 @@ resultsDEWSeq <- function(object, contrast,name,
   }
   # calculate the number of windows that overlaps with each other by atleast 2 bp,
   # this way, any intron/exon junctions will not be counted, but all ovelapping windows will be counted
-  resOvs <- findOverlaps(resGrange,minoverlap=1,drop.redundant=FALSE,drop.self=FALSE,ignore.strand=FALSE)
+  idMap <- mcols(resGrange)$pos_id
+  names(idMap) <- names(resGrange)
+  uniqGrange <- unique(resGrange)
+  resOvs <- findOverlaps(uniqGrange,minoverlap=1,drop.redundant=FALSE,drop.self=FALSE,ignore.strand=FALSE)
   nOvWindows <- as.data.frame(table(queryHits(resOvs)))[,2]
-  names(nOvWindows) <- as.character(mcols(resGrange)$unique_id)
-  nOvWindows <- nOvWindows[rownames(res)]
+  if(length(nOvWindows)!=length(uniqGrange)){
+    stop("Error in counting number of unique positions")
+  }
+  names(nOvWindows) <- as.character(mcols(uniqGrange)$pos_id)
+  nOverlapCount <- nOvWindows[idMap]
+  names(nOverlapCount) <- names(idMap)
+  if(length(nOverlapCount)!=length(idMap)){
+    stop("Error in calculating total number of window overlaps!")
+  }
+  nOverlapCount <- nOverlapCount[rownames(res)]
   # adjusted p-values for overlapping windows using Bonferroni correction
-  res$pSlidingWindows <- pmin(res$pvalue*nOvWindows,1)
+  res$pSlidingWindows <- pmin(res$pvalue*nOverlapCount,1)
   # if original baseMean was positive, but now zero due to replaced counts, fill in results
   if ( sum(mcols(object)$replace, na.rm=TRUE) > 0) {
     nowZeroIds <- intersect(rownames(res),rownames(object)[which(mcols(object)$replace & mcols(object)$baseMean == 0)])
