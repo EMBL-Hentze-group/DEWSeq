@@ -399,7 +399,7 @@ Eventually, you will end up with sorted *.bam* files.
 
 **From bam and gff3 files to count matrix and annotation**
 
-[htseq-clip](http://www.hentze.embl.de/public/htseq-clip/) is the 
+[htseq-clip](https://pypi.org/project/htseq-clip/) is the 
 preprocessing pipeline developed for the use for
 DEWSeq, but other tools may be used. 
 htseq-clip performs the following steps:
@@ -419,11 +419,14 @@ In addition, htseq-clip can also:
 * split the annotation into UTRs, CDS
 * count non-overlapping regions (UTRs, CDS, exons, introns, etc) for 
    enrichment plots or DESeq2 analysis
-* calculating the site distance to exon/intron junctions
 
-htseq-clip is provided as a [singularity container](https://sylabs.io/) image and comes 
-with a [Snakemake](https://snakemake.readthedocs.io/en/stable/) workflow for processing on local computers,
-servers, or computer clusters.
+htseq-clip can be installed via Python package installer as:
+
+```{bash, eval = FALSE}
+pip install htseq-clip
+```
+
+Additional details on htseq-clip functions and required input files are [described here](https://htseq-clip.readthedocs.io/en/latest/)
 
 All you need is
 
@@ -431,8 +434,9 @@ All you need is
  * .bam.bai index files 
  * .gff3 files (Preferrably from Gencode or similar)
 
-Please find all information, the documentation and downloads here:
-http://www.hentze.embl.de/public/htseq-clip/
+An earlier, Python 2.7 compatibile version of htseq-clip is provided as a [singularity container](https://sylabs.io/) image and comes 
+with a [Snakemake](https://snakemake.readthedocs.io/en/stable/) workflow for processing on local computers,
+servers, or computer clusters.
 
 Tip: You can use Sailfish, Kallisto, RSEM, Salmon or any (pseudo)aligner to 
 get an estimation of the different expression levels of transcripts. Use this to 
