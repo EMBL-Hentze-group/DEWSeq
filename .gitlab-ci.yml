@@ -5,5 +5,7 @@ biocRelease:
   image: bioconductor/bioconductor_docker:RELEASE_3_10
   stage: biocRelease
   script:
+    - R --slave -e "install.packages(c('knitr', 'rmarkdown','data.table'),repos='https://cloud.r-project.org/',dependencies=TRUE)"
+    - R --slave -e "library(BiocManager);BiocManager::install(c('DESeq2', 'BiocParallel', 'BiocGenerics', 'BiocStyle', 'IHW','GenomeInfoDb', 'GenomicRanges', 'S4Vectors', 'SummarizedExperiment'))"
     - R CMD check .
     - R CMD BiocCheck .
