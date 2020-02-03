@@ -1,0 +1,9 @@
+stages:
+  - biocRelease
+
+biocRelease:
+  image: bioconductor/bioconductor_docker:RELEASE_3_10
+  stage: biocRelease
+  script:
+    - R CMD check .
+    - R CMD BiocCheck .

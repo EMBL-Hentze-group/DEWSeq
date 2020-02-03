@@ -293,8 +293,7 @@ We then apply FDR correction on the p-values corrected for overlaps using Bonfer
 
 Most importantly, replicates and input controls are required for the 
 significance testing for DEWSeq. Currently, we only allow the use of 
-`r Biocpkg("DESeq2")`'s wald test, not the LRT test for more complex models,
-which will be implemented later. Please contact the authors if you would like
+`r Biocpkg("DESeq2")`'s wald test and LRT test. Please contact the authors if you would like
 to use more complex models in your analysis.
 
 ### Input controls
@@ -633,8 +632,7 @@ sizeFactors(ddw)
 ### Estimate dispersions and wald test
 
 The next step is to estimate the dispersions and perform the wald test
-with these two functions. *Please note, currently, DEWSeq does not support 
-LRT tests.* 
+with these two functions.
 
 Please read up on fitType in the `r Biocpkg("DESeq2")` package and adjust
 according to your data set.
