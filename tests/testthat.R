@@ -1,3 +1,3 @@
 library("testthat")
-library("DEWSeqD")
-test_check("DEWSeqD")
+library("DEWSeq")
+test_check("DEWSeq")
