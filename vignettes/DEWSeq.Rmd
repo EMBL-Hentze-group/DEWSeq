@@ -710,7 +710,6 @@ majority of the hits are coming from histone genes.
 `resultWindows` contains information about the differential expression of
 windows. Now we would like to combine overlapping windows to a binding region.
 
-
 ```{r extractRegions, eval = TRUE, results = "hide"}
 resultRegions <- extractRegions(windowRes  = resultWindows,
                                 padjCol    = "p_adj_IHW",

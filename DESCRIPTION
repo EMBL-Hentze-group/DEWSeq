@@ -17,6 +17,7 @@ Imports:
     utils
 Depends:
     R(>= 3.6.0),
+    R.utils,
     DESeq2,
     BiocParallel
 Suggests:
