@@ -16,7 +16,7 @@ Imports:
     stats,
     utils
 Depends:
-    R(>= 3.6.0),
+    R(>= 4.0.0),
     R.utils,
     DESeq2,
     BiocParallel
