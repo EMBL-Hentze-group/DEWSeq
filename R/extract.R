@@ -114,6 +114,10 @@ extractRegions <- function(windowRes,
      ',log2FoldChangeCol,': log2foldchange column.
       Missing columns: ',paste(missingCols,collapse=", "),'')
   }
+  if(is(windowRes,'data.table') ||is(windowRes,'tbl') ){
+    windowRes <- data.frame(windowRes)
+    warning('windowRes is a data.table or tibble object, converting it to data.frame')
+  }
   windowRes <- na.omit(windowRes[,requiredCols])
   sigDat <- windowRes[ windowRes[,padjCol]<=padjThresh &
                          windowRes[,log2FoldChangeCol]>=log2FoldChangeThresh, ]

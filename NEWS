@@ -4,3 +4,7 @@ Changes in version 0.99.0 (2019-09-23)
 Changes in version 1.0.2 (2020-02-03)
  + Updated vignette to add htseq-clip pypi links
  + LRT tests to results_DEWSeq function
+
+Changes in version 1.0.6 (2020-04-08)
+ + added missing dependency R.utils
+ + minor fix for stricter tibble subsetting
