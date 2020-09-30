@@ -2,4 +2,5 @@ image: hentzegroup/dewseq_test:devel
 
 test:
     script:
-        - R -e 'message(getwd());message(paste(list.files(),collapse=", "))'
+        - R CMD build .
+        - R -e 'message(getwd());message(paste(list.files(),collapse=","))'
