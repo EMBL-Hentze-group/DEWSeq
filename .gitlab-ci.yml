@@ -3,6 +3,7 @@ image: hentzegroup/dewseq_test:devel
 test:
     script:
         - R CMD build .
+        - R CMD check DEWSeq*.tar.gz
         - R -e  "library(BiocCheck);
             checkRes <- BiocCheck(Sys.glob('DEWSeq*.tar.gz')[1]);
             error<-FALSE;
@@ -26,5 +27,5 @@ test:
             if(error){
                 stop('Fix the warnings/errors above!');
             }else{
-                message('No errors found\n');}"
+                message('No errors found!\n\nDONE...\n');}"
 
