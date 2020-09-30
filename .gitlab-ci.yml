@@ -3,4 +3,5 @@ image: hentzegroup/dewseq_test:devel
 test:
     script:
         - R CMD build .
-        - R CMD check
+        - R CMD check DEWSeq*.tar.gz
+        - R CMD BiocCheck DEWSeq*.tar.gz
