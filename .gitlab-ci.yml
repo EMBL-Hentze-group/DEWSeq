@@ -4,4 +4,4 @@ test:
     script:
         - R CMD build .
         - R CMD check DEWSeq*.tar.gz
-        - R -e 'library(BiocCheck);BiocCheck("DEWSeq")'
+        - R -e 'library(BiocCheck);setwd('../');BiocCheck("DEWSeq")'
