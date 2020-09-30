@@ -6,7 +6,9 @@ Authors@R:
     c(person("Sudeep","Sahadevan",email= "sahadeva@embl.de",role="aut"), 
     person("Thomas","Schwarzl",email="schwarzl@embl.de",role="aut"),
     person("bioinformatics team","Hentze",email="biohentze@embl.de",role=c("aut","cre")))
-Description: DEWSeq
+Description: DEWSeq is a sliding window approach for the analysis of
+    differentially enriched binding regions eCLIP or iCLIP next generation
+    sequencing data.
 Imports:
     BiocGenerics,
     data.table(>= 1.11.8),
