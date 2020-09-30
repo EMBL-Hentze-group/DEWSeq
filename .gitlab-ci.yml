@@ -2,5 +2,4 @@ image: hentzegroup/dewseq_test:devel
 
 test:
     script:
-        - R CMD build .
-        - R -e 'library(BiocCheck);BiocCheck("../DEWSeq")'
+        - R -e 'message(getwd());message(paste(list.files(),collapse=", "))'
