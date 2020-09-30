@@ -8,3 +8,6 @@ Changes in version 1.0.2 (2020-02-03)
 Changes in version 1.1.4 (2020-04-07)
  + DEWSeq version bump for Bioconductor 3.11
  + added missing dependency R.utils
+
+Changes in version 1.1.6 (2020-09-30)
+ + modified authors and description sections in DESCRIPTION
