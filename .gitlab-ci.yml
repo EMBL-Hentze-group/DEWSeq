@@ -3,4 +3,17 @@ image: hentzegroup/dewseq_test:devel
 test:
     script:
         - R CMD build .
-        - R -e 'library(BiocCheck); checkRes <- BiocCheck(Sys.glob('DEWSeq*.tar.gz')[1]); error<-FALSE; if(length(checkRes$error)>0){error<-TRUE; for(i in seq_along(checkRes$error){message(checkRes$error[i],"\n")})}; if(length(checkRes$warning)>0){error<-TRUE; for(i in seq_along(checkRes$warning){message(checkRes$warning[i],"\n")})}; for(i in seq_along(checkRes$note){message(checkRes$note[i],"\n")}); if(error){stop("Fix the warnings/errors above!")}'
+        - R -e 'library(BiocCheck)
+        checkRes <- BiocCheck(Sys.glob("DEWSeq*.tar.gz")[1])
+        error<-FALSE
+        if(length(checkRes$error)>0){
+            error<-TRUE
+            for(i in seq_along(checkRes$error)){message(checkRes$error[i],"\n")}
+        }
+        if(length(checkRes$warning)>0){
+            error<-TRUE
+            for(i in seq_along(checkRes$warning)){message(checkRes$warning[i],"\n")}
+        }
+        for(i in seq_along(checkRes$note)){message(checkRes$note[i],"\n")}
+        if(error){stop("Fix the warnings/errors above!")}else{message("No errors found\n")}'
+        
