@@ -1,0 +1,6 @@
+image: hentzegroup/dewseq_test:devel
+
+test:
+    script:
+        - R CMD build .
+        - R CMD check
