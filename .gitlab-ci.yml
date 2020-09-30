@@ -4,7 +4,7 @@ test:
     script:
         - R CMD build .
         - R -e 
-        'library(BiocCheck);
+        "library(BiocCheck);
         checkRes <- BiocCheck(Sys.glob('DEWSeq*.tar.gz')[1])
         error<-FALSE
         if(length(checkRes$error)>0){
@@ -20,4 +20,4 @@ test:
             stop('Fix the warnings/errors above!')
         }else{
             message('No errors found\n')
-        }'
+        }"
