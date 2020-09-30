@@ -9,14 +9,14 @@ test:
             if(length(checkRes[['error']])>0){
                 error<-TRUE;
                 message(paste(checkRes[['error']],collapse='\n\n'));
-            }
+            };
             if(length(checkRes[['warning']])>0){
                 error<-TRUE;
                 message(paste(checkRes[['warning']],collapse='\n\n'));
-            }
+            };
             if(length(checkRes[['note']])>0){
                 message(paste(checkRes[['note']],collapse='\n\n'));
-            }
+            };
             if(error){
                 stop('Fix the warnings/errors above!');
             }else{
