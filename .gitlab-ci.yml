@@ -3,4 +3,4 @@ image: hentzegroup/dewseq_test:devel
 test:
     script:
         - R CMD build .
-        - R -e 'library(BiocCheck);setwd("../");BiocCheck("DEWSeq")'
+        - R -e 'library(BiocCheck);BiocCheck(".")'
