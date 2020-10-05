@@ -1,0 +1,31 @@
+image: hentzegroup/dewseq_test:devel
+
+test:
+    script:
+        - R CMD build .
+        - R CMD check DEWSeq*.tar.gz
+        - R -e  "library(BiocCheck);
+            checkRes <- BiocCheck(Sys.glob('DEWSeq*.tar.gz')[1]);
+            error<-FALSE;
+            if(length(checkRes[['error']])>0){
+                error<-TRUE;
+                message('____ ERORRS ____\n\n');
+                message(paste(checkRes[['error']],collapse='\n\n'));
+                message('\n\n');
+            };
+            if(length(checkRes[['warning']])>0){
+                error<-TRUE;
+                message('____ WARNINGS ____\n\n');
+                message(paste(checkRes[['warning']],collapse='\n\n'));
+                message('\n\n');
+            };
+            if(length(checkRes[['note']])>0){
+                message('____ NOTES ____\n\n');
+                message(paste(checkRes[['note']],collapse='\n\n'));
+                message('\n\n');
+            };
+            if(error){
+                stop('Fix the warnings/errors above!');
+            }else{
+                message('No errors found!\n\nDONE...\n');}"
+
