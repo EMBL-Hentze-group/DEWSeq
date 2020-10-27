@@ -1,7 +1,7 @@
 Package: DEWSeq
 Type: Package
 Title: Differential Expressed Windows Based on Negative Binomial Distribution
-Version: 1.3.2
+Version: 1.4.0
 Authors@R: 
     c(person("Sudeep","Sahadevan",email= "sahadeva@embl.de",role="aut"), 
     person("Thomas","Schwarzl",email="schwarzl@embl.de",role="aut"),
