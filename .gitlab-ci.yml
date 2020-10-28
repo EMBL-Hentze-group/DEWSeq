@@ -1,9 +1,30 @@
 image: hentzegroup/dewseq_test:devel
 
-test:
+stages:
+    - build
+    - test
+
+cmdbuild:
+    stage: build
+    artifacts:
+        name: "${CI_BUILD_NAME}_${CI_BUILD_REF_NAME}"
+        untracked: true
+        expire_in: 1 week
     script:
         - R CMD build .
+
+crancheck:
+    stage: test
+    dependencies:
+        - cmdbuild
+    script:
         - R CMD check DEWSeq*.tar.gz
+
+bioccheck:
+    stage: test
+    dependencies:
+        - cmdbuild
+    script:
         - R -e  "library(BiocCheck);
             checkRes <- BiocCheck(Sys.glob('DEWSeq*.tar.gz')[1]);
             error<-FALSE;
@@ -28,4 +49,3 @@ test:
                 stop('Fix the warnings/errors above!');
             }else{
                 message('No errors found!\n\nDONE...\n');}"
-
