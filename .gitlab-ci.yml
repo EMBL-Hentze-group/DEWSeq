@@ -1,4 +1,4 @@
-image: hentzegroup/dewseq_test:devel
+image: hentzegroup/dewseq_test:RELEASE_3_12
 
 stages:
     - build
