@@ -258,7 +258,7 @@ test: first, we filter windows with negative wald test statistic values (windows
 followed a right-tailed test on the remaining windows. The advantage is that the filtering step increases performance 
 when testing millions of windows. 
 
-```{r , fig.cap = "Sliding window approach with single-nucleotide position count data", out.width="120%", echo = FALSE} 
+```{r , fig.cap = "Sliding window approach with single-nucleotide position count data", out.width="140%", out.height="120%", echo = FALSE} 
 knitr::include_graphics("dewseqoverview.png")
 ```
 
