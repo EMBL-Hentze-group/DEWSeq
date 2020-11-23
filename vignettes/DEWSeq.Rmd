@@ -97,7 +97,7 @@ eCLIP introduces updates in chemistry, the use of a size-matched
 input (SMI) control sample is an essential addition to the protocol
 which can be also adapted to iCLIP or similar protocols.
 
-```{r, fig.cap = "Crosslink site trunction at reverse transcription", echo = FALSE}
+```{r, fig.cap = "Crosslink site trunction at reverse transcription", out.width="80%", echo = FALSE}
 knitr::include_graphics("truncation.png")
 ```
 
@@ -114,7 +114,7 @@ and PAR-CLIP [@Hafner2010] rely exclusively on read-through events
 the technical difficulty of these protocols requires many optimizations steps,
 which makes them rather hard to combine.
 
-```{r, fig.cap = "Truncation sites (referred to as crosslink sites) are the neighboring position of the aligned read", out.width="100%", echo = FALSE} 
+```{r, fig.cap = "Truncation sites (referred to as crosslink sites) are the neighboring position of the aligned read", out.width="80%", echo = FALSE} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("truncationsite.png")
 ```
@@ -137,7 +137,7 @@ others are mostly found at UTRs. A large portion of RBPs do not have
 a known RNA-binding domain and bind using disordered regions with unknown 
 target preferences. 
 
-```{r, fig.cap = "Different binding modes of RNA-binding proteins", fig.wide = TRUE, echo = FALSE} 
+```{r, fig.cap = "Different binding modes of RNA-binding proteins", out.width="80%", echo = FALSE} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("binding_modes.png")
 ```
@@ -154,7 +154,7 @@ a limited efficiency of around 1% or less (depending on UV lamp intensity and ti
 irradiation). Newer crosslinkers with lasers reach up to 5-20% crosslinking
 efficiency depending on the protein and experimental setup. 
 
-```{r, fig.cap = "Chance of crosslinking", fig.small = TRUE, echo = FALSE} 
+```{r, fig.cap = "Chance of crosslinking", out.width="100%", echo = FALSE} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("crosslinking_chance.png")
 ```
@@ -209,7 +209,7 @@ In addition, it was shown that the crosslinking pattern will be affected by
 longer RNA fragments, which occurs as a result of the protein of interest binding
 closely together, protecting a larger RNA region from digestion [@Haberman2017]. 
 
-```{r, fig.cap = "Different RNase concentrations will result in different fragment sizes.", out.width="100%", echo = FALSE} 
+```{r, fig.cap = "Different RNase concentrations will result in different fragment sizes.", out.width="80%", echo = FALSE} 
 knitr::include_graphics("digestionpatterns.png")
 ```
 
@@ -223,7 +223,7 @@ different likelihood of truncating or reading through [@Hocq2018].
 The chance of this event will also be affected by the
 polypeptide which is left after protein digestion of the protein of interest.
 
-```{r, fig.cap = "Read-throughs", out.width="100%", echo = FALSE} 
+```{r, fig.cap = "Read-throughs", out.width="80%", echo = FALSE} 
 knitr::include_graphics("readthrough.png")
 ```
 
@@ -282,7 +282,7 @@ windows do only share information with the overlapping windows. Therefore,
 DEWSeq corrects the p-value for each
 overlapping window with the number of overlaps using Bonferroni correction. 
 
-```{r, fig.cap = "Combining significant windows", echo = FALSE, out.width="100%"} 
+```{r, fig.cap = "Combining significant windows", echo = FALSE, out.width="80%"} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("overlapping_sliding_windows.png")
 ```
@@ -321,7 +321,7 @@ exclude many false positives and can
 control for truncations caused by interferences.
 
 
-```{r, fig.cap = "Combining significant windows", out.width="100%", echo = FALSE} 
+```{r, fig.cap = "Combining significant windows", out.width="80%", echo = FALSE} 
 knitr::include_graphics("controls.png")
 ```
 
