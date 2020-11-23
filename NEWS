@@ -11,3 +11,6 @@ Changes in version 1.2.0 (2020-04-07)
 
 Changes in version 1.3.0 (2020-09-30)
  + modified authors and description sections in DESCRIPTION
+
+Changes in version 1.4.2 (2020-09-30)
+ + Fix figure scaling issue in vignette

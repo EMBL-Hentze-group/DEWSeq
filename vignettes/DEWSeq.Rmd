@@ -114,7 +114,7 @@ and PAR-CLIP [@Hafner2010] rely exclusively on read-through events
 the technical difficulty of these protocols requires many optimizations steps,
 which makes them rather hard to combine.
 
-```{r, fig.cap = "Truncation sites (referred to as crosslink sites) are the neighboring position of the aligned read", fig.small = TRUE, echo = FALSE} 
+```{r, fig.cap = "Truncation sites (referred to as crosslink sites) are the neighboring position of the aligned read", out.width="100%", echo = FALSE} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("truncationsite.png")
 ```
@@ -209,7 +209,7 @@ In addition, it was shown that the crosslinking pattern will be affected by
 longer RNA fragments, which occurs as a result of the protein of interest binding
 closely together, protecting a larger RNA region from digestion [@Haberman2017]. 
 
-```{r, fig.cap = "Different RNase concentrations will result in different fragment sizes.", fig.small=TRUE, echo = FALSE} 
+```{r, fig.cap = "Different RNase concentrations will result in different fragment sizes.", out.width="100%", echo = FALSE} 
 knitr::include_graphics("digestionpatterns.png")
 ```
 
@@ -223,7 +223,7 @@ different likelihood of truncating or reading through [@Hocq2018].
 The chance of this event will also be affected by the
 polypeptide which is left after protein digestion of the protein of interest.
 
-```{r, fig.cap = "Read-throughs", fig.small = T, echo = FALSE} 
+```{r, fig.cap = "Read-throughs", out.width="100%", echo = FALSE} 
 knitr::include_graphics("readthrough.png")
 ```
 
@@ -241,7 +241,7 @@ from the same protein. Again, although low crosslinking
 efficiency reduces the chance of having multiple crosslink sites
 at once, those events occur stochastically. 
 
-```{r, fig.cap = "Early truncation events", echo = FALSE} 
+```{r, fig.cap = "Early truncation events", out.width="100%", echo = FALSE} 
 knitr::include_graphics("earlytruncation.png")
 ```
 
@@ -258,7 +258,7 @@ test: first, we filter windows with negative wald test statistic values (windows
 followed a right-tailed test on the remaining windows. The advantage is that the filtering step increases performance 
 when testing millions of windows. 
 
-```{r , fig.cap = "Sliding window approach with single-nucleotide position count data", echo = FALSE} 
+```{r , fig.cap = "Sliding window approach with single-nucleotide position count data", out.width="100%", echo = FALSE} 
 knitr::include_graphics("dewseqoverview.png")
 ```
 
@@ -282,7 +282,7 @@ windows do only share information with the overlapping windows. Therefore,
 DEWSeq corrects the p-value for each
 overlapping window with the number of overlaps using Bonferroni correction. 
 
-```{r, fig.cap = "Combining significant windows", echo = FALSE, fig.small = TRUE} 
+```{r, fig.cap = "Combining significant windows", echo = FALSE, out.width="100%"} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("overlapping_sliding_windows.png")
 ```
@@ -321,7 +321,7 @@ exclude many false positives and can
 control for truncations caused by interferences.
 
 
-```{r, fig.cap = "Combining significant windows", echo = FALSE} 
+```{r, fig.cap = "Combining significant windows", out.width="100%", echo = FALSE} 
 knitr::include_graphics("controls.png")
 ```
 
@@ -409,7 +409,7 @@ htseq-clip performs the following steps:
 * count sites in sliding windows
 * create count matrices 
 
-```{r, fig.cap = "htseq-clip workflow", echo = FALSE}
+```{r, fig.cap = "htseq-clip workflow", out.width="100%", echo = FALSE}
 knitr::include_graphics("htseq-clip.png")
 ```
 
