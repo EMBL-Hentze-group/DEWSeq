@@ -137,7 +137,7 @@ others are mostly found at UTRs. A large portion of RBPs do not have
 a known RNA-binding domain and bind using disordered regions with unknown 
 target preferences. 
 
-```{r, fig.cap = "Different binding modes of RNA-binding proteins", out.width="80%", echo = FALSE} 
+```{r, fig.cap = "Different binding modes of RNA-binding proteins", out.width="120%", echo = FALSE} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("binding_modes.png")
 ```
@@ -154,7 +154,7 @@ a limited efficiency of around 1% or less (depending on UV lamp intensity and ti
 irradiation). Newer crosslinkers with lasers reach up to 5-20% crosslinking
 efficiency depending on the protein and experimental setup. 
 
-```{r, fig.cap = "Chance of crosslinking", out.width="100%", echo = FALSE} 
+```{r, fig.cap = "Chance of crosslinking", out.width="80%", echo = FALSE} 
 # fig.width=200, out.width="200px"
 knitr::include_graphics("crosslinking_chance.png")
 ```
@@ -258,7 +258,7 @@ test: first, we filter windows with negative wald test statistic values (windows
 followed a right-tailed test on the remaining windows. The advantage is that the filtering step increases performance 
 when testing millions of windows. 
 
-```{r , fig.cap = "Sliding window approach with single-nucleotide position count data", out.width="100%", echo = FALSE} 
+```{r , fig.cap = "Sliding window approach with single-nucleotide position count data", out.width="120%", echo = FALSE} 
 knitr::include_graphics("dewseqoverview.png")
 ```
 
