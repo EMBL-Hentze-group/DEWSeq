@@ -97,7 +97,8 @@ eCLIP introduces updates in chemistry, the use of a size-matched
 input (SMI) control sample is an essential addition to the protocol
 which can be also adapted to iCLIP or similar protocols.
 
-```{r, fig.cap = "Crosslink site trunction at reverse transcription", out.width="80%", echo = FALSE}
+```{r, fig.cap = "Crosslink site trunction at reverse transcription", fig.small=TRUE, echo = FALSE}
+# out.width="80%",
 knitr::include_graphics("truncation.png")
 ```
 
