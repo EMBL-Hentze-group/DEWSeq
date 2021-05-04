@@ -1,14 +1,4 @@
-'''
- @Author: Sudeep Sahadevan
- @Date: 2021-05-04 09:15:38
- @Last Modified by:   Sudeep Sahadevan
- @Last Modified time: 2021-05-04 09:15:38
-''''''
- @Author: Sudeep Sahadevan
- @Date: 2021-05-04 09:15:34
- @Last Modified by:   Sudeep Sahadevan
- @Last Modified time: 2021-05-04 09:15:34
-'''---
+---
 title: "Analyzing eCLIP and iCLIP data with DEWSeq"
 author:
 - name: Sudeep Sahadevan
