@@ -1,4 +1,14 @@
----
+'''
+ @Author: Sudeep Sahadevan
+ @Date: 2021-05-04 09:15:38
+ @Last Modified by:   Sudeep Sahadevan
+ @Last Modified time: 2021-05-04 09:15:38
+''''''
+ @Author: Sudeep Sahadevan
+ @Date: 2021-05-04 09:15:34
+ @Last Modified by:   Sudeep Sahadevan
+ @Last Modified time: 2021-05-04 09:15:34
+'''---
 title: "Analyzing eCLIP and iCLIP data with DEWSeq"
 author:
 - name: Sudeep Sahadevan
@@ -629,7 +639,83 @@ sizeFactors(ddw)
 
 ## Differential expressed windows analysis
 
-### Estimate dispersions and wald test
+### Estimate dispersion
+
+We fit parametric and local fit, and decide the best fit following this [Bioconductor post](https://support.bioconductor.org/p/81094/)
+
+First of all, define a variable called `decide_fit` and based on whether the value assigned
+to it is `TRUE` or `FALSE` dispersion fit can be decided 
+
+```{r fitvar}
+decide_fit <- TRUE
+```
+
+```{r parametric_dispersion}
+parametric_ddw  <- estimateDispersions(ddw, fitType="parametric")
+if(decide_fit){
+  local_ddw  <- estimateDispersions(ddw, fitType="local")
+}
+```
+
+This is the dispersion estimate for parametric fit
+
+```{r plot parametric fit, fig.wide=TRUE}
+plotDispEsts(parametric_ddw, main="Parametric fit")
+```
+
+This is the dispersion estimate for local fit, given automated decision fitting is enabled:
+
+```{r plot local fit, fig.wide = TRUE}
+if(decide_fit){
+  plotDispEsts(local_ddw, main="Local fit")
+}
+```
+
+This will get the residuals for either fit, only for automated decision fitting
+
+```{r residual fit}
+parametricResid <- na.omit(with(mcols(parametric_ddw),abs(log(dispGeneEst)-log(dispFit))))
+if(decide_fit){
+  localResid <- na.omit(with(mcols(local_ddw),abs(log(dispGeneEst)-log(dispFit))))
+  residDf <- data.frame(residuals=c(parametricResid,localResid),
+                        fitType=c(rep("parametric",length(parametricResid)),
+                                  rep("local",length(localResid))))
+  summary(residDf)
+}
+```
+
+and we plot histograms of the fits
+
+```{r plot residual histograms, fig.wide = TRUE}
+if(decide_fit){
+  ggplot(residDf, aes(x = residuals, fill = fitType)) + 
+    scale_fill_manual(values = c("darkred", "darkblue")) + 
+    geom_histogram(alpha = 0.5, position='identity', bins = 100) + theme_bw()
+}
+```
+
+Now, we will decide for the better fit based on median
+
+```{r choose_fit}
+summary(parametricResid)
+if(decide_fit){
+  summary(localResid)
+  if (median(localResid) <= median(parametricResid)){
+    cat("chosen fitType: local")
+    ddw <- local_ddw
+  }else{
+    cat("chosen fitType: parametric")
+    ddw <- parametric_ddw
+  }
+  rm(local_ddw,parametric_ddw,residDf,parametricResid,localResid)
+}else{
+  ddw <- parametric_ddw
+  rm(parametric_ddw)
+}
+```
+
+
+### Call differentially bingind regions using wald test
 
 The next step is to estimate the dispersions and perform the wald test
 with these two functions.
