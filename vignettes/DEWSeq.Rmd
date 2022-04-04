@@ -556,17 +556,6 @@ ddw
 This will return a DESeq object with the coordinates and annotation stores as 
 rowAnnotation.
 
-## Prefiltering
-
-Prefiltering becomes even more important with large numbers of sliding windows. 
-Please find more details here:
-[DESeq2 vignette on pre-filtering](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#pre-filtering)
-
-```{r row filtering, eval = TRUE}
-keep <- rowSums(counts(ddw)) >= 10
-ddw <- ddw[keep,]
-```
-
 ## Estimating Size Factors
 
 For library normalisation, rather than modifying the raw counts,
@@ -579,6 +568,34 @@ The standard procedure to estimate size factors is
 ddw <- estimateSizeFactors(ddw)
 sizeFactors(ddw)
 ```
+
+## Prefiltering
+
+### DESeq2 approach
+
+Prefiltering becomes even more important with large numbers of sliding windows. 
+Please find more details here:
+[DESeq2 vignette on pre-filtering](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#pre-filtering)
+
+```{r rowfiltering, eval = FALSE}
+keep <- rowSums(counts(ddw)) >= 10
+ddw <- ddw[keep,]
+```
+
+### max window count approach
+
+Prefiltering can also be done based on [htseq-clip](https://htseq-clip.readthedocs.io/en/latest/documentation.html#helper-functions)
+output files. `htseq-clip` helper function [createMaxCountMatrix](https://htseq-clip.readthedocs.io/en/latest/documentation.html#createmaxcountmatrix)
+outputs count matrix based on `crosslink_count_position_max` column in the output files
+from [count function](https://htseq-clip.readthedocs.io/en/latest/documentation.html#count).
+This can be done as follows:
+
+```{r countfiltering, eval = TRUE}
+maxCountFile <- file.path(system.file('extdata',package='DEWSeq'),'SLBP_K562_w50s20_max_counts.txt.gz')
+ddw <- filterCounts(ddw,maxCountFile,5,2)
+dim(ddw)
+```
+
 
 ### Estimate size factors based on a specific set of RNAs
 
