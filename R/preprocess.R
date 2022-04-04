@@ -153,6 +153,7 @@ DESeqDataSetFromSlidingWindows <- function(countData, colData, annotObj,
   return(DESeqDataSet(se, design = design, ignoreRank))
 }
 
+
 #' @export
 #' @importFrom data.table fread
 #' 
