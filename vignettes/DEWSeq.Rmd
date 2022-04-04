@@ -491,8 +491,7 @@ For this, we recommend `data.table` or `tidyr` packages to read in the data swif
 In our experience, data.table is significantly faster than tidyr.
 
 ```{r loading tidyverse, eval = TRUE, results='hide'}
-library(tidyverse)
-library(data.table)
+require(data.table)
 ```
 
 First we read in counts 
@@ -518,14 +517,18 @@ or alternatively with tidyr (slower):
 annotationData <- read_tsv(annotationFile)
 ```
 
-Let's take a look at the data files
-
-```{r datasummary}
+Let's take a look at the data files:
+count data
+```{r datasummary1}
 head(countData)
 dim(countData)
+```
+and then annotation data
+```{r datasummary2}
 head(annotationData)
 dim(annotationData)
 ```
+
 
 
 Finally we have to create a sample description

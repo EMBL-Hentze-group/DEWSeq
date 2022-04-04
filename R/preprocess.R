@@ -152,3 +152,33 @@ DESeqDataSetFromSlidingWindows <- function(countData, colData, annotObj,
   se <- SummarizedExperiment(assays = SimpleList(counts=countData),colData = colData,rowRanges=gr)
   return(DESeqDataSet(se, design = design, ignoreRank))
 }
+
+#' @export
+#' @importFrom data.table fread
+#' 
+#' @title  filter count data
+#' @description In addition to count data matrix, htseq-clip also creates a max count matrix.\cr
+#' For each window, this file contains the maximum crosslink site count (height)  calculated \cr
+#' per nucleotide. This function uses this file to filter the count data file instead of the \cr
+#' default prefiltering on \code{rowSums}. Windows failing the threshold \cr
+#' \code{rowSums(maxWindowCount>=countThresh)>=nSamples} will be removed from the object. 
+#' 
+#' @param object \code{DESeqDataSet}, see \code{\link{DESeqDataSetFromSlidingWindows}}
+#' @param maxCountFile \code{character} file name/path to max count matrix
+#' @param countThresh \code{numeric} max count threshold
+#' @param nsamples \code{numeric} number of samples where the max count value must be\cr
+#' >= countThresh
+#'
+#' @return DESeq object
+filterCounts <- function(object, maxCountFile, countThresh, nsamples){
+  maxCounts <- fread(maxCountFile)
+  if(nsamples>ncol(maxCounts)){
+    stop("nsamples cut-off given: ",nsamples, " is > number of columns in ",maxCountFile,": ",ncol(maxCounts))
+  }
+  windowIds <- maxCounts[rowSums(maxCounts>=countThresh)>=nsamples,][[1]]
+  commonIds <- intersect(rownames(object), windowIds)
+  if(length(commonIds)==0){
+    stop("There are no common windowIds between the given DESeq object and the file ", maxCountFile)
+  }
+  return(object[commonIds,])
+}
