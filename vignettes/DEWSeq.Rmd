@@ -588,13 +588,17 @@ Prefiltering can also be done based on [htseq-clip](https://htseq-clip.readthedo
 output files. `htseq-clip` helper function [createMaxCountMatrix](https://htseq-clip.readthedocs.io/en/latest/documentation.html#createmaxcountmatrix)
 outputs count matrix based on `crosslink_count_position_max` column in the output files
 from [count function](https://htseq-clip.readthedocs.io/en/latest/documentation.html#count).
-This can be done as follows:
+
+This filtering can be done as follows:
 
 ```{r countfiltering, eval = TRUE}
 maxCountFile <- file.path(system.file('extdata',package='DEWSeq'),'SLBP_K562_w50s20_max_counts.txt.gz')
-ddw <- filterCounts(ddw,maxCountFile,5,2)
+ddw <- filterCounts( object = ddw,maxCountFile = maxCountFile, 
+                      countThresh = 5,nsamples = 2)
 dim(ddw)
 ```
+Based on data.frame in `maxCountFile` this function filters out all the windows with less than `5` counts in atleast `2` samples (out of a total of `3` in this example)
+
 
 
 ### Estimate size factors based on a specific set of RNAs
