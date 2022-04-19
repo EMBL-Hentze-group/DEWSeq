@@ -17,3 +17,6 @@ Changes in version 1.4.2 (2020-09-30)
 
 Changes in version 1.5.2 (2021-05-05)
  + Update vignette for dispersion estimation
+
+Changes in version 1.9.2 (2022-04-19)
+ + add function to filter read counts based on max. position count
