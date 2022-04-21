@@ -4,8 +4,15 @@
 \alias{DESeqDataSetFromSlidingWindows}
 \title{create DESeq data object}
 \usage{
-DESeqDataSetFromSlidingWindows(countData, colData, annotObj, design,
-  tidy = FALSE, ignoreRank = FALSE, start0based = TRUE)
+DESeqDataSetFromSlidingWindows(
+  countData,
+  colData,
+  annotObj,
+  design,
+  tidy = FALSE,
+  ignoreRank = FALSE,
+  start0based = TRUE
+)
 }
 \arguments{
 \item{countData}{\code{data.frame} or \code{matrix}, sliding window count data}

@@ -4,7 +4,9 @@
 \name{slbpVst}
 \alias{slbpVst}
 \title{ENCODE eCLIP data SLBP in K562}
-\format{matrix;}
+\format{
+matrix;
+}
 \usage{
 data(slbpVst)
 }

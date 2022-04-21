@@ -4,9 +4,20 @@
 \alias{resultsDEWSeq}
 \title{extract DEWseq results}
 \usage{
-resultsDEWSeq(object, contrast, name, listValues = c(1, -1), cooksCutoff,
-  test, addMLE = FALSE, tidy = FALSE, parallel = FALSE,
-  BPPARAM = bpparam(), minmu = 0.5, start0based = TRUE)
+resultsDEWSeq(
+  object,
+  contrast,
+  name,
+  listValues = c(1, -1),
+  cooksCutoff,
+  test,
+  addMLE = FALSE,
+  tidy = FALSE,
+  parallel = FALSE,
+  BPPARAM = bpparam(),
+  minmu = 0.5,
+  start0based = TRUE
+)
 }
 \arguments{
 \item{object}{\code{DESeqDataSet}, on which the following functions has already been called:

@@ -155,6 +155,7 @@ DESeqDataSetFromSlidingWindows <- function(countData, colData, annotObj,
 
 
 #' @export
+#' @importFrom methods as is
 #' @importFrom data.table fread
 #' 
 #' @title  filter count data

@@ -40,5 +40,5 @@ License: LGPL (>= 3)
 URL: https://github.com/EMBL-Hentze-group/DEWSeq/
 Encoding: UTF-8
 LazyData: false
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.2
 BugReports: https://github.com/EMBL-Hentze-group/DEWSeq/issues

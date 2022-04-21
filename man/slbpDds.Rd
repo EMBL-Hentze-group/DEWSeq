@@ -4,7 +4,9 @@
 \name{slbpDds}
 \alias{slbpDds}
 \title{ENCODE eCLIP data SLBP in K562}
-\format{An object of class \code{"DESeq"};}
+\format{
+An object of class \code{"DESeq"};
+}
 \usage{
 data(slbpDds)
 }

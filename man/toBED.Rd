@@ -4,10 +4,17 @@
 \alias{toBED}
 \title{windows/regions to BED}
 \usage{
-toBED(windowRes, regionRes, fileName, padjCol = "padj",
-  padjThresh = 0.05, log2FoldChangeCol = "log2FoldChange",
-  log2FoldChangeThresh = 1, trackName = "sliding windows",
-  description = "sliding windows")
+toBED(
+  windowRes,
+  regionRes,
+  fileName,
+  padjCol = "padj",
+  padjThresh = 0.05,
+  log2FoldChangeCol = "log2FoldChange",
+  log2FoldChangeThresh = 1,
+  trackName = "sliding windows",
+  description = "sliding windows"
+)
 }
 \arguments{
 \item{windowRes}{\code{data.frame}, output from \code{\link{resultsDEWSeq}}}

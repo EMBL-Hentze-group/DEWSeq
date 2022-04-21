@@ -4,7 +4,9 @@
 \name{SLBP_K562_w50s20}
 \alias{SLBP_K562_w50s20}
 \title{ENCODE eCLIP data for SLBP in K562, low count filtered}
-\format{An object of class \code{"DESeq"};}
+\format{
+An object of class \code{"DESeq"};
+}
 \usage{
 data(SLBP_K562_w50s20)
 }

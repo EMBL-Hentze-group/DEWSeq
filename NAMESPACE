@@ -2,10 +2,10 @@
 
 export(DESeqDataSetFromSlidingWindows)
 export(extractRegions)
+export(filterCounts)
 export(resultsDEWSeq)
 export(toBED)
 export(topWindowStats)
-export(filterCounts)
 import(BiocParallel)
 import(DESeq2)
 import(S4Vectors)

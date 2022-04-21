@@ -4,9 +4,14 @@
 \alias{extractRegions}
 \title{extract significant regions}
 \usage{
-extractRegions(windowRes, padjCol = "padj", padjThresh = 0.05,
-  log2FoldChangeCol = "log2FoldChange", log2FoldChangeThresh = 1,
-  start0based = TRUE)
+extractRegions(
+  windowRes,
+  padjCol = "padj",
+  padjThresh = 0.05,
+  log2FoldChangeCol = "log2FoldChange",
+  log2FoldChangeThresh = 1,
+  start0based = TRUE
+)
 }
 \arguments{
 \item{windowRes}{\code{data.frame}, output from \code{\link{resultsDEWSeq}}}

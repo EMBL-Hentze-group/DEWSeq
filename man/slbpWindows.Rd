@@ -4,7 +4,9 @@
 \name{slbpWindows}
 \alias{slbpWindows}
 \title{ENCODE eCLIP data SLBP in K562}
-\format{data.frame;}
+\format{
+data.frame;
+}
 \usage{
 data(slbpWindows)
 }

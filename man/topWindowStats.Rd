@@ -4,10 +4,19 @@
 \alias{topWindowStats}
 \title{stats for the top windows in each region}
 \usage{
-topWindowStats(windowRes, padjCol = "padj", padjThresh = 0.05,
-  log2FoldChangeCol = "log2FoldChange", log2FoldChangeThresh = 1,
-  start0based = TRUE, normalizedCounts, treatmentCols,
-  treatmentName = "treatment", controlName = "control", op = "max")
+topWindowStats(
+  windowRes,
+  padjCol = "padj",
+  padjThresh = 0.05,
+  log2FoldChangeCol = "log2FoldChange",
+  log2FoldChangeThresh = 1,
+  start0based = TRUE,
+  normalizedCounts,
+  treatmentCols,
+  treatmentName = "treatment",
+  controlName = "control",
+  op = "max"
+)
 }
 \arguments{
 \item{windowRes}{\code{data.frame}, output from \code{\link{resultsDEWSeq}}}

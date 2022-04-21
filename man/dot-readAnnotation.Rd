@@ -4,8 +4,14 @@
 \alias{.readAnnotation}
 \title{read annotation data}
 \usage{
-.readAnnotation(fname, uniqIds = NULL, asGRange = TRUE,
-  checkWindowNumber = TRUE, start0based = TRUE, threads = 10)
+.readAnnotation(
+  fname,
+  uniqIds = NULL,
+  asGRange = TRUE,
+  checkWindowNumber = TRUE,
+  start0based = TRUE,
+  threads = 10
+)
 }
 \arguments{
 \item{fname}{\code{character}, file name/path}
