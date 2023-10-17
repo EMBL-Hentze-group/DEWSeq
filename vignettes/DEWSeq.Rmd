@@ -427,10 +427,6 @@ All you need is
 * .bam.bai index files
 * .gff3 files (Preferrably from Gencode or similar)
 
-An earlier, Python 2.7 compatibile version of htseq-clip is provided as a [singularity container](https://sylabs.io/) image and comes
-with a [Snakemake](https://snakemake.readthedocs.io/en/stable/) workflow for processing on local computers,
-servers, or computer clusters.
-
 Tip: You can use Sailfish, Kallisto, RSEM, Salmon or any (pseudo)aligner to
 get an estimation of the different expression levels of transcripts. Use this to
 filter the annotation before flattening it.
@@ -609,15 +605,12 @@ First we identify significant windows in IP or the controls.
 ddw_tmp <- ddw
 ddw_tmp <- estimateDispersions(ddw_tmp, fitType = "local", quiet = TRUE)
 ddw_tmp <- nbinomWaldTest(ddw_tmp)
-
-tmp_significant_windows <- 
-                results(ddw_tmp,
-                    contrast = c("type", "IP", "SMI"),
-                    tidy = TRUE,
-                    filterFun = ihw) %>% 
-                dplyr::filter(padj < 0.05) %>% 
-                .[["row"]]
-rm("ddw_tmp")
+ddw_tmp_results <- results(ddw_tmp,contrast = c("type", "IP", "SMI"),
+                           tidy = TRUE, filterFun =  ihw)
+tmp_significant_windows <- ddw_tmp_results %>%
+                           dplyr::filter(padj < 0.05) %>% 
+                           dplyr::pull(row)
+rm(list = c("ddw_tmp", "ddw_tmp_results"))
 ```
 
 Then we exclude those for the estimation of the size factors
